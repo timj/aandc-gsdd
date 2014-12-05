@@ -441,8 +441,29 @@ migrated to SDFITS.
 
 Was GSD a successful format? Yes, in terms of its longevity at JCMT.
 
+When the JCMT control system was built, computing performance was a
+major concern. For this reason HDS and FITS, which were not designed
+for real-time operation and were deemed too slow. The JCMT software
+team had experience of in-memory data management - those who had
+worked at MRAO had used shared memory for data capture and those from
+SERC who had worked with the ADAM MON system knew how to manage a
+shared database. The GSD software library took ideas from the MON
+system to provide a suite of routines for memory management that
+provided the required performance. It was a forerunner of the
+in-memory databases we see today.
+
 Are there any lessons on the standardization process that we can
 report on? Why did it fail? What could have been done differently?
+
+GSD was documented and stable. The UK had Starlink to publish the
+software and data files to the UK community. Access to that network
+from other countries, such as the US, was problematic, and hindered
+the spread of the software and prevented take up. Fears of lack of
+support also drive people to create their own in-house
+solutions. Today, the internet and the culture of open-source
+development make that much less likely and a good idea has a better
+chance of surviving and growing.
+
 }
 
 It was solely used as a data acquisition format at JCMT, with there
