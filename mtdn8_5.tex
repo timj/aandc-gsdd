@@ -1,0 +1,626 @@
+\documentstyle{article} 
+\pagestyle{myheadings}
+
+%------------------------------------------------------------------------------
+\newcommand{\jachdoccategory}  {Design Note}
+\newcommand{\jachdocinitials}  {MTDN}
+\newcommand{\jachdocnumber}    {008.5}
+\newcommand{\jachdocauthors}   {James Scobbie}
+\newcommand{\jachdocdate}      {August 4th, 1994}
+\newcommand{\jachdoctitle}     {JCMT Single Dish Data System}
+%------------------------------------------------------------------------------
+
+\newcommand{\jachdocname}{\jachdocinitials /\jachdocnumber}
+\markright{\jachdocname}
+\setlength{\textwidth}{160mm}
+\setlength{\textheight}{225mm}
+\setlength{\topmargin}{-5mm}
+\setlength{\oddsidemargin}{0mm}
+\setlength{\evensidemargin}{0mm}
+\setlength{\parindent}{0mm}
+\setlength{\parskip}{\medskipamount}
+\setlength{\unitlength}{1mm}
+
+%------------------------------------------------------------------------------
+% Add any \newcommand or \newenvironment commands here
+%------------------------------------------------------------------------------
+
+\begin{document}
+\thispagestyle{empty}
+SCIENCE \& ENGINEERING RESEARCH COUNCIL \hfill \jachdocname\\
+JOINT ASTRONOMY CENTRE\\
+{\large\bf James Clerk Maxwell Telescope\\}
+{\large\bf \jachdoccategory\ \jachdocnumber}
+\begin{flushright}
+\jachdocauthors\\
+\jachdocdate
+\end{flushright}
+\vspace{-4mm}
+\rule{\textwidth}{0.5mm}
+\vspace{5mm}
+\begin{center}
+{\Large\bf \jachdoctitle}
+\end{center}
+\vspace{5mm}
+
+%------------------------------------------------------------------------------
+%  Add this part if you want a table of contents
+ \setlength{\parskip}{0mm}  
+ \tableofcontents
+ \setlength{\parskip}{\medskipamount}
+ \markright{\jachdocname}
+%------------------------------------------------------------------------------
+
+
+\section{Introduction}
+\subsection{Purpose}
+
+  This document provides a description of the current use of
+the General Single Dish Data Format System at the JCMT.
+
+
+\subsection{Scope}
+
+  The scope includes all data stored in General Single Dish Data Format
+at the JCMT.
+
+\subsection{Definitions and abbreviations}
+\begin{description}
+\item [GSD]      General Single Dish Data handling routines, JCMT only.
+\item [GSDD]     General Single Dish Data Format.
+\item [GSDF]     General Single Dish JCMT Data definition file.  
+\item [JCMT]     James Clerk Maxwell Telescope. 
+\item [ADAM]     Astronomical Data Aquisition and Monitor.
+\item [NBS]      Noticeboard System from the Starlink collection.
+\item [FITS]     Flexible Image Transport System.
+\end{description}
+
+
+\subsection{References}
+
+\begin{enumerate}
+  \item {\bf MTDN008} General Single Dish Data Format System, Version 4.  
+        {\em Fairclough,Kenderdine,Titterington 23rd Jan 1987}
+  \item {\bf NRAO} Single Dish Data Format {\em Brown, Stobie 21st Oct 1986}
+  \item {\bf NRAO} Single Fits Tape {\em Stobie, Morgan 21st Oct 1986}
+\end{enumerate}
+
+
+
+
+\subsection{Overview}
+
+  The General Single Dish Data Format System specifies the physical
+format, structure and type of information that comprise observations as 
+agreed by NRAO, IRAM and UK/NL MT teams at a meeting of these parties
+back in 1986.
+
+  This format system has since failed to be adopted by any of the 
+organisations that participated in its creation. The Format itself has
+not been developed further, however at JCMT a similar system based upon 
+the General Single Dish Data Format System has evolved. 
+
+  Some of the reasoning behind the implementation route taken was based 
+upon the dominance of a single operating system (VMS), the lack of a 
+developed or applicable FITS standard (with BINTABLES) and the performance 
+limitations of the hardware of that period.
+
+  With time the system at JCMT has actively evolved without plan, 
+control or documentation. This document attempts to define what is currently 
+done at the JCMT in terms of data storage content and is to provide a
+basis on which the future of the system may be decided.
+
+
+
+
+\section{GSD Architecture}
+
+  The GSD Architecture described in MTDN008 Version 4 (Reference 1)   
+remains the same. Each file follows the format described starting with
+the single file descriptor, an item descriptor for each datum, and then
+the data. 
+
+
+\section{JCMT Storage Data Definitions}
+
+   The JCMT system of Storing data in GSD files utilizes a set of user
+supplied files containing data definitions. These files (GSDF files)
+define what data is to be stored by the Observing system STORAGE task.
+
+   Each data definition includes,
+
+\begin{description}
+  \item [COMMENT]    A character string describing the item.
+  \item [FITS NAME]  A JCMT specific FITS keyword.
+  \item [GSDD NAME]  The General Single Dish Data Format item identifier.
+  \item [CLASS]      A mask used to identify items stored together.
+  \item [TYPE]       The data type (Char,Integer,Real,Double,Logical) 
+  \item [LOCATION]   The Adam NBS location of the data item.
+  \item [DIMENSION]  Dimensions of array, zero being a scalar.
+  \item [DIMENSIONS] The GSDD NAME of each item that will contain the value 
+                     of a dimension at run time.
+\end{description}
+
+   There exist 17 top level GSDF files which are composed of 94 component 
+files defining a total of nearly 600 seperate items. Many of these are
+historical.
+
+   For this document and for the current definition of the data items to
+be stored only the following GSDF files will be considered as "in use".
+
+\begin{itemize}
+  \item STORAGE\_CBE\_FULL.GSDF
+  \item STORAGE\_AOSC\_FULL.GSDF
+  \item STORAGE\_UKT14\_FULL.GSDF
+  \item STORAGE\_IFD\_FULL.GSDF
+  \item STORAGE\_DAS\_FULL.GSDF
+  \item STORAGE\_DAS\_TP\_FULL.GSDF
+  \item STORAGE\_DAS\_CROSS\_CORR\_FULL.GSDF
+\end{itemize}
+
+
+
+\newpage
+\section{The Class System}
+
+  The Class system is described in MTDN008 Version 4 (Reference 1) 
+where three Systems of classes are explained, the Simple System, 
+System 1 and System 2. A class is a grouping of similar data items
+under a naming convention.
+
+
+  Each of the three Systems has a different number of classes where
+the classes are not the same between Systems. For continuity, for this
+version, the same Class headings as those of System 1 and System 2 have
+been used. The two additional Classes are Class 55 which is used for
+data related to dual dish interferometry and the No Class which 
+contains data items that do not currently belong to any other class.
+
+
+\small
+\subsection{Class 1: Identity Parameters}
+
+
+\begin{tabular}{||l|l|l|l||} \hline
+Item                      & Mnemonic & Format & Units \\ \hline
+Telescope name            & C1TEL    & C*16   &       \\      
+Identifies the observing program & C1PID    & C*16   & ~     \\
+Name of the primary observer     & C1OBS    & C*16   & ~     \\
+Name of the support scientist    & C1ONA1   & C*16   & ~     \\
+Name of the telescope operator   & C1ONA2   & C*16   & ~     \\
+Source name part 1               & C1SNA1   & C*16   & ~     \\
+Source name part 2               & C1SNA2   & C*16   & ~     \\
+Character code of commanded centre  & C1HGT    & R*8    & KM    \\
+Geographical longitude of telescope (W +ve) & C1LONG   & R*8    & DEG   \\
+Geodetic latitude of telescope (N +ve)      & C1LAT    & R*8    & DEG   \\
+Observation number        & C1SNO    & R*8    &  ~    \\
+Name of the frontend      & C1RCV    & C*16   &  ~    \\
+Type of frontend          & C1FTYP   & C*16   &  ~    \\
+Name of the backend       & C1BKE    & C*16   &  ~    \\
+Type of backend           & C1BTYP   & C*16   &  ~    \\ \hline
+\end{tabular}
+
+
+ C1HGT is Character code of commanded centre or source coordinate system. \\
+ C1SNO is listed as D ( Real*8 ) in the GSDF files but as an Integer in control task.
+
+
+
+
+
+\subsection{Class 2: Time Parameters}
+
+
+\begin{tabular}{||l|l|l|l||} \hline
+Item                      & Mnemonic & Format & Units \\ \hline
+Secondary mirror x displacement from nominal at observation start  & C2FV     & R*4    &  MM   \\
+Secondary mirror y displacement from nominal at observation start  & C2FL     & R*4    &  MM   \\
+Secondary mirror z displacement from nominal at observation start  & C2FR     & R*4    &  MM   \\ \hline
+\end{tabular}
+ \\
+
+
+
+
+\subsection{Class 3: Position Parameters}
+
+
+\begin{tabular}{||l|l|l|l||} \hline
+Item                      & Mnemonic & Format & Units \\ \hline
+UT1 date of observation   & C3DAT    & R*8    &  YYYY.MMDD \\      
+UT1 hour of observation   & C3UT     & R*8    & HOUR  \\      
+UT1-UTC correction interpolated from time service telex & C3UT1C   & R*8    & DAY   \\      
+Local sidereal time at start of the observation & C3LST    & R*8    & HOUR  \\      
+Calibration observation?    & C3CAL    & L*1    & ~     \\      
+Centre moves between scans? & C3CEN    & L*1    & ~     \\      
+Data taken on the fly or in discrete mode? & C3FLY    & L*1    & ~     \\      
+Focus observation?        & C3FOCUS  & L*1    &  ~    \\      
+Map observation?          & C3MAP    & L*1    &  ~    \\      
+Number of dimension in the map table & C3NPP    & I*4    &  ~    \\      
+Number of map points      & C3NMAP   & I*4    &  ~    \\      
+Number of scans           & C3NIS    & I*4    &  ~    \\      
+Number of scans done      & C3NSAMPLE & I*4    &  ~    \\      
+Number of scan table 1 variables & C3NO\_SCAN\_VARS1 & I*4    & ~     \\      
+Number of scan table 2 variables & C3NO\_SCAN\_VARS2 & I*4    & ~     \\      
+Total time of scan        & C3SRT    & I*4    & SEC   \\      
+Maximum number of map points done in a phase & C3MXP    & I*4    & ~     \\      
+Maximum number of cycles in the scan & C3NCI    & I*4    &  ~    \\      
+Number of cycles done in the scan    & C3NCYCLE & I*4    &  ~    \\      
+Duration of each cycle               & C3CL     & I*4    & SEC   \\      
+Total number of xy positions observed during a cycle & C3NCP    & I*4    & ~     \\      
+Number of phase table variables      & C3NSV    & I*4    & ~     \\      
+Number of phases per cycle           & C3PPC    & I*4    &  ~    \\      
+No. of frontend output channels      & C3NFOC   & I*4    &  ~    \\      
+Number of IF inputs to each section  & C3NOIFPBES  & I*4 &  ~    \\      
+What's in the DATA array             & C3AOSOUTPUT & C*8 &  ~    \\      
+BE input channels connected to this section        & C3BESCONN & I     &  ~    \\      
+IF output channels connected to BE input channels  & C3BEINCON & I*4   &  ~    \\      
+Number of channels per backend section             & C3LSPC    & I*4   &  ~    \\      
+Subsystem nr to which each backend section belongs & C3BESSPEC & I*4   &  ~    \\      
+Copy of frontend LO frequency per backend section  & C3BEFENULO & R*8  &  ~    \\      
+Total IF per backend section                       & C3BETOTIF & R*8   &  ~    \\      
+Copy of frontend sideband sign per backend section & C3BEFESB  & I*4   &  ~    \\      
+Scan integration time                              & C3INTT   & I*4    &  ~    \\      
+Number of backend output channels                  & C3NCH    & I*4    &  ~    \\      
+Number of backend sections                         & C3NRS    & I*4    &  ~    \\      
+Number of backend input channels                   & C3NRC    & I*4    &  ~    \\      
+Backend configuration                              & C3CONFIGNR & I*4  &  ~    \\      
+Description of output in DAS DATA                  & C3DASOUTPUT & C*8 &  ~    \\      
+DAS calibration source for backend calibration     & C3DASCALSRC & C*6 &  ~    \\      
+DAS calibration source for backend calibration     & C3DASSHFTFRAC &R*4&  ~    \\      
+Subband overlap                                    & C3OVERLAP & R*4   &  ~    \\ \hline
+\end{tabular}
+ \\
+
+
+                            
+                            
+\subsection{Class 4: Pointing Parameters}
+
+
+\begin{tabular}{||l|l|l|l||} \hline
+Item                      & Mnemonic & Format & Units \\ \hline
+Character code of commanded centre                             & C4CSC    & C*16   &  ~    \\      
+centre coords                                                  & C4CECO   & I*4    &  ~    \\      
+Type of epoch, JULIAN, BESSELIAN or APPARENT                   & C4EPT    & C*16   &  ~    \\      
+Centre moving flag (solar system object)                       & C4MCF    & L*1    &  ~    \\      
+Date of the RA/DEC coordinates (1950)                          & C4EPH    & R*8    & YEAR  \\      
+Right ascension of source for EPOCH                            & C4ERA    & R*8    & DEG   \\      
+Declination of source for EPOCH                                & C4EDEC   & R*8    & DEG   \\      
+Right Ascension of date                                        & C4RADATE & R*8    & DEG   \\      
+Declination of date                                            & C4DECDATE& R*8    & DEG   \\      
+Right ascension J2000                                          & C4RA2000 & R*8    & DEG   \\      
+Declination J2000                                              & C4EDEC2000 & R*8  & DEG   \\      
+Galactic longitude                                             & C4GL     & R*8    & DEG   \\      
+Galactic latitude                                              & C4GB     & R*8    & DEG   \\      
+Azimuth at observation date                                    & C4AZ     & R*8    & DEG   \\      
+Elevation at observation date                                  & C4EL     & R*8    & DEG   \\      
+Char. code for local x-y coord.system                          & C4LSC    & C*16   &  ~    \\      
+Units of cell and mapping coordinates                          & C4ODCO   & C*16   &  ~    \\      
+Angle between cell y axis and x-axis (CCW)                     & C4AXY    & R*8    & DEG   \\      
+Commanded x centre position                                    & C4SX     & R*8    &  ~    \\      
+Commanded y centre position                                    & C4SY     & R*8    &  ~    \\      
+Reference x position                                           & C4RX     & R*8    &  ~    \\      
+Reference y position                                           & C4RY     & R*8    &  ~    \\      
+DAZ:Net Az offset at start                                     & C4AZERR  & R*8    &ARCSEC \\      
+DEL:Net El offset at start                                     & C4ELERR  & R*8    &ARCSEC \\      
+Secondary mirror is chopping                                   & C4SM     & L*1    &  ~    \\      
+Secondary mirror chopping waveform                             & C4FUN    & C*10   &  ~    \\      
+Secondary mirror chopping period                               & C4FRQ    & R*4    & Hz    \\      
+Secondary mirror chopping coordinate system                    & C4SMCO   & C*2    &  ~    \\      
+Secondary mirror chop throw                                    & C4THROW  & R*4    &ARCSEC \\      
+Secondary mirror chop position angle                           & C4POSANG & R*4    & DEG   \\      
+Secondary mirror offset parallel to lower axis (E-W Tilt)      & C4OFFS\_EW & R*4   &ARCSEC \\      
+Secondary mirror offset parallel to upper axis (N-S Tilt)      & C4OFFS\_NS & R*4   &ARCSEC \\      
+Secondary mirror absolute X position at observation start      & C4X      & R*4    & MM    \\      
+Secondary mirror absolute Y position at observation start      & C4Y      & R*4    & MM    \\      
+Secondary mirror absolute Z position at observation start      & C4Z      & R*4    & MM    \\      
+Secondary mirror ew chop scale                                 & C4EW\_SCALE   & R*4 & ARCSEC/ENC\\      
+Secondary mirror ns chop scale                                 & C4NS\_SCALE   & R*4 & ARCSEC/ENC\\      
+Secondary mirror ew encoder value                              & C4EW\_ENCODER & I*4 & ENCODER   \\      
+Secondary mirror ns encoder value                              & C4NS\_ENCODER & I*4 & ENCODER   \\      
+Mounting of telescope                                          & C4MOCO        & C   &  ~        \\ \hline
+\end{tabular}
+ \\
+
+ The items C4AXY, C4SX, C4SY, C4RX, C4RY, are stored as 
+Real*8 but are actually Real*4 in the control task. \\
+
+ Item C4CSC may also be source coordinate system.\\ 
+ Item C4MOCO is defined as LOWER/UPPER axes, e.g; AZ/ALT.\\
+ Item C4ODCO is offset definition code. \\
+ Item C4CECO is centre coords where AZ=1; EQ=3; RD=4; RB=6; RJ=7; GA=8. \\
+
+                                                                    
+\subsection{Class 5: Environment Parameters}                           
+
+
+\begin{tabular}{||l|l|l|l||} \hline
+Item                                & Mnemonic & Format & Units \\ \hline
+Ambient temperature                 & C5AT     & R*8    & DEG C \\
+Mean atmospheric pressure           & C5PRS    & R*8    & MM HG \\
+Mean atmospheric relative humidity  & C5RH     & R*8    & \%    \\ \hline
+\end{tabular}
+ \\
+
+ The items C54AT, C5PRS, C5RH, are stored as Real*8 
+but are actually Real*4 in the telescope task.
+
+
+
+
+\subsection{Class 6: Mapping Parameters}
+
+
+\begin{tabular}{||l|l|l|l||} \hline
+Item                                          & Mnemonic & Format & Units \\ \hline
+Local x-y AZ= 1;EQ=3;RD=4;RB=6;RJ=7;GA=8      & C6FC     & I*4    &  ~    \\      
+Type of observation                           & C6ST     & C*16   &  ~    \\      
+Map rows scanned in alternate directions?     & C6REV    & L*1    &  ~    \\      
+Map rows are in X or Y direction              & C6SD     & C*16   &  ~    \\      
+In first row x increases (T) or decreases (F) & C6XPOS   & L*1    &  ~    \\      
+In first row y increases (T) or decreases (F) & C6YPOS   & L*1    &  ~    \\      
+Number of sky points completed in the observation & C6NP & I*4    &  ~    \\      
+Observation mode                              & C6MODE   & C*20   &  ~    \\      
+Cycle reversal flag                           & C6CYCLREV& L*1    &  ~    \\      
+Cell x dim,; descriptive origin item 1        & C6DX     & R*8    &  ~    \\      
+Cell y dimension; descriptive origin item 2   & C6DY     & R*8    &  ~    \\      
+Scanning angle, angle local vertical to x axis measured CW  & C6MSA    & R*8    &  ~    \\      
+X map dimension; number of points in the x-direction        & C6XNP    & I*4    &  ~    \\      
+Y map dimension; number of points in the y-direction        & C6YNP    & I*4    &  ~    \\      
+X coordinate of the first map point                         & C6XGC    & R*4    &  ~    \\      
+Y coordinate of the first map point                         & C6YGC    & R*4    &  ~    \\ \hline
+\end{tabular}
+ \\
+
+ The items C6DX, C6DY, C6MSA are stored as Real*8 
+but are actually Real*4 in the control task.
+                                                    
+                           
+
+
+\subsection{Class 7: Velocity Parameters}
+
+
+\begin{tabular}{||l|l|l|l||} \hline
+Item                                        & Mnemonic  & Format & Units \\ \hline
+Number of elements of vradial array         & C7SZVRAD  & I*4    & NO    \\      
+Radial velocity of the source               & C7VR      & R*8    & KM/S  \\      
+Bad channel value                           & C7BCV     & R*4    & IN    \\      
+TEL's array for computing radial velocities & C7VRADIAL & R*8    &  ~    \\      
+Filter                                      & C7FIL     & C*16   &  ~    \\      
+Aperture                                    & C7AP      & C*16   &  ~    \\      
+Sensitivity range of lockin                 & C7SNTVTYRG& C*16   &  ~    \\      
+Lockin time constant                        & C7TIMECNST& C*16   &  ~    \\      
+Lockin sensitivity in scale range units     & C7SNSTVTY & I*4    &  ~    \\      
+Lockin phase                                & C7PHASE   & R*4    &  ~    \\      
+CSO tau at 225GHz                           & C7TAU225  & R*4    &  ~    \\      
+CSO tau time (YYMMDDHHMM)                   & C7TAUTIME & C      &  ~    \\      
+Seeing at JCMT                              & C7SEEING  & R*4    &  ~    \\      
+SAO seeing time (YYMMDDHHMM)                & C7SEETIME & C      &  ~    \\  \hline
+\end{tabular}
+ \\
+
+                            
+                            
+\subsection{Class 8: Engineering Parameters}
+
+
+\begin{tabular}{||l|l|l|l||} \hline
+Item                                                 & Mnemonic & Format & Units \\ \hline
+Ratio total power observed/incident on the telescope & C8AAE    & R*8    & \%    \\      
+Fraction of beam in diffraction limited main beam    & C8ABE    & R*8    & \%    \\      
+Antenna gain                                         & C8GN     & R*8    &  ~    \\      
+Rear spillover and scattering efficiency             & C8EL     & R*8    &  ~    \\      
+Forward spillover and scattering efficiency          & C8EF     & R*8    &  ~    \\  \hline
+\end{tabular}
+ \\
+
+
+
+\subsection{Class 9: Data Parameters}
+
+\begin{tabular}{||l|l|l|l||} \hline
+Item                      & Mnemonic & Format & Units \\ \hline
+   None                   &   ~      &   ~    &  ~    \\ \hline
+\end{tabular}
+
+                                                                                
+
+
+
+\subsection{Class 10: Reciever Parameters}
+
+\begin{tabular}{||l|l|l|l||} \hline
+Item                      & Mnemonic & Format & Units \\ \hline
+ None                     &    ~     &  ~     &  ~    \\ \hline
+\end{tabular}
+
+                                                                                
+
+\subsection{Class 11: Phase Control Table}
+
+
+\begin{tabular}{||l|l|l|l||} \hline
+Item                                    & Mnemonic & Format & Units \\ \hline
+Names of the cols. of phase table       & C11VD    & C*16   &  ~    \\      
+Phase table: switching scheme dependent & C11PHA   & R*4    &  ~    \\ \hline
+\end{tabular}
+ \\
+
+
+
+
+\subsection{Class 12: Phase Value Table}
+
+
+\begin{tabular}{||l|l|l|l||} \hline
+Item                                           & Mnemonic & Format & Units \\ \hline
+Cold load temperature                          & C12TCOLD & R*4    & K     \\      
+Ambient load temperature                       & C12TAMB  & R*4    & K     \\      
+Velocity definition code - radio, optical, or relativistic & C12VDEF  & C*20   & ~     \\      
+Velocity frame of reference - LSR, Bary-, Helio-, or Geo- centric   & C12VREF  & C*20  & ~     \\      
+Units of spectrum data                         & C12CAL   & C*20   & ~     \\      
+Calibration instrument used (FE, BE, or USER)  & C12CALTASK & C*20   & ~     \\      
+Type of calibration (THREELOADS or TWOLOADS)   & C12CALTYPE & C*20   & ~     \\      
+Way of calibrating the data (RATIO or DIFFERENCE) & C12REDMODE & C*20   & ~     \\      
+Names of the cols. of scan table1              & C12SCAN\_VARS1 & C*16   & ~     \\      
+Names of the cols. of scan table2              & C12SCAN\_VARS2 & C*16   & ~     \\      
+Begin scan table                               & C12SCAN\_TABLE\_1 & R*4    &  ~    \\      
+End scan table                                 & C12SCAN\_TABLE\_2 & R*4    &  ~    \\      
+Centre frequencies (rest frame of source)      & C12CF      & R*8   & GHZ  \\      
+Rest frequency                                 & C12RF      & R*8   & GHZ  \\      
+BE input frequencies                           & C12INFREQ  & R*8   & GHZ  \\      
+Frequency resolution                           & C12FR      & R*8    & MHZ  \\      
+Bandwidth                                      & C12BW      & R*4    & MHZ  \\      
+Receiver temperature                           & C12RT      & R*4    & K    \\      
+System temperature                             & C12SST     & R*4    & K    \\      
+Sky temperature at last calibration            & C12TSKY    & R*4    & K    \\      
+Telescope temp. from last skydip               & C12TTEL    & R*4    & K    \\      
+Gain value (kelvins per volt or equivalent)    & C12GAINS   & R*4    & K/V  \\      
+Calibration temperature                        & C12CT      & R*4    & K    \\      
+Water opacity                                  & C12WO      & R*4    & NEPER\\      
+Sky transmission from last calibration         & C12ETASKY  & R*4    & ~    \\      
+Ratio of signal sideband to image sideband sky transmission & C12ALPHA   & R*4    & ~    \\      
+Normalizes signal sideband gain                & C12GS      & R*4    & ~   \\      
+Telescope transmission                         & C12ETATEL  & R*4    & ~   \\      
+Frontend-derived Tsky, image sideband          & C12TSKYIM  & R*4    & ~   \\      
+Frontend-derived sky transmission              & C12ETASKYIM& R*4    & ~   \\      
+Frontend-derived Tsys, image sideband          & C12TSYSIM  & R*4    & ~   \\      
+Ratio of signal sideband to image sideband sky transmission & C12TASKY   & R*4    & ~   \\      
+Correlation function mode                      & C12CM    & I*4    &   ~   \\      
+Correlation bit mode                           & C12BM    & I*4    &   ~   \\ 
+Centre frequencies (rest frame of source)      & C12CF    & R*8    & GHZ   \\      
+Rest frequency; FITS: [Hz]; GSD: [GHz]         & C12RF    & R*8    & GHZ   \\      
+Frequency resolution; FITS: [Hz]; GSD: [MHz]   & C12FR    & R*8    & MHZ   \\      
+Bandwidth; FITS: [Hz]; GSD: [MHz]              & C12BW    & R*8    & MHZ   \\      
+Calibration temperature                        & C12CT    & R*8    & K     \\      
+Water opacity                                  & C12WO    & R*8    & NEPER \\ \hline
+\end{tabular}
+ \\
+
+ The item C12CT as C1BKE.TCAL is saved as a Real*8 but us a Real*4 in the 
+ukt14 task. 
+
+                                                                      
+                            
+\subsection{Class 13: Phase Timing Table}
+
+
+\begin{tabular}{||l|l|l|l||} \hline
+Item                                                 & Mnemonic & Format & Units \\ \hline
+Spectrum data                                        & C13DAT   & R*4    &  ~    \\      
+Spectrum data                                        & C13DAT   & R*8    &  ~    \\      
+Individual beam integrations                         & C13SPV   & R*8    &  ~   \\      
+Raw error is accumulated over the scan               & C13RAW\_ERROR    & R*8    &  ~    \\      
+Raw out of phase data samples in each phase          & C13SPV\_OP       & R*8    &  ~    \\      
+Raw (out of phase) error, stored at end scan         & C13RAW\_ERROR\_OP & R*8    &  ~    \\      
+array of responsivities                              & C13RESP  & R*4    &  ~    \\      
+Phase data standard deviation                        & C13STD   & R*8    &  ~    \\      
+Standard error                                       & C13ERR   & R*8    &  ~    \\ \hline
+\end{tabular}
+ \\
+
+ The C13SPV is saved as Real*8 but is a real*4 in the DAS task, and
+a Real*8 in the ukt14 task. 
+
+ The C13DAT is listed with two types for saving, that for the DAS task
+of Real*4 and that for the ukt14 task of Real*8.                                                                  
+                                                              
+        
+\subsection{Class 14: Data Value Table}
+
+
+\begin{tabular}{||l|l|l|l||} \hline
+Item                             & Mnemonic & Format & Units \\ \hline
+List of xy offsets for each scan & C14PHIST & R*4    & RUNS  \\  \hline
+\end{tabular}
+ \\
+
+
+
+
+\subsection{Class 15: Pointing History Table}
+
+\begin{tabular}{||l|l|l|l||} \hline
+Item                      & Mnemonic & Format & Units \\ \hline
+ None                     &    ~     &   ~    &   ~   \\ \hline
+\end{tabular}
+ \\
+
+
+                                                                                
+
+
+\subsection{Class 55: Inclinometry}
+
+
+\begin{tabular}{||l|l|l|l||} \hline
+Item                                               & Mnemonic & Format & Units \\ \hline
+DAS number of phases for interferometry observing  & C55NPH   & I*4    &  ~    \\      
+DAS number of phases for interferometry observing  & C55NCYC  & I*4    &  ~    \\      
+DAS number of phases for interferometry observing  & C55NINT  & I*4    &  ~    \\      
+DAS number of correlation cycles                   & C55NCORR & I*4    &  ~    \\      
+RXJ X length of projected baseline in metres       & C55LX     & R*8    &  ~    \\      
+RXJ Y length of projected baseline in metres       & C55LY     & R*8    &  ~    \\      
+RXJ Z length of projected baseline in metres       & C55LZ     & R*8    &  ~    \\      
+RXJ Coeff of sin term in exp for fringe rate       & C55A      & R*8    &  M    \\      
+RXJ Coeff of cos term in exp for fringe rate       & C55B      & R*8    &  M    \\      
+RXJ Coeff of constant term in exp for fringe rate  & C55C      & R*8    &  M    \\      
+RXJ Const term to compensate for differing telescope focal lengths  & C55D      & R*8    &  M    \\      
+RXJ Delay setting of RXJ micro for CSO side        & C55CSOSW  & I*4    &  ~    \\      
+RXJ Delay setting of RXJ micro for JCMT side       & C55JCMTSW & I*4    &  ~    \\      
+RXJ Number of the tick on which integration started& C55SECOND & I*4    &  ~    \\      
+CSO Position of absorber IN or OUT                 & C55ABSORB & C*1    &  ~    \\      
+CSO TAU value                                      & C55TAU    & R*4    &  ~    \\      
+CSO Position offset in az                          & C55DAZ    & R*4    &ARCSEC \\      
+CSO Position offset in elevation                   & C55DEL    & R*4    &ARCSEC \\      
+CSO RA                                             & C55RA     & R*8    &  ~    \\      
+CSO Dec                                            & C55DEC    & R*8    &  ~    \\      
+CSO Epoch of CSO RA and Dec                        & C55EPOCH  & R*8    &  ~    \\      
+CSO Pointing offset in az                          & C55PAZ    & R*4    &ARCSEC \\      
+CSO Pointing offset in elevation                   & C55PEL    & R*4    &ARCSEC \\      
+CSO Track mode of telescope Y or N                 & C55TRACK  & C*1    &  ~    \\      
+CSO Focus mode of CSO                              & C55FMODE  & C*1    &  ~    \\      
+CSO X position of focus                            & C55FX     & R*4    &  ~    \\      
+CSO Y position of focus                            & C55FY     & R*4    &  ~    \\      
+CSO Z position of focus                            & C55FZ     & R*4    &  ~    \\      
+CSO LSR velocity of source                         & C55VLSR   & R*4    & KM/S  \\      
+CSO  velocity offset                               & C55VOFF   & R*4    & KM/S  \\      
+CSO radial velocity                                & C55VRAD   & R*4    & KM/S  \\      
+CSO Phase lock status L or U                       & C55PLOCK  & C*1    &  ~    \\      
+CSO Rest frequency of line                         & C55RFREQ  & R*8    & GHz   \\      
+CSO IF frequency                                   & C55IFFREQ   & R*8    & GHz   \\      
+CSO LO frequency                                   & C55LOFREQ   & R*8    & GHz   \\      
+CSO frequency offset                               & C55FREQOFF  & R*8    & GHz   \\      
+CSO Sideband U or L                                & C55SIDEBAND & C*1    &  ~    \\      
+CSO Multiplier Harmonic number                     & C55MHN      & I*4    &  ~    \\      
+CSO overall status 0 = bad  1 = good               & C55CSOSTATUS& I*4    &  ~    \\      
+CENTRE\_AZ from tel sdis array                     & C55TELAZ    & R*8    &  ~    \\      
+CENTRE\_EL from tel sdis array                     & C55TELEL    & R*8    &  ~    \\      
+Observing frequencies                              & C55FENUOBS  & R*8    &  ~    \\      
+FE side band signs                                 & C55FESBSIGN & I*4    &  ~    \\      
+FE LO frequency                                    & C55FENULO   & R*8    &  ~    \\      
+DAS total power measurement on hot load            & C55HOTPOWER & R*4    &  ~    \\      
+DAS data processing done                           & C55DASPRBIT & I*4    &  ~    \\      
+Description of where processing is done            & C55DASPRLOC & C*10   &  ~    \\      
+DAS total power measurement on hot load            & C55SKYPOWER & R*4    &  ~    \\      
+Samples to store for cross correlation mode        & C55SAM      & R*4    &  ~    \\      
+DAS total power per subband per integration        & C55POWER    & R*4    &  ~    \\ \hline
+\end{tabular}
+                                                                      
+
+\subsection{No Class}
+
+                    
+\begin{tabular}{||l|l|l|l||} \hline
+Item                                & Mnemonic  & Format & Units \\ \hline
+Position angle of cell y axis (CCW) & CELL\_V2Y & R*8    & DEG   \\ \hline
+\end{tabular}
+ \\
+        
+
+\section{AOB}
+
+
+\end{document}

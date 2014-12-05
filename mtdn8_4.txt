@@ -1,0 +1,2119 @@
+                                                                          Page 1
+GSDD - General Single Dish Data Format System
+
+
+JAMES CLERK MAXWELL TELESCOPE
+United Kingdom/Netherlands Telescopes Headquarters
+665 Komohana Street
+Hilo, Hawaii 96720, U.S.A.
+
+JCMT Note MTDN008.04
+
+
+                 GSDD - General Single Dish Data Format System                 GSDD - General Single Dish Data Format System                 GSDD - General Single Dish Data Format System                 GSDD - General Single Dish Data Format System
+
+
+Version 1, J.H.Fairclough  1-Jun-1985
+Version 2, R.Padman        1-Sep-1986
+Version 3, J.H.Fairclough  1-Oct-1986
+Version 4, J.H.Fairclough, S.Kenderdine and D.Titterington 23-Jan-1987
+Processed by FDOCUMENT:  21 February 1988
+
+
+
+
+                                   CONTENTS
+
+        1       INTRODUCTION . . . . . . . . . . . . . . . . . . . . 2
+        2       PREFACE TO MTDN/8.1  . . . . . . . . . . . . . . . . 2
+        3       PREFACE TO MTDN/8.2  . . . . . . . . . . . . . . . . 3
+        4       PREFACE TO MTDN/8.3  . . . . . . . . . . . . . . . . 3
+        5       PREFACE TO MTDN/8.4  . . . . . . . . . . . . . . . . 4
+
+
+CHAPTER 1       GSD ARCHITECTURE
+
+        1.1     TAPE DESCRIPTION . . . . . . . . . . . . . . . . . . 5
+        1.2     FILE DESCRIPTION . . . . . . . . . . . . . . . . . . 5
+        1.2.1     File Descriptor  . . . . . . . . . . . . . . . . . 6
+        1.2.2     Item Descriptors . . . . . . . . . . . . . . . . . 6
+        1.2.3     Data . . . . . . . . . . . . . . . . . . . . . . . 7
+
+
+CHAPTER 2       THE SIMPLE SYSTEM
+
+        2.1     THE NEED FOR A MINIMUM FORMAT  . . . . . . . . . . . 8
+        2.2     MINIMUM REQUIRED DATA  . . . . . . . . . . . . . . . 9
+        2.3     CLASS 1 : IDENTITY PARAMETERS  . . . . . . . . . . . 9
+        2.4     CLASS 2 : TIME PARAMETERS  . . . . . . . . . . . .  11
+        2.5     CLASS 3 : POSITION PARAMETERS  . . . . . . . . . .  11
+        2.6     CLASS 4 : DATA PARAMETERS  . . . . . . . . . . . .  12
+        2.7     CLASS 5 : RECEIVER PARAMETERS  . . . . . . . . . .  13
+        2.8     CLASS 6 : DATA VALUE TABLE . . . . . . . . . . . .  14
+
+
+CHAPTER 3       SYSTEM 1
+
+        3.1     CLASS 1 : IDENTITY PARAMETERS  . . . . . . . . . .  15
+        3.2     CLASS 2 : TIME PARAMETERS  . . . . . . . . . . . .  17
+        3.3     CLASS 3 : POSITION PARAMETERS  . . . . . . . . . .  18
+        3.4     CLASS 4 : POINTING PARAMETERS  . . . . . . . . . .  23
+GSDD - General Single Dish Data Format SystemGSDD - General Single Dish Data Format SystemGSDD - General Single Dish Data Format SystemGSDD - General Single Dish Data Format System                   Page 2
+JCMT Note MTDN008.04JCMT Note MTDN008.04JCMT Note MTDN008.04JCMT Note MTDN008.04
+
+
+        3.5     CLASS 5 : ENVIRONMENT PARAMETERS . . . . . . . . .  25
+        3.6     CLASS 6 : MAPPING PARAMETERS . . . . . . . . . . .  25
+        3.7     CLASS 7 : VELOCITY PARAMETERS  . . . . . . . . . .  27
+        3.8     CLASS 8 : ENGINEERING PARAMETERS . . . . . . . . .  28
+        3.9     CLASS 9 : DATA PARAMETERS  . . . . . . . . . . . .  29
+        3.10    CLASS 10 : RECEIVER PARAMETERS . . . . . . . . . .  29
+        3.11    CLASS 11 : PHASE CONTROL TABLE . . . . . . . . . .  32
+        3.12    CLASS 12 : PHASE VALUE TABLE . . . . . . . . . . .  32
+        3.13    CLASS 13 : PHASE TIMING TABLE  . . . . . . . . . .  33
+        3.14    CLASS 14 : DATA VALUE TABLE  . . . . . . . . . . .  34
+
+
+CHAPTER 4       SYSTEM 2
+
+        4.1     CLASS 15 : POINTING HISTORY TABLE  . . . . . . . .  35
+GSDD - General Single Dish Data Format System                             Page 3
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+1  INTRODUCTION
+
+
+This document contains the specification and explanation of the  General  Single
+Dish  Data Format System.  This specification has been drawn up according to the
+requirements of the NRAO, IRAM, and UK/NL MT teams.
+
+The specification defines a physical format for the storage of single dish  data
+and  for  its  transport  between  the  computer  systems  participating  in its
+definition.
+
+The specification defines the meaning of the data items  to  be  transported  so
+that  reduction  software  developed  at  any  institution  can  be used on data
+produced by any of the telescopes.
+
+The FITS format has not been chosen as the primary transport system  because  it
+would require:
+
+      o  A large amount of formatted header information giving overheads in  the
+         time taken to create it and to store it.
+
+      o  The current FITs standard does not allow the storage of more  than  one
+         array  or  table  in  a  data  file; hence it is not capable of storing
+         images and associated tabular information necessary for reprocessing of
+         the images.
+
+      o  The DEC Backup Utility offers a more reliable  method  of  reading  and
+         writing  error  free tapes and exchanging data between telescopes using
+         VAX computer systems.
+
+
+It is important to note that the basic version this format can be  converted  to
+FITs format.
+
+Proposals have been made for an extension of the FITs format to store more  than
+one array; it may be some years before that extension is widely adopted.
+
+
+
+
+2  PREFACE TO MTDN/8.1
+
+
+This note was formally GSDD.  It is now being issued as a  new  note  with  some
+revisions for the new documentation scheme.
+
+On Rachael Padman's suggestion, I have included a description of the  basic  set
+as  the first chapter as an introduction to the concepts and also to ensure that
+extensions of the system can grow  from  a  common  core.   The  original  "Full
+System"  is  now  described  in  the  second chapter.  Many of the items are not
+properly defined yet and there is still redundancy to eliminate.
+                                                                             JHF
+
+
+
+                                     - 3 -
+GSDD - General Single Dish Data Format System                             Page 4
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+3  PREFACE TO MTDN/8.2
+
+
+Clarification and amendments to item description.  The mapping parameter section
+has been revised to reflect the more general MRAO mapping scheme.
+
+We still don't know how to deal with non-linear frequency scales, - as would  be
+required  for  some Acousto-Optic spectrometers, or possibly optical/IR data.  I
+suggest that a zero frequency resolution be used as a flag to  indicate  that  a
+non-linear  scale  is  in  use,  and  that  we  find a way to include the actual
+frequencies with the data - perhaps a  frequency  table  similar  to  the  phase
+table.
+                                                                              RP
+
+
+
+
+4  PREFACE TO MTDN/8.3
+
+
+In trying to implement the JCMT STORAGE task some deficiencies in the  structure
+of the file came to light.
+
+The original Scan prolog required a reduction program  to  know  the  class  and
+position  within  a class of a particular item.  It was recognized that what was
+                                      _______really required was to be able to ask by name for an item  and  be  returned  an
+index  for accessing it.  Because of this the prolog to the file now holds "Item
+Descriptors" which permit items to be accessed by name.
+
+The point of this scheme is to allow new items to be added to a dataset  without
+the  revision of programs that write and read GSDD files.  Of course application
+writers are free to ignore this information and  write  applications  that  only
+handle  specific  versions  of the format:  to aid this the item descriptors and
+pointers have been physically grouped (which is not the case in an  HDS  file!).
+The  GSDD  files are not accessible via VAX/RMS, it is necessary to map the file
+using VMS system services.  This is because it is  desirable  to  permit  system
+wide access to a GSD data file whilst it is being written.  Technically the file
+is a mapped global section.  Routines written in VAX FORTRAN  are  available  to
+open  GSD  files  and  access  data from them.  It is intended that GSD files be
+archived in RMS files to permit access to GSDD data using standard FORTRAN 77.
+
+It was decided that to attempt to store different frontend/backend  combinations
+in a single file would lead to a very complex structure and this requirement was
+dropped; it was decided that when different frontend-backend  combinations  were
+in  use  during  an  observation  then  the  data from each combination would be
+recorded in seperate GSDD files.
+
+An offshoot of this revision is that the Full system approaches more closely the
+NRAO  GSDD  design.  This revision contains the latest terminology and additions
+used in the NRAO system.
+                                                                             JHF
+
+
+
+
+                                     - 4 -
+GSDD - General Single Dish Data Format System                             Page 5
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+5  PREFACE TO MTDN/8.4
+
+
+The TIME, POSITION, POINTING and MAPPING parameter classes have been revised  in
+view of the implementation of the JCMT pointing system.  We believe that the new
+set of parameters is compatible with, but more rigourous than, the original NRAO
+scheme.
+
+It was realised that the actual observing sequences would  very  often  NOT  fit
+into  a  simple  prescription envisaged in the Mapping Class of parameters (this
+describes a map in terms of the  start  position  and  vertical  and  horizontal
+steps).   To  adequately  describe these observing sequences the full system was
+extended to version 2.
+
+Version 1 of the full system is a method of  describing  most  simple  types  of
+observation and represents the proposed NRAO/JCMT compromise.
+
+Version 2 of the  full  system  differs  from  system  1  in  that  the  Mapping
+Parameters  that  described  the map dimensions have been replaced by a Pointing
+History Table which has a one to one correspondence with the  integration  count
+in  the data table (i.e the mean position for each integration in stored).  This
+allows any pattern of integration points to be stored.
+                                                                      JHF and SK
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     - 5 -
+
+
+
+
+
+
+
+
+
+
+
+
+                                   CHAPTER 1
+
+                                GSD ARCHITECTURE
+
+
+
+1.1  TAPE DESCRIPTION
+
+
+Data will be transported in DEC VAX/VMX files on DEC BACKUP  tapes  or  on  ANSI
+standard tapes.
+
+BACKUP is a highly reliable facility for writing and reading tapes and should be
+used wherever possible.
+
+
+
+
+1.2  FILE DESCRIPTION
+
+
+Each file contains data for a single "scan".  In a "scan" a telescope executes a
+sequence  of  movements centred on a position in the sky:  the "target".  Common
+examples are maps (raster scans) or simply tracking an object.
+
+The file consists of a "prolog" followed by "data".  The  prolog  describes  the
+data  and  can be used for retrieving it.  The prolog consists of a single "file
+descriptor" and "item descriptors", one for each data item.
+
+While the rest of this chapter describes the prolog, subsequent chapters itemise
+the  data  stored  in  the suggested variants of a GSD file.  It is important to
+remember that the data  items  contigously  in  virtual  storage  (and  possibly
+physical storage), in the sequence given.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     - 6 -
+GSDD - General Single Dish Data Format System                           Page 1-2
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+1.2.1  File Descriptor
+
+
+The file begins with a 64 byte FILE DESCRIPTOR with the structure:
+
+      STRUCTURE / FILE_DESCRIPTOR /
+         REAL    GSD_VN                  ! GSD version number
+         INTEGER MAX_ITEM                ! Maximum number of items
+                                         ! This should be set at file create
+                                         ! time to the number of descriptors
+                                         ! that you expect to create
+         INTEGER NUM_ITEM                ! Number of item descriptor created
+         INTEGER STR_DATA                ! Start of scan data (in bytes)
+         INTEGER END_DATA                ! End of scan data (in bytes)
+         CHARACTER*44 COMMENT            ! Fill characters contain comment
+      ENDSTRUCTURE
+
+
+
+
+
+1.2.2  Item Descriptors
+
+
+There then follow MAX_ITEM 64 byte ITEM DESCRIPTORS with the structure:
+
+      STRUCTURE / ITEM_DESCRIPTOR /
+         LOGICAL*1 TABLE                 !  1  ! Table data?
+         CHARACTER*(GSD__SZNAME) NAME    ! 16  ! Name of descriptor
+         INTEGER*2 NAMELEN               ! 18  ! Length of name
+         CHARACTER*(GSD__SZUNIT) UNIT    ! 28  ! Unit of descriptor
+         INTEGER*2 UNITLEN               ! 30  ! Length of unit
+         INTEGER*2 DATA_TYPE             ! 32  ! Data type code
+         INTEGER LOCATION                ! 36  ! Start byte of item data
+         INTEGER LENGTH                  ! 40  ! Number of bytes required
+         INTEGER NDIMS                   ! 44  ! Number of dimensions
+         INTEGER DIMPTRS(GSD__MXDIM)     ! 64  ! Pointer to dimensioning scalar
+      ENDSTRUCTURE
+
+
+
+Current values of GSD__SZNAME, GSD__SZUNIT and  GSD__MXDIM  are  15,  10  and  5
+respectively.
+
+The descriptor permits a definition of an array; this obviously has some storage
+overhead  but  does make the prolog much simpler to decode.  Data type codes are
+as follows:
+
+Code            VAX FORTRAN Data type declaration
+
+1               Byte
+2               Logical*1
+3               Integer*2
+4               Integer*4
+
+                                     - 7 -
+GSDD - General Single Dish Data Format System                           Page 1-3
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+5               Real*4
+6               Double precision or Real*8
+7               Character*16
+
+
+Item descriptors for scalars must  precede  item  descriptors  for  tables.   As
+storage  is  allocated  sequentially  item by item at run time, scalar data (the
+traditional "header") will precede any tabular data (the  traditional  array  or
+"image" or "spectrum").
+
+
+
+
+1.2.3  Data
+
+
+After the descriptors follow the data specified by them, starting  at  the  byte
+locations contained in the item descriptor.
+
+If no value can be given to an item, the null value of the  items  are  assigned
+the following FORTRAN parameter values:
+
+      BYTE BBAD
+      PARAMETER (BBAD = '81'X)               ! -127
+      LOGICAL*1 LBAD
+      PARAMETER (LBAD = .FALSE.)
+      INTEGER*2 WBAD
+      PARAMETER (WBAD = '8001'X)             ! -32767
+      INTEGER*4 IBAD
+      PARAMETER (IBAD = '80000001'X)         ! -2147483647
+      REAL*4 RBAD
+      PARAMETER (RBAD = 'FFF7FFFF'X)         ! -1.7014109E+38
+      REAL*8 DBAD
+      PARAMETER (DBAD = 'FFFFFFFFFFF7FFFF'X) ! -1.701410233083081E+38
+      CHARACTER*16 CBAD
+      PARAMETER (CBAD = ' ')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     - 8 -
+
+
+
+
+
+
+
+
+
+
+
+
+                                   CHAPTER 2
+
+                               THE SIMPLE SYSTEM
+
+
+
+This chapter describes a minimum format, as a way  of  introducing  a  practical
+                                                                _______data  structure.  This minimum format is intended primarily for reduced spectra.
+The information included in the header is regarded as  a  minimum  complete  set
+which  will  enable  the  data to be reduced and displayed.  It assumes data has
+been collected from a single backend.
+
+
+
+
+2.1  THE NEED FOR A MINIMUM FORMAT
+
+
+If we want observatories in general (many  of  which  do  not  support  computer
+professionals  on  their  staffs) to adopt our proposed standard data format, we
+have to make it  accessible.   This  means  it  must  be  possible  to  write  a
+recognizable  file  without  (1) requiring any specialist knowledge of data-base
+systems, and (2) without having to provide lots  of  data  items  which  may  be
+either  unknown  or unnecessary in most contexts.  Furthermore, if we all decide
+to adopt this format as the basis of our data reduction system, then it must  be
+possible  to include data from other wavebands with a minimum of difficulty.  In
+                                   ___  _______practice this means that we should not  require  radio-specific  data  (aperture
+efficiency  etc).   The  data  items  selected  here  refer  specifically to the
+________                 ___________spectrum, and not to the observation.
+
+There is a second reason for wanting to define a minimum format.  This is one of
+____________completeness.   It  is  not always intuitively obvious just which parameters are
+required to specify an observation fully.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     - 9 -
+GSDD - General Single Dish Data Format System                           Page 2-2
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+2.2  MINIMUM REQUIRED DATA
+
+
+In order to identify a spectrum absolutely for later use the following items are
+required:
+
+     1.  The time at which the spectrum was measured (by  convention  the  start
+         time)
+
+     2.  The position on the sky at which the centre of the beam was pointing.
+
+     3.  The X co-ordinate  system  of  spectrum  (e.g.   centre  frequency  and
+         channel spacing).
+
+     4.  The noise level on the spectrum.
+
+
+                                                                      ____Any reduction system must be capable of operating on data which have  only  this
+information,  even if not all possible operations in the reduction system can be
+carried out without further details.  With the information  given  above  it  is
+always possible to:
+
+     1.  Display the data with properly labelled axes.
+
+     2.  Perform any 1-d  data-type-independent  operations  (baseline  removal,
+         addition, subtraction, normalization by a control spectrum, etc).
+
+     3.  Merge the data (via  averaging  or  otherwise)  with  data  from  other
+         instruments (subject to an intelligent understanding on the part of the
+         observer).
+
+
+The simple system is therefore capable of storing a calibrated spectra collected
+by observing a single sky position.
+
+
+
+
+2.3  CLASS 1 :  IDENTITY PARAMETERS
+
+
+
+Item                                 | Mnemonic | Format | Unit
+-----------------------------------------------------------------------------
+Scan Number                          | C1SNO    |   R*8  |
+Telescope Descriptor                 | C1TEL    |   C*16 |
+Source Name 1                        | C1SN1    |   C*16 |
+Source Name 2                        | C1SN2    |   C*16 |
+Type of data                         | C1TYP    |   C*16 |
+Observing Mode                       | C1MOD    |   C*16 |
+Frontend Descriptor                  | C1RCV    |   C*16 |
+Backend descriptor                   | C1BKE    |   C*16 |
+-----------------------------------------------------------------------------
+
+
+                                     - 10 -
+GSDD - General Single Dish Data Format System                           Page 2-3
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+___________Scan Number
+
+A number assigned at the telescope to be associated with this scan.  The integer
+part  represents  the scan's ordinal number and the fractional part represents a
+repeat count.
+
+____________________Telescope Descriptor
+
+Mnemonic for the telescope:  eg:  JCMT 15M, NRAO 12M, IRAM 30M
+
+___________Source Name
+
+Holds the name of the object scanned,
+
+____________Type of Data
+
+Describes the kind of data e.g:  LINE, CONT, FSAM, PULS
+
+______________Observing Mode
+
+Summarises the switching scheme of the observation :
+
+     1.  PSSW - position switched
+
+     2.  FQSW - frequency switched
+
+     3.  BMSW - beam switched
+
+     4.  TLPW - total power
+
+     5.  PLSW - Polarization switched
+
+     6.  SHSW - Sky/Horn switched
+
+     7.  LDSW - Load switched
+
+     8.  USER - User defined
+
+
+The switching scheme is fully specified by means of phase tables; see below.
+
+___________________Frontend Descriptor
+
+Identifies the frontend(s).
+
+JCMT Examples:  RXA, RXB, UKT14...
+
+NRAO Examples:  2C3MMSIS, 2MM, BOLOMETER...
+
+__________________Backend Descriptor
+
+Identifies the backend(s).
+
+
+
+                                     - 11 -
+GSDD - General Single Dish Data Format System                           Page 2-4
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+JCMT examples:  UKC, AOS...
+
+NRAO examples:  DIGITAL, STD
+
+
+
+
+2.4  CLASS 2 :  TIME PARAMETERS
+
+
+
+Item                                 | Mnemonic | Format | Unit
+--------------------------------------------------------------------
+UT1 Date at scan start               | C2UT1D   |   R*8  | YYYY.MMDD
+UT1 Hour at scan start               | C2UT1C   |   R*8  | HOURS
+--------------------------------------------------------------------
+
+
+
+
+
+2.5  CLASS 3 :  POSITION PARAMETERS
+
+
+The position parameters define the telescope and target locations.
+
+Item                                 | Mnemonic | Format | Unit
+--------------------------------------------------------------------
+Type of Epoch                        | C3EPT    |   C*16 |
+Epoch oF RA and DEC                  | C3EPH    |   R*8  | YEAR
+Commanded Epoch Right Ascension      | C3ERA    |   R*8  | DEGREE
+Commanded Epoch Right Ascension      | C3EDC    |   R*8  | DEGREE
+-----------------------------------------------------------------------------
+
+
+For each scan,  a  coordinate  system  is  selected  and  a  reference  position
+(coordinates  and  epoch) in that coordinate system given.  This is the "centre"
+of the scan.  The "source position" is the position of an  object  near  to  the
+reference  position;  thus the reference position may be derived from the source
+position by the user specifying some offsets.
+
+The right ascension of that position is the  "Epoch  Right  Ascension"  and  the
+declination is "Epoch Declination".  In the simple system the telescope pointing
+is assumed to be sufficiently accurate enough for the commanded position  to  be
+the position at which data was collected.
+
+_____________Type of Epoch
+
+FK4 or FK5
+
+_____Epoch
+
+
+
+
+                                     - 12 -
+GSDD - General Single Dish Data Format System                           Page 2-5
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+Epoch of the RA and DEC coordinates in the equinox given.
+
+_____ __________Epoch RA and DEC
+
+RA and DEC for the given epoch and equinox.
+
+
+
+
+2.6  CLASS 4 :  DATA PARAMETERS
+
+
+This class of data is used to dimension the data tables:
+
+Item                                 | Mnemonic   | Format | Unit
+---------------------------------------------------------------------
+Number of Receiver Channels          |  C4NRC     |   I*4  |
+Number of Integrations per Scan      |  C4NIS     |   I*4  |
+Number of Cycles per Integration     |  C4NCI     |   I*4  |
+Number of Phases per Cycle           |  C4PCC     |   I*4  |
+Number of Backend Channels           |  C4NCH     |   I*4  |
+---------------------------------------------------------------------
+
+
+___________________________Number of Receiver Channels
+
+The number of independent polarizations or channels of the frontend in use.
+
+___________Definitions
+
+     1.  PHASE - Particular combination of switched parameters.  Thus  a  simple
+         beam-switched observation would involve 2 phases (on- and off-source).
+
+     2.  CYCLE - Complete observation, involving measurement of the power  level
+         for each channel for one complete set of phases.
+
+     3.  INTEGRATION - Normally the data will be accumulated over  a  number  of
+         cycles  before  being reduced.  An integration comprises this number of
+         cycles.
+
+     4.  SCAN - Complete observation of source.   In  general  could  include  a
+         number  of integrations.  Reasons for breaking up a scan into more than
+         one integration include guarding against interference or loss  of  data
+         due to a system failure.
+
+
+
+
+
+
+
+
+
+
+
+                                     - 13 -
+GSDD - General Single Dish Data Format System                           Page 2-6
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+2.7  CLASS 5 :  RECEIVER PARAMETERS
+
+
+Receiver parameters originate in a particular frontend/backend combination.
+
+All items except the first are vectors dimensioned by  the  number  of  receiver
+channels.
+
+Item                                 | Mnemonic  |  Format | Unit
+---------------------------------------------------------------------
+Observed Frequency                   |  C5CF     |    R*8  | MHZ
+Rest Frequency                       |  C5RF     |    R*8  | MHZ
+Frequency resolution                 |  C5FR     |    R*8  | MHZ
+Thermal Noise Level                  |  C5NOI    |    R*8  | DN
+Data Calibration Code                |  C5CAL    |    C*16 |
+Polarization type                    |  C5SP     |    C*16 |
+Polarization angle                   |  C5PZA    |    R*8  | DEGREE
+-----------------------------------------------------------------------------
+
+
+__________________Observed Frequency
+
+The centre frequency of the observation.  This represents the frequency at which
+the receiver frontend is actually tuned.
+
+______________Rest Frequency
+
+The rest frequency of the observation; this is set by the observer.  This is the
+frequency  for  which  the  LSR velocity corrections have been applied.  Usually
+this will be the rest frequency of the molecule being observed.
+
+____________________Frequency Resolution
+
+Frequency spacing of the spectral line backend.
+
+_____________________Data Calibration Code
+
+Unit of data; e.g:  JY, K etc
+
+___________________Thermal Noise Level
+
+This is an alternative quantity for noise measurements to system temperature and
+integration  time;  it  is  also  the  only quantity required for averaging with
+optimal weighting.  It has the units of the data calibration code.
+
+_________________Polarization Type
+
+Describes the type of polarization in this receiver  channel;  e.g:   RC  (Right
+circular), LC (Left circular), LN (Linear).
+
+__________________Polarization Angle
+
+
+
+
+                                     - 14 -
+GSDD - General Single Dish Data Format System                           Page 2-7
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+Polarization angle of this receiver channel.
+
+
+
+
+2.8  CLASS 6 :  DATA VALUE TABLE
+
+
+This table contains the "image" or set of spectra collected at each map point.
+
+Item                                 | Mnemonic   | Format | Unit
+-----------------------------------------------------------------------------
+Data(NCH, PCC, NCI, NIS, NRC)        |  C6DAT     |   R*8  |
+-----------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     - 15 -
+
+
+
+
+
+
+
+
+
+
+
+
+                                   CHAPTER 3
+
+                                    SYSTEM 1
+
+
+
+System 1 permits the description of  simple  maps  collected  in  a  variety  of
+switching combinations.
+
+
+
+
+3.1  CLASS 1 :  IDENTITY PARAMETERS
+
+
+The identity parameters uniquely tag the observation and describe it generally.
+
+Item                                 | Mnemonic | Format | Unit
+-----------------------------------------------------------------------------
+Scan Number                          | C1SNO    |   R*8  |
+Observer Name 1                      | C1ON1    |   C*16 |
+Observer Name 2                      | C1ON2    |   C*16 |
+Observer Name 3                      | C1ON3    |   C*16 |
+Project Identification               | C1PID    |   C*16 |
+Telescope Descriptor                 | C1TEL    |   C*16 |
+Longitude                            | C1LONG   |   R*8  | DEGREE
+Latitude                             | C1LAT    |   R*8  | DEGREE
+Height                               | C1HGT    |   R*8  | METRE
+Source Name 1                        | C1SN1    |   C*16 |
+Source Name 2                        | C1SN2    |   C*16 |
+Type of data                         | C1TYP    |   C*16 |
+Observing Mode                       | C1MOD    |   C*16 |
+Frontend Descriptor                  | C1RCV    |   C*16 |
+Backend descriptor                   | C1BKE    |   C*16 |
+Reference Scan Number                | C1OSN    |   R*8  |
+-----------------------------------------------------------------------------
+
+
+___________Scan Number
+
+A number assigned at the telescope to be associated with this scan.  The integer
+part  represents  the scan's ordinal number and the fractional part represents a
+repeat count.
+
+
+
+
+                                     - 16 -
+GSDD - General Single Dish Data Format System                           Page 3-2
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+_____________Observer Name
+
+Name of the primary observer
+
+______________________Project Identification
+
+Identifies the observing program.
+
+____________________Telescope Descriptor
+
+Mnemonic for the telescope:  eg:  JCMT 15M, NRAO 12M, IRAM 30M
+
+_________Longitude
+
+Geographical longitude of the telescope site (West +ve)
+
+________Latitude
+
+Geodetic latitude of the telescope site (North +ve)
+
+______Height
+
+Height of the telescope site above sea level
+
+___________Source Name
+
+Holds the name of the object scanned,
+
+____________Type of Data
+
+Describes the kind of data e.g:  LINE, CONT, FSAM, PULS
+
+______________Observing Mode
+
+Describes the kind of observation :
+
+     1.  PSSW - position switched
+
+     2.  FQSW - frequency switched
+
+     3.  BMSW - beam switched
+
+     4.  TLPW - total power
+
+     5.  PLSW - Polarization switched
+
+     6.  SHSW - Sky/Horn switched
+
+     7.  LDSW - Load switched
+
+     8.  USER - User defined
+
+
+
+
+                                     - 17 -
+GSDD - General Single Dish Data Format System                           Page 3-3
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+___________________Frontend Descriptor
+
+Identifies the frontend(s).
+
+JCMT Examples:  RXA, RXB, UKT14...
+
+NRAO Examples:  2C3MMSIS, 2MM, BOLOMETER...
+
+__________________Backend Descriptor
+
+Identifies the backend(s).
+
+JCMT examples:  AOS, KENT...
+
+NRAO examples:  DIGITAL, STD
+
+_____________________Reference Scan Number
+
+Scan number of the last designated total power off scan.
+
+
+
+
+3.2  CLASS 2 :  TIME PARAMETERS
+
+
+
+Item                                 | Mnemonic | Format | Unit
+--------------------------------------------------------------------
+UT1 Date at scan start               | C2UT1D   |   R*8  | YYYY.MMDD
+UT1 Hour at scan start               | C2UT1H   |   R*8  | HOUR
+UT1-UTC correction                   | C2UT1C   |   R*8  | SECOND
+Local Sidereal Time at scan start    | C2LST    |   R*8  | HOUR
+--------------------------------------------------------------------
+
+____________Dates, Times
+
+UT1, related to the orientation of the earth and therefore the relation  between
+az/alt  and RA/Dec, is a 'natural' time system to record an observation in.  The
+onus of handling the UT1-UTC correction is with the telescope-management and not
+with observers doing data reduction.  The correction is up to +/- 1 second.
+
+___________________Local Sidereal Time
+
+This is apparent ST (hour angle of the true equinox of date) as opposed to  mean
+ST, and refers to the true geographic longitude of the telescope site.
+
+
+
+
+
+
+
+
+
+                                     - 18 -
+GSDD - General Single Dish Data Format System                           Page 3-4
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+3.3  CLASS 3 :  POSITION PARAMETERS
+
+
+For each observation, the telescope is given, or computes  from  the  observer's
+instructions,  a  position on the sky.  For observations essentially at a single
+point on the sky, this position defines that point (though the 'observation' may
+also  include  measurements  made at positions offset from it); for observations
+involving 1D or 2D scans of the sky ('maps'), the position defines the origin of
+a  local raster.  The position defined here is variously known as the 'commanded
+position', or (in JCMT terminology) the observing 'Centre'.
+
+In defining the position the observer must specify
+
+      o  two angular coordinates (e.g. longitude and latitude),
+
+      o  the coordinate system
+
+      o  where relevant, the epoch and type of coordinate system
+
+Specifying the last two items typically  involves  the  choice  of  one  of  the
+following:
+
+     1.  Az/alt
+
+     2.  RA/Dec in apparent coordinates at epoch of observation
+
+     3.  RA/Dec with respect to FK4 equinox at a stated Besselian epoch (usually
+         1950,  giving  'B1950  coordinates');  strictly speaking, a position in
+         Besselian coordinates needs to  be  accompanied  by  the  date  of  the
+         observations from which the Besselian position was deduced
+
+     4.  RA/Dec with respect to FK5 equinox at a stated  Julian  epoch  (usually
+         2000, giving 'J2000 coordinates')
+
+     5.  galactic
+
+Normally the position will be steady in the coordinate system  in  which  it  is
+defined; if it is not (e.g. planets) a flag is set, to indicate explicit motion.
+
+Regardless of how the position is originally  specified,  the  entries  in  this
+class hold it in three equivalent forms:  (1), (5), and one of (2), (3) and (4).
+The redundancy here will be useful in cataloguing observations performed with  a
+telescope.   The  choice  between  (2),  (3)  and  (4)  is  that of the original
+specification,  when  applicable,  and  otherwise  a  suitable   default.    The
+equivalence between az/alt and RA/Dec (and strictly speaking between some RA/Dec
+coordinates and galactic) can only apply at one moment of time; this  'epoch  of
+observation'  is  taken  to be the start of the integration period for the first
+sample recorded.
+
+For both mapping and non-mapping observations, the telescope may  from  time  to
+time  point  to a position different from that of the commanded Centre; this may
+occur by accident or design or a combination  of  the  two.   Offsets  from  the
+Centre  can  be  defined  or described in a set of 'local coordinates' about the
+Centre position (as at JCMT) or as increments to the  telescope  drive  encoders
+
+                                     - 19 -
+GSDD - General Single Dish Data Format System                           Page 3-5
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+(as at NRAO).
+
+The local coordinate system is obtained by first projecting the celestial sphere
+from  infinity  onto  the  tangent  plane  at  the  observing Centre.  The local
+coordinates are then a set of 2D cartesian coordinates in the tangent plane with
+origin  at  the  Centre.   To define the axes, the user must specify a celestial
+coordinate system (e.g. az/alt, galactic).  The local Y axis is taken as the the
+line  through  the Centre toward the North pole in this system; the local X axis
+is at right angles to it through the  Centre  in  the  direction  of  increasing
+longitude coordinate.  Note that in many cases this definition gives left-handed
+coordinates as seen from the telescope.  Note also that the celestial coordinate
+system used for defining local coordinates need not be the same as that in which
+the Centre is defined.
+
+For mapping observations, and also for specifying  offsets,  a  further  set  of
+coordinates  in  the tangent plane may be used.  These are 'raster coordinates',
+based on a general 2D linear grid ('raster space') in the  tangent  plane.   The
+Centre  is  the origin and the unit cell a general parallelogram whose shape and
+orientation with respect to the local coordinate axes  the  user  will  need  to
+specify.   Typically,  maps will comprise observations at lattice points in this
+grid.  Raster and local coordinates become synonymous for the simplest case of a
+square unit cell aligned along local coordinate axes.
+
+The orientation of the unit cell is specified by means  of  two  angles  in  the
+tangent plane:
+
+      o  The 'XY angle' is the angle between the raster X and Y axes (90 degrees
+         for a rectangle, and positive for right-handed 2D axes as seen from the
+         telescope).
+
+      o  The 'map scanning angle' is the angle between (a) the  Y  axis  of  the
+         local  coordinate  system, as defined above, and (b) the raster X axis;
+         like position angle it is measured positive from North through East.
+
+In addition the lengths of  the  'unit  vectors'  along  the  axes  need  to  be
+specified.
+
+Observations of planets and other solar system objects  are  best  described  in
+terms  of a Centre which moves with respect to the coordinate system in which it
+is defined (normally RA/Dec of date).  The tangent plane  and  local  coordinate
+system  then  move  with  the  object and are continuously being redefined (note
+again that local coordinates need not be defined via the same coordinate  system
+as  used  to  define  the  Centre;  one  can have local coordinates defined with
+respect to az/alt about a Centre defined and moving with respect  to  RA/Dec  of
+date).
+
+
+In addition to the Centre, the observer  may  specify  two  more  positions  (of
+relevance mostly for non-mapping observations):
+
+      o  a 'user adopted' position for the 'source', specified as  offsets  from
+         the nominal position described above.
+
+
+
+                                     - 20 -
+GSDD - General Single Dish Data Format System                           Page 3-6
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+      o  the position of a nearby 'blank-sky' point used as  a  reference,  also
+         specified as offsets.
+
+The offsets can be quoted directly as angles at the telecope drive encoders,  or
+in local or raster coordinates.
+
+Lastly some estimate of the pointing errors may be required.  Systematic  errors
+(or pointing offsets) and random errors are allowed for.
+
+Item                                 | Mnemonic | Format | Unit
+--------------------------------------------------------------------
+Coordinate system of command         | C3CO     |   C*16 |
+Type of epoch                        | C3EPT    |   C*16 |
+Epoch of RA/Dec coordinate system    | C3EPH    |   R*8  | YEAR
+Commanded Centre Coordinate code     | C3CECO   |   I*4  |
+Commanded Epoch Right Ascension      | C3ERA    |   R*8  | DEGREE
+Commanded Epoch Declination          | C3EDEC   |   R*8  | DEGREE
+Commanded Galactic Longitude         | C3GL     |   R*8  | DEGREE
+Commanded Galactic Latitude          | C3GB     |   R*8  | DEGREE
+Commanded Azimuth                    | C3AZ     |   R*8  | DEGREE
+Commanded Elevation                  | C3EL     |   R*8  | DEGREE
+Moving Centre flag                   | C3MCF    |   L*1  |
+Local Coordinate System Code         | C3LOCO   |   I*4  |
+Offset definition code               | C3ODCO   |   C*16 |
+Mounting code                        | C3MOCO   |   C*16 |
+XY Angle                             | C3AXY    |   R*8  | DEGREE
+Map Scanning Angle                   | C3MSA    |   R*8  | DEGREE
+Cell size in X                       | C3CX     |   R*8  | ARCSEC (see note)
+Cell size in Y                       | C3CY     |   R*8  | ARCSEC (see note)
+Commanded Source X Position offset   | C3SX     |   R*8  | ARCSEC (see note)
+Commanded Source Y Position offset   | C3SY     |   R*8  | ARCSEC (see note)
+Commanded Reference X Position offset| C3RX     |   R*8  | ARCSEC (see note)
+Commanded Reference Y Position offset| C3RY     |   R*8  | ARCSEC (see note)
+Systematic error in X position       | C3SEX    |   R*8  |
+Systematic error in Y position       | C3SEY    |   R*8  |
+RMS error in X Position              | C3REX    |   R*8  |
+RMS error in Y Position              | C3REY    |   R*8  |
+-----------------------------------------------------------------------------
+
+Note: 'distances' on the tangent plane are in terms of the radius of the
+celestial sphere seen in projection; 1 'degree' is (pi/180) * that radius
+etc
+
+
+____________________________Coordinate system of command
+
+AZ/ALT, RA/DEC, or GALACTIC.  Unless the Moving Centre flag is set,  the  Centre
+is constant with respect to this coordinate system throughout the observation.
+
+____________________________________________________Epoch of RA/Dec coordinate system, and type of epoch
+
+Epoch (e.g. 1950, 2000) of the equinox with respect to  which  the  RA  and  Dec
+coordinates refer; type = BESSELIAN (FK4), JULIAN (FK5) or APPARENT.  The common
+combinations are Besselian 1950, Julian 2000 and apparent of date.
+
+                                     - 21 -
+GSDD - General Single Dish Data Format System                           Page 3-7
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+________________________________Commanded Centre Coordinate Code
+
+This entry  contains  the  above  information  in  codified  form  for  commonly
+occurring cases.  [JCMT permitted codes are indicated in square brackets]
+
+ 1 = Encoder angles [AZ for JCMT, generally az/alt or HA/Dec according
+        to mounting code]
+ 2 = Azimuth, Altitude (i.e. true geometrical equivalents of other
+        coordinate systems, not JCMT AZ coordinates)
+ 3 = Apparent HA and Dec [EQ]
+ 4 = Apparent RA and Dec at epoch of observation [RD]
+ 5 = Mean RA and Dec at epoch of observation
+ 6 = B1950 RA and Dec [RB, with the assumption that the 1950 positions
+        were derived from observations at a nominal observing epoch of 1975]
+ 7 = J2000 RA and Dec [RJ]
+ 8 = Galactic [GA]
+
+ 0 = other (not codified)
+
+
+__________________Moving Centre flag
+
+Normally false, implying that the Centre is stationary in the  above  coordinate
+system; true for planets, moon etc.
+
+___________________Commanded Positions
+
+Position of the Centre at the start of  the  integration  of  the  first  sample
+recorded,  given equivalently as RA and Dec with respect to the stated epoch and
+equinox,  galactic  coordinates,  and  az/alt.   Note  that  az/alt   are   true
+geometrical coordinates, corresponding to a simple rotation of HA/Dec.
+
+____________________________Local Coordinate System Code
+
+Defines the orientation of the local coordinate system  in  the  tangent  plane.
+Coding is as above for Centre Coordinate code.
+
+______________________Offset Definition Code
+
+Offsets are specified as (X,Y).  The interpretation of X and Y  depends  on  the
+offset definition code ('raster', 'local' or 'encoder') as follows:
+
+      o  Raster:  X and Y are coordinates in raster space (see Section 3.6).
+
+      o  Local:  X and Y are local coordinates on the tangent plane, as  defined
+         above.
+
+      o  Encoders:  X and Y are increments in encoder values of  the  az/HA  and
+         alt/Dec drives according to the mounting code.
+
+
+_____________Mounting Code
+
+
+
+                                     - 22 -
+GSDD - General Single Dish Data Format System                           Page 3-8
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+AZ/ALT  or  EQUATORIAL;  needed  for  interpretation  of  offsets   as   encoder
+increments.
+
+________XY Angle
+
+The angle between the raster X and Y axes on  the  tangent  plane  (positive  if
+these correspond to a right-handed set as seen from the telescope).
+
+__________________Map Scanning Angle
+
+Angle at the Centre, measured clockwise as seen from the telescope, between  (i)
+the  Y axis of the local coordinate system, i.e. the direction towards the North
+pole of the coordinate system with respect to which the  local  coordinates  are
+defined, and (ii) the raster X axis.
+
+___________________ _Cell Sizes in X and Y
+
+Lengths of the 'unit vectors' along the raster X and Y axes  defining  the  unit
+cell in raster space.
+
+______________________________Commanded Source X, Y Position
+
+The 'source' position is offset from nominal by (X,Y), interpreted according  to
+the offset definition code.
+
+_________________________________Commanded Reference X, Y Position
+
+The blank-sky reference position is similarly offset.
+
+__________________________ _Systematic errors in X and Y
+
+The systematic errors in X and Y may  in  fact  be  "accidental"  or  "designed"
+pointing  corrections  to  the  source  and  reference  positions.  (In the NRAO
+application they are the current pointing offsets, in the JCMT application  they
+will be zero).
+
+________________________Random errors in X and Y
+
+The random errors in X and Y averaged for the entire  scan.   The  meaning  that
+these  values  have  is  up  to  the  telescope system implementers; they may be
+"typical values" or they may be computed for each  observation.   (In  the  JCMT
+initial system they will be typical values determined from pointing tests.)
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     - 23 -
+GSDD - General Single Dish Data Format System                           Page 3-9
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+3.4  CLASS 4 :  POINTING PARAMETERS
+
+
+This  section   holds   the   pointing   parameters   necessary   for   position
+reconstruction.   Some parameters can be identified as common to all single dish
+telescopes;  others  are  telescope-dependent  and  their  values  can  only  be
+interpreted in conjunction with a description of the pointing characteristics of
+the telescope in question.
+
+Four axis-misalignment angles can always be identified:
+
+     1.  the angular extent to which  the  lower  axis  (=  azimuth  for  az/alt
+         mounts,  polar  for  equatorial)  departs  to  the NORTH of its nominal
+         direction (vertical and polar respectively)
+
+     2.  the angular extent to which  the  lower  axis  (=  azimuth  for  az/alt
+         mounts,  polar  for  equatorial)  departs  to  the  EAST of its nominal
+         direction (vertical and polar respectively)
+
+     3.  the extent to which the upper (altitude, declination) axis departs from
+         being at right angles to the lower
+
+     4.  the extent to which the telescope beam  departs  from  being  at  right
+         angles to the upper axis.
+
+
+In addition there are the two encoder zeros on the two drive axes.
+
+In principle for non-deforming telescopes with ideal drives and encoders,  these
+six  parameters  completely  define  the  pointing behaviour.  Angle (4) and the
+encoder zero on the upper drive axis  are  functions  of  the  mounting  of  the
+receiver,  secondary  mirror  etc;  the  remaining four parameters are permanent
+constants.
+
+For telescopes which  depart  from  ideality  in  the  sense  of  the  preceding
+paragraph,  additional parameters are needed.  These are telescope-dependent and
+are represented simply by numerical values, with no systematic interpretation.
+
+Item                                       | Mnemonic | Format | Unit
+-----------------------------------------------------------------------------
+Lower Axis N of Ideal                      | C4LAN    |   R*8  | ARCSEC
+Lower Axis E of Ideal                      | C4LAE    |   R*8  | ARCSEC
+Upper Axis not 90 degrees to Lower         | C4UANP   |   R*8  | ARCSEC
+Beam not 90 degrees to Upper Axis          | C4BNP    |   R*8  | ARCSEC
+Lower Axis (encoder) Zero                  | C4LAZ    |   R*8  | ARCSEC
+Upper Axis (encoder) Zero                  | C4UAZ    |   R*8  | ARCSEC
+Receiver box or secondary orientation      | C4ORI    |   R*8  |
+Focus X Displacement (north-south)         | C4FV     |   R*8  | MM
+Focus Y Displacement (east-west)           | C4FL     |   R*8  | MM
+Focus Z Displacement (radial)              | C4FR     |   R*8  | MM
+-----------------------------------------------------------------------------
+
+
+
+
+                                     - 24 -
+GSDD - General Single Dish Data Format System                          Page 3-10
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+_________________Lower Axis Angles
+
+Angles by which the lower axis (azimuth or hour-angle, depending on the mounting
+code)  points  'North'  or East of the nominal pointing direction; 'North' means
+that as viewed from the east the axis is rotated clockwise with respect  to  its
+nominal direction.
+
+_____________________________________Upper Axis not perpendicular to Lower
+
+The angle by which the 'positive' end of the upper axis (altitude,  declination)
+lies  above  (=  north  of, for equatorial mounts) the plane normal to the lower
+axis; 'positive' is defined such that when looking in the positive direction  an
+increase in the upper axis coordinate cooresponds to a clockwise rotation.
+
+_____________________________________________Telescope Beam not perpendicular to Upperaxis
+
+The angle such that when driven about the upper axis, the beam describes a small
+circle of radius 90-minus-angle about the 'positive' end of the axis ('positive'
+as defined in the preceding paragraph).
+
+_____________Encoder Zeros
+
+In the sense:
+
+        Encoder reading = Azimuth (etc) value + Encoder zero
+
+
+_____________________________________Receiver Box or Secondary Orientation
+
+Rotation or polarization angle orientation of the receiver or reflector  at  the
+prime focus.
+
+__________________Focus Displacement
+
+These are cartesian coordinates with respect to a right handed set of axes, with
+origin at the focus and
+
+ z-axis: outwards along the primary principal axis
+ x-axis: 'upward' normal to the plane containing the z-axis and the
+         altitude/declination axis; an increase in altitude/declination
+         would move the origin in the positive x direction
+
+
+The Focus Displacement records any scan dependent displacement of the focus from
+this origin.
+
+
+
+
+
+
+
+
+
+
+                                     - 25 -
+GSDD - General Single Dish Data Format System                          Page 3-11
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+3.5  CLASS 5 :  ENVIRONMENT PARAMETERS
+
+
+The Environment parameters define the external physical conditions affecting the
+telescope.
+
+Item                                 | Mnemonic  | Format | Unit
+-----------------------------------------------------------------------------
+Ambient Temperature                  |  C5AT     | R*8    | C
+H2O Temperature                      |  C5WT     | R*8    | K
+O2 Temperature                       |  C5OT     | R*8    | K
+Pressure                             |  C5PRS    | R*8    | MM HG
+Relative Humidity                    |  C5RH     | R*8    | %
+Dew Point                            |  C5DP     | R*8    | C
+MM H2O                               |  C5H2O    | R*8    | MM
+Index of Refraction 1                |  C5IR1    | R*8    | DEGREE
+Index of Refraction 2                |  C5IR2    | R*8    | DEGREE
+Index of Refraction 3                |  C5IR3    | R*8    | DEGREE
+-----------------------------------------------------------------------------
+
+
+
+
+
+3.6  CLASS 6 :  MAPPING PARAMETERS
+
+
+The Mapping Parameters, together with those in  the  Position  Class,  define  a
+local  raster  grid on the sky and the pattern traced by the telescope beam with
+respect to that grid; the purpose is to store an entire map as a single entity.
+
+The raster grid is a regular 2D lattice in the tangent plane  at  the  observing
+Centre  (see Section 3.3); it is completely specified by defining the unit cell.
+Two angles in the tangent plane are used to specify the orientation of the  unit
+cell.   The  'XY  angle' is the angle between the X and Y axes (90 degrees for a
+rectangle, and positive for right-handed 2D axes as seen  from  the  telescope).
+The  'map  scanning  angle' is the angle between (a) the line on the sky towards
+the North pole of the coordinate system used to define  local  coordinates  (see
+Section  3.3),  and  (b)  the  raster X axis; like position angle it is measured
+positive from North through East.
+
+In the simplest cases, the map is of observations at a rectangle  of  Nx  by  Ny
+lattice  points  (i.e.  integer coordinates) in raster space, corresponding to a
+parallelogram (rectangle) on the tangent plane.  In more complicated cases,  the
+map  may consist of observations at stated non-integer (x,y) positions in raster
+space, or of observations as the telescope scans steadily along stated  straight
+lines in raster space.
+
+Simple maps are regarded as a succession of strip-scans in raster space parallel
+to one of the raster axes.  They are specified by
+
+     1.  Nx and Ny, the size of the map in grid points,
+
+
+
+                                     - 26 -
+GSDD - General Single Dish Data Format System                          Page 3-12
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+     2.  (Xo,Yo) raster coordinates of one corner of the map (the  first  to  be
+         observed),
+
+     3.  whether each strip-scan is with respect to X  at  constant  Y  or  vice
+         versa,
+
+     4.  whether each strip-scan represents a  succession  of  discrete  points,
+         with  the  telescope  stationary at each in turn, or is the result of a
+         steady sweep of the telescope beam in raster space (observing  'on  the
+         fly'),
+
+     5.  whether the  strip-scans  are  all  traversed  in  the  same  direction
+         ('forwards'),  or  are alternately forwards and backwards on successive
+         scans,
+
+     6.  the signs of the forward increments DX and DY between successive points
+
+
+A special case which can also be specified simply in terms of the  raster  space
+is  a  spiral  mapping,  in  which  successive observations are taken at lattice
+points describing a square spiral  about  the  centre  of  the  map.   Here  the
+parameters are
+
+     1.  Nx = Ny, the size of the map in grid points (an odd number),
+
+     2.  (Xo,Yo) raster coordinates of the centre of the map (the first position
+         to be observed),
+
+     3.  the signs of the initial increment DX and the second increment DY  from
+         the  centre  point,  which  define  the  sense  in  which the spiral is
+         described.
+
+
+The map data are held in the chronological order of observation.  A complete map
+will  contain  data  for  Ns  = Nx*Ny sample points.  Maps may be incomplete, or
+conceivably over-complete; in all cases Ns gives the number of  points  actually
+recorded, the map being regarded as the initial pattern continuing until a total
+of just Ns samples have occurred.
+
+Item                                 | Mnemonic | Format | Unit
+-----------------------------------------------------------------------------
+Number of X points                   | C6NX     |   I*4  |
+Number of Y points                   | C6NY     |   I*4  |
+Initial value of X                   | C6X0     |   R*8  |
+Initial value of Y                   | C6Y0     |   R*8  |
+Scan Direction                       | C6SD     |   C*16 |
+Scan Type                            | C6ST     |   C*16 |
+Scan Reversal                        | C6REV    |   L*1  |
+Sign of stepping in X                | C6XPOS   |   L*1  |
+Sign of stepping in Y                | C6YPOS   |   L*1  |
+Total number of map points sampled   | C6NS     |   I*4  |
+-----------------------------------------------------------------------------
+
+
+
+                                     - 27 -
+GSDD - General Single Dish Data Format System                          Page 3-13
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+______________________Number of X, Y, points
+
+Size of map area (if completed) in grid points;  the  actual  number  of  points
+sampled may be different (see below).
+
+_______________________ _Initial values of X and Y
+
+Coordinates in raster space of the first point observed.
+
+______________Scan Direction
+
+HORIZONTAL if each strip-scan is with respect to X at constant  Y;  VERTICAL  if
+vice versa; or SPIRAL.
+
+_________Scan Type
+
+DISCRETE if a strip-scan represents a succession of discrete observations,  with
+the  telescope beam stationary at each in turn; CONTINUOUS if the telescope beam
+sweeps steadily in raster space ('observation on the fly').  In  the  continuous
+case,  the  raster  coordinates for a sample correspond to telescope position at
+the middle of the period of integration for that sample.
+
+_____________Scan Reversal
+
+True if successive strip-scans alternate between forwards and  backwards;  false
+if all scans are forwards.
+
+___________________________Sign of stepping in X and Y
+
+True if the forward direction along a strip-scan, or the step between successive
+strip-scans,  or  the  initial  increments  in  a  spiral-scan,  correspond to a
+positive increment of the relevant (X or Y) coordinate; false if negative.
+
+___________________________________Total number of map points sampled 
+
+The map as stored is regarded as continuing in the pattern defined by the  above
+parameters  until  a  total of Ns samples have been stored.  Only for a complete
+map will Ns be the same as the nominal  size  Nx*Ny.   Maps  may  contain  fewer
+samples than Nx*Ny (incomplete maps) or more (over-complete).
+
+
+
+
+3.7  CLASS 7 :  VELOCITY PARAMETERS
+
+
+
+Item                                 | Mnemonic | Format | Unit
+-----------------------------------------------------------------------------
+Velocity Definition Code             | C7VDEF   |   C*16 |
+Velocity Reference Code              | C7VREF   |   C*16 |
+Velocity with respect to reference   | C7VL     |   R*8  | KM/S
+-----------------------------------------------------------------------------
+
+
+                                     - 28 -
+GSDD - General Single Dish Data Format System                          Page 3-14
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+________________________Velocity Definition Code
+
+This may be one of RADIO, OPTICAL or RELATIVE.
+
+_______________________Velocity Reference Code
+
+This may be one of LSR, BARYCENTRIC (with respect to  barycentre  of  the  solar
+system), HELIOCENTRIC, GEOCENTRIC or TOPOCENTRIC.
+
+________Velocity
+
+The source velocity specified by the observer relative to the velocity reference
+frame.
+
+
+
+
+3.8  CLASS 8 :  ENGINEERING PARAMETERS
+
+
+
+Item                                            | Mnemonic | Format | Unit
+-----------------------------------------------------------------------------
+Antenna Aperture Efficiency                     | C8AAE    |   R*8  | %
+Antenna Beam Efficiency                         | C8ABE    |   R*8  | %
+Antenna Gain                                    | C8GN     |   R*8  |
+ETAL Rear spillover and scatt' efficiency       | C8EL     |   R*8  |
+ETAFSS Forward spillover and scatt' efficiency  | C8EF     |   R*8  |
+-----------------------------------------------------------------------------
+
+
+___________________Aperture efficiency
+
+The ratio of the total power  observed  to  the  total  power  incident  on  the
+telescope.
+
+_______________________Antenna beam efficiency
+
+The fraction of the beam lying in a diffraction limited main beam.   Kutner  and
+Ulichs' definition of Eta-fss applies.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     - 29 -
+GSDD - General Single Dish Data Format System                          Page 3-15
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+3.9  CLASS 9 :  DATA PARAMETERS
+
+
+This class of data is used to dimension the data tables:
+
+Item                                 | Mnemonic   | Format | Unit
+---------------------------------------------------------------------
+Number of Receiver Channels          |  C9NRC     |   I*4  |
+Number of Integrations per Scan      |  C9NIS     |   I*4  |
+Number of Cycles per Integration     |  C9NCI     |   I*4  |
+Number of Phases per Cycle           |  C9PCC     |   I*4  |
+Number of Backend Channels           |  C9NCH     |   I*4  |
+
+
+___________________________Number of Receiver Channels
+
+The number of independent polarizations or channels of the frontend in use.
+
+___________Definitions
+
+     1.  PHASE - Particular combination of switched parameters.  Thus  a  simple
+         beam-switched observation would involve 2 phases (on- and off-source).
+
+     2.  CYCLE - Complete observation, involving measurement of the power  level
+         for each channel for one complete set of phases.
+
+     3.  INTEGRATION - Normally the data will be accumulated over  a  number  of
+         cycles  before  being reduced.  An integration comprises this number of
+         cycles.
+
+     4.  SCAN - Complete observation of source.   In  general  could  include  a
+         number  of integrations.  Reasons for breaking up a scan into more than
+         one integration include guarding against interference or loss  of  data
+         due to a system failure.
+
+
+
+
+
+3.10  CLASS 10 :  RECEIVER PARAMETERS
+
+
+Receiver parameters originate in a particular frontend/backend combination.
+
+All items except the first are vectors dimensioned by  the  number  of  receiver
+channels.
+
+Item                                 | Mnemonic   |  Format | Unit
+---------------------------------------------------------------------
+Antenna Beam Width (FWHM)            |  C10HP     |    R*8  | ARCSEC
+Observed Frequency                   |  C10CF     |    R*8  | MHZ
+Rest Frequency                       |  C10RF     |    R*8  | MHZ
+Frequency resolution                 |  C10FR     |    R*8  | MHZ
+Bandwidth                            |  C10BW     |    R*8  | MHZ
+
+                                     - 30 -
+GSDD - General Single Dish Data Format System                          Page 3-16
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+Receiver Temperature                 |  C10RT     |    R*8  | K
+Calibration Temperature              |  C10CT     |    R*8  | K
+Source System Temperature            |  C10SST    |    R*8  | K
+Reference System Temperature         |  C10RST    |    R*8  | K
+Source Temperature                   |  C10ST     |    R*8  | K
+RMS of mean Source Temperature       |  C10RMS    |    R*8  | K
+Thermal Noise Level                  |  C10NOI    |    R*8  | DN
+Reference Point Number               |  C10RP     |    R*8  |
+X-value at the reference point       |  C10X0     |    R*8  |
+Delta X                              |  C10DX     |    R*8  |
+Total Integration Time               |  C10IT     |    R*8  | SECOND
+Bad Channel Value                    |  C10BCV    |    R*8  | K
+Data Calibration Code                |  C10CAL    |    C*16 |
+H2O Opacity                          |  C10WO     |    R*8  | NEPERS
+O2 Opacity                           |  C10OO     |    R*8  | NEPERS
+Polarization type                    |  C10SP     |    C*16 |
+Polarization angle                   |  C10PZA    |    R*8  | DEGREE
+-----------------------------------------------------------------------------
+
+
+__________________Antenna Beam Width
+
+Telescope main beamwidth at the observing frequency.
+
+__________________Observed Frequency
+
+The centre frequency of the observation.  This represents the frequency at which
+the receiver frontend is actually tuned.
+
+______________Rest Frequency
+
+The rest frequency of the observation; this is set by the observer.  This is the
+frequency  for  which  the  LSR velocity corrections have been applied.  Usually
+this will be the rest frequency of the molecule being observed.
+
+____________________Frequency Resolution
+
+Frequency spacing of the spectral line backend.
+
+_________Bandwidth
+
+The total bandwidth of the receiver channel.
+
+____________________Receiver Temperature
+
+The noise temperature of the receiver for this channel.
+
+_______________________Calibration Temperature
+
+The noise temperature of the calibration source, e.g noise tube diode  value  or
+cold load temperature.
+
+
+
+
+                                     - 31 -
+GSDD - General Single Dish Data Format System                          Page 3-17
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+_________________________Source System Temperature
+
+The system temperature measured on source.  i.e the corrected noise  temperature
+on source.
+
+____________________________Reference System Temperature
+
+The  system  temperature  measured  on  reference,  i.e  the   corrected   noise
+temperature on reference.
+
+__________________Source Temperature
+
+Source temperature computed for a series of on-off  samples.   i.e  the  antenna
+temperature at the source position.
+
+______________________________RMS Of Mean Source Temperature
+
+RMS value about the mean source temperature.
+
+___________________Thermal Noise Level
+
+This is an alternative quantity for noise measurements to system temperature and
+integration  time;  it  is  also  the  only quantity required for averaging with
+optimal weighting.
+
+______________________Reference Point Number
+
+The position in the spectral  line  device  for  which  the  observer  enters  a
+frequency or velocity.  It is usually the first or centre channel.
+
+______________________________X Value at the reference point
+
+Value of frequency or velocity at the reference point.
+
+_______Delta X
+
+The step size along the x-axis.
+
+______________________Total Integration Time
+
+The total integration time for this receiver channel.
+
+_________________Bad Channel Value
+
+The antenna temperature to be assigned to defective filterbank channels.
+
+_____________________Data Calibration Code
+
+The unit of data produced by the spectral line backend, e.g:  DN, Jy.
+
+___________H2O Opacity
+
+
+
+
+                                     - 32 -
+GSDD - General Single Dish Data Format System                          Page 3-18
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+The opacity of water as computed by a model at the frequency of this channel.
+
+__________O2 Opacity
+
+The opacity of molecular oxygen as computed by a model at the frequency of  this
+channel.
+
+_________________Polarization Type
+
+Describes the type of polarization in this receiver channel; e.g:  RC, LC, LN
+
+__________________Polarization Angle
+
+Polarization angle of this receiver channel.
+
+
+
+
+3.11  CLASS 11 :  PHASE CONTROL TABLE
+
+
+The next three tables describe the switching scheme used during the observation.
+The example at the end of phase timing table explains how the scheme operates.
+
+Item                                 | Mnemonic  | Format | Unit
+-----------------------------------------------------------------------------
+Number of Switching variables        | C11NSV    |   I*4  |
+Variable Descriptor Code: VDC(NSV)   | C11VDC    |   C*16 |
+Variable Amplitude: VAM(NSV)         | C11VAM    |   R*8  |
+-----------------------------------------------------------------------------
+
+
+
+
+
+3.12  CLASS 12 :  PHASE VALUE TABLE
+
+
+
+Item                                 | Mnemonic  | Format | Unit
+-----------------------------------------------------------------------------
+Number of Switching variables        | C12NSV    |   I*4  |
+Number of Phases per Cycle           | C12PPC    |   I*4  |
+Phase Values: PHV(PPC, NSV)          | C12PHA    |   L*1  |
+-----------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+                                     - 33 -
+GSDD - General Single Dish Data Format System                          Page 3-19
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+3.13  CLASS 13 :  PHASE TIMING TABLE
+
+
+
+Item                                 | Mnemonic  | Format | Unit
+-----------------------------------------------------------------------------
+Number of Phases per Cycle           | C13PPC    |   I*4  |
+Fractional time per phase: TPP(PPC)  | C13TPP    |   R*8  | SECOND
+-----------------------------------------------------------------------------
+
+
+_______Example Two switch variables (focus and position).
+
+3 positions, 2 foci.
+
+Implies 8 phases, assumed equal length.
+Posn on      0    0 0 1 1 1 1 0 0
+
+Posn Hi    +30"   1 1 0 0 0 0 0 0
+
+Posn Lo    -30"   0 0 0 0 0 0 1 1
+
+Focus Hi   +54mm  1 0 1 0 1 0 1 0
+
+Focus Lo   -54mm  0 1 0 1 0 1 0 1
+This switching arrangement would be described as:
+
+NSV = 5
+VDC = Posn on, Posn Hi, Posn Lo, Focus Hi, Focus Lo.
+VAM = 0        +30      -30      +54       -54
+
+NSV = 5
+PPC = 8
+PHV = 0, 0, 1, 1, 1, 1, 0, 0,
+      1, 1, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 1, 1,
+      1, 0, 1, 0, 1, 0, 1, 0,
+      0, 1, 0, 1, 0, 1, 0, 1
+
+PPC = 8
+TPP = .125, .125, .125, .125, .125, .125, .125, .125
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     - 34 -
+GSDD - General Single Dish Data Format System                          Page 3-20
+JCMT Note MTDN008.04                                            21 February 1988
+
+
+3.14  CLASS 14 :  DATA VALUE TABLE
+
+
+This table contains the "image" or set of spectra collected at each map point.
+
+Item                                 | Mnemonic   | Format | Unit
+-----------------------------------------------------------------------------
+Data(NCH, PCC, NCI, NIS, NRC)        |  C14DAT    |   R*8  |
+-----------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     - 35 -
+
+
+
+
+
+
+
+
+
+
+
+
+                                   CHAPTER 4
+
+                                    SYSTEM 2
+
+
+
+System 2 differs from the system 1 in the following ways:
+
+     1.  The Mapping Parameter Class is absent (Class 6)
+
+     2.  A Pointing History table is added (Class 15)
+
+
+The pointing history table performs the function of describing the  position  of
+the  telescope  at  any  data  point  in  a  more  general  way than the mapping
+parameters could.
+
+
+
+
+4.1  CLASS 15 :  POINTING HISTORY TABLE
+
+
+This table contains the position mean position of each integration  point.   The
+units of position are those of the Local Coordinate System Code.  The array is a
+series of longitude-latitude coordinate pairs.
+
+Item                                 | Mnemonic   | Format | Unit
+-----------------------------------------------------------------------------
+Position(2, NIS, NRC)                |  C15DAT    |   R*8  |
+-----------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     - 36 -

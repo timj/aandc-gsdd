@@ -1,0 +1,10 @@
+*.bbl
+*.blg
+*.out
+*.spl
+*.aux
+*.log
+*.lot
+*.lof
+*.toc
+acgsd.pdf

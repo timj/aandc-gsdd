@@ -1,0 +1,1790 @@
+                                                                          Page 1
+GSD - Global Section Datafile System
+
+
+JAMES CLERK MAXWELL TELESCOPE
+Joint Astronomy Centre
+665 Komohana Street
+Hilo, Hawaii 96720, U.S.A.
+
+JCMT Note MTIN033.02
+
+
+                      GSD - Global Section Datafile System                      GSD - Global Section Datafile System                      GSD - Global Section Datafile System                      GSD - Global Section Datafile System
+
+
+Version 0, J.H.Fairclough - original
+Version 1, J.H.Fairclough - add architecture and fortran i/o appendices.
+Version 2, J.H.Fairclough - file extension upgrade
+Processed by FDOCUMENT:  21 February 1988
+
+
+
+
+                                   CONTENTS
+
+        1       PREFACE TO VERSION 2 . . . . . . . . . . . . . . . . 2
+        2       GENERAL  . . . . . . . . . . . . . . . . . . . . . . 2
+        3       WRITING APPLICATIONS USING GSD . . . . . . . . . . . 3
+        3.1       Example Of A Writer Program  . . . . . . . . . . . 3
+        3.2       Example Of A Read Program  . . . . . . . . . . . . 5
+        4       LINKING APPLICATIONS . . . . . . . . . . . . . . . . 6
+        5       GSDPRINT . . . . . . . . . . . . . . . . . . . . . . 6
+        6       GSDFORMAT  . . . . . . . . . . . . . . . . . . . . . 6
+        7       PERFORMANCE  . . . . . . . . . . . . . . . . . . . . 7
+
+
+APPENDIX A      GSD SUBROUTINE DESCRIPTIONS
+
+
+APPENDIX B      
+
+        B.1     TAPE DESCRIPTION . . . . . . . . . . . . . . . . .  26
+        B.2     FILE DESCRIPTION . . . . . . . . . . . . . . . . .  26
+        B.2.1     File Descriptor  . . . . . . . . . . . . . . . .  26
+        B.2.2     Item Descriptors . . . . . . . . . . . . . . . .  27
+        B.2.3     Data . . . . . . . . . . . . . . . . . . . . . .  28
+
+
+APPENDIX C      FORTRAN I/O TO GSD FILES
+
+GSD - Global Section Datafile System                                      Page 2
+JCMT Note MTIN033.02                                            21 February 1988
+
+
+1  PREFACE TO VERSION 2
+
+
+     A GSD_TUNE routine has been added to allow the programmer to tune  features
+of the system.  Tuneable features are the masks used for SYS$CRMPSC when opening
+a GSD file (i.e a private section can be created) and the minimum extend size of
+the file.
+     The GSD library has been upgraded to support file  extension.   This  means
+that  an  array's  dimension  bounds  can be changed dynamically.  The change is
+"transparent", no extra routines are available to the user; he/she may now  call
+GSD_PUT  for  a  scalar that bounds an array after creating the array.  This was
+not allowed before!  A consequence of file extension is that  multiple  versions
+of a file are created; these may be automatically purged using by tuning.
+     The GSD_INQ_SIZE routine is  obsolete;  new  applications  should  use  the
+GSD_INQUIRE_ARRAY  routine  instead.   The  former  routine  will  remain in the
+library until the next release of GSD.
+     Some parameters in GSDPARS have changed in value.  All routines using  this
+file should be recompiled.
+
+
+
+
+2  GENERAL
+
+
+     The subroutine library package GSD has been  written  to  permit  the  fast
+reading  and  writing  of  data  in  a  realtime  software  environment.  It was
+stimulated by the need to provide fast filing of data in the so called  GSDD  or
+"General  Single  Dish  Data" format developed by MRAO, IRAM and NRAO.  The MRAO
+version of GSDD is described in MTDN008.
+     The main features of the GSD package are that:
+      o  Reading and writing is done to a mapped global section file.   The  GSD
+         library  routines  provide  a simple interface to GSD files.  GSD files
+         can be accessed using FORTRAN i/o (see appendix C).
+      o  GSD files can contain user specified scalar and array quantities.   The
+         user  specification  is stored in the file along with the values of the
+         quantities.
+      o  GSD files have a very simple architecture; they consist of:
+          o  A "file descriptor" followed by "item descriptors",  one  for  each
+             quantity specified by the user, followed by:
+          o  Contiguous data values at locations held in the descriptors.
+
+         A more detailed description of the architecture is held in appendix B.
+      o  GSD data access routines allow data  to  be  accessed  in  any  of  the
+         following  data  types:  BYTE, LOGICAL*1, INTEGER*2, INTEGER*4, REAL*4,
+         REAL*8, CHARACTER*(GSD_SZCHAR).  GSD_SZCHAR is currently 16.
+      o  GSD data access routines perform data type conversion if  the  internal
+         data type differs from that demanded.  The RTL routine LIB$CVT_DX_DX is
+         used for conversion to and from  the  character  data  type,  otherwise
+         assignments  are  used.   All  assignments are protected by a condition
+         handler.
+      o  Data of "unlimited" size can accessed via the use of the RTL  OTS$MOVE3
+         routine;  this  routine  permits up to 2 Gbyte of data to be moved in a
+         single subroutine call.
+
+                                     - 2 -
+GSD - Global Section Datafile System                                      Page 3
+JCMT Note MTIN033.02                                            21 February 1988
+
+
+      o  The GSD library is programmed entirely in VAX FORTRAN, according to VAX
+         ADAM conventions, for easy maintainance.
+      o  The GSD library deliberately does not use locks to coordinate access to
+         the global section file; this is to reduce the overhead of the VMS lock
+         manager.   Locking  conventions  should  be  devised  for  coordinating
+         processes;  ADAM  processes  would  use  the LOCK library to coordinate
+         access.
+      o  The global section file is conceived for a single writer  and  multiple
+         readers; other schemes could easily be provided.
+      o  Arrays of up to 5 dimensions are permitted.  This could be made more if
+         required; 5 dimensions was chosen to set the item descriptor size at 64
+         bytes.
+      o  Arrays can be accessed  in  contiguous  slices  starting  at  any  user
+         specified  cell  location  and  ending  at  any "higher" cell location.
+         Arrays can be mapped according to an applications' requirements.   This
+         means  that  data  can written as a 1 dimensional array but read as a 2
+         dimensional array.
+
+
+
+
+
+3  WRITING APPLICATIONS USING GSD
+
+
+     A subroutine reference manual, is provided in the appendix that details all
+the  calling  sequences.  In the examples below consult the reference manual for
+unexplained arguments.
+     In the examples some variables appear with names beginning with GSD__  (GSD
+double  underscore!);  these  are  GSD  parameters  and error codes.  You should
+include in your source the files GSDPARS and GSDERRS to dimension arrays  (where
+this  is  necessary  it is shown in the subroutine description) and to check for
+errors.
+     GSD routines do not signal errors themselves; errors  caused  by  incorrect
+input  or  use  of  a  routine, are passed back as GSD error codes in the STATUS
+argument.  Bad returns from calls to system and run time  library  routines  are
+also  passed  back.   The  OK  status  is  the parameter ADAM_OK in the ADAMERRS
+include file.  This currently has a value zero.
+
+
+
+
+3.1  Example Of A Writer Program
+
+
+     The following call sequences are required to write a GSD file:
+     Calculate how big the file should be (PAGCNT) and determine how many  items
+you want to store (NOITEMS), then create it:
+
+CALL GSD_OPEN_WRITE (FILENAME, VERSION, LABEL, NO_ITEMS, PAGCNT, ! Input
+                     FD, STATUS)                              ! Output
+
+
+
+
+                                     - 3 -
+GSD - Global Section Datafile System                                      Page 4
+JCMT Note MTIN033.02                                            21 February 1988
+
+
+     The file open routine passes  back  a  integer  "file  number"  in  the  FD
+argument that is used for access to file later.
+     Create your descriptors.
+
+
+DO I = 1, NSCALAR
+   CALL GSD_CREATE_SCALAR (FD, SNAME(I), SUNIT(I), STYPE(I), ! Input
+                           SINDEX(I), STATUS)                ! Output
+   CALL GSD_PUT0<T>(SINDEX(I), <T>VALUE,                     ! Input
+                    STATUS)                                  ! Output
+ENDDO
+
+DO I = 1, NARRAY
+   CALL GSD_CREATE_ARRAY (FD, ANAME(I), AUNIT(I), ATYPE(I), ! Input
+                          ANDIMS(I), ADIMNAMES(1, I),       ! Input
+                          AINDEX(I), STATUS)                ! Output
+ENDDO
+
+     The item create routines pass back  an  "index"  for  getting  and  putting
+values.
+     If the value of an dimensioning scalar is subsequently  changed,  the  file
+will be extended or contracted as appropiate.
+     GSD indices are small integer arrays that  must  be  dimensioned  with  the
+GSD__SZINDEX   parameter   and   never  be  altered  by  the  application,  else
+unpredictable results will occur!
+     An application can then put 1D slices of an array; to force modified  pages
+out to disk use the GSD_UPDATE routine.
+     First compute the total SIZE in cells of the array; this can be found using
+the GSD_INQUIRE_ARRAY routine if not done locally:
+
+CALL GSD_INQUIRE_ARRAY(INDEX, MAXDIMS,  ! Input
+                 DIMNUMBERS, DIMNAMES, DIMUNITS,          ! Output
+                 DIMVALS, DIMINDEX, ACTDIMS, SIZE, STATUS)! Output
+
+SIZE_SLICE = SIZE/NSLICE
+END   = 0
+
+DO I = 1, NSLICE
+   START = END + 1
+   END   = END + SIZE_SLICE
+   CALL GSD_PUT1<T> (AINDEX(1), 1, SIZE, START, END, ! Input
+                     <T>VALUES, PUTVALS, STATUS)     ! Output
+   CALL GSD_UPDATE (FD, STATUS)
+ENDDO
+
+     When all values have been put just close the GSD file...
+
+CALL GSD_CLOSE (FD, STATUS)
+
+
+
+
+
+
+
+                                     - 4 -
+GSD - Global Section Datafile System                                      Page 5
+JCMT Note MTIN033.02                                            21 February 1988
+
+
+3.2  Example Of A Read Program
+
+
+     First open the file by name:
+
+CALL GSD_OPEN_READ(FILENAME,                          ! Input
+                   FD, VERSION, LABEL, NO_ITEMS, STATUS) ! Output
+
+
+     If you know the name of the descriptors you want then get their indices by:
+
+CALL GSD_FIND (FD, NAME,                                 ! Input
+               NUMBER, UNIT, TYPE, ARRAY, INDEX, STATUS) ! Output
+
+     ARRAY is a logical value indicating whether or not the item is an array.
+     If you do not know what is in the file go through  the  descriptors  seeing
+what  is  there.  The code fragment below shows how the values of the items in a
+GSD file may be extracted as text :
+
+DO WHILE (NUMBER .LT. NO_ITEMS .AND. STATUS .EQ. ADAM__OK)
+   NUMBER = NUMBER + 1
+
+  Get information on the next item
+   CALL GSD_ITEM (FD, NUMBER,                                 ! Input
+                  NAME, UNIT, TYPE, ARRAY, GSDINDEX, STATUS)  ! Output
+
+   IF (STATUS .EQ. ADAM__OK) THEN
+      IF (.NOT. ARRAY) THEN
+
+        Get scalar value as character string GSD routine does
+        type conversion
+         CALL GSD_GET0C (GSDINDEX,       ! Input
+                         CVALUE, STATUS) ! Output
+
+      ELSE
+        Get the dimensional information on the array...
+         CALL GSD_INQUIRE_ARRAY(INDEX, MAXDIMS,                 ! Input
+     :                 DIMNUMBERS, DIMNAMES, DIMUNITS,          ! Output
+     :                 DIMVALS, DIMINDEX, ACTDIMS, SIZE, STATUS)! Output
+
+        Map the array as a 1D array of length SIZE and write out
+        the values.
+        Transfer the data in sections equal to the size of the
+        locally declared array (CHARACTER*25 CVALUES(MAXTRANS))...
+
+         TRANSFERS = (SIZE + MAXTRANS - 1 ) / MAXTRANS
+         TRANSFER_COUNT = 0
+         END = 0
+
+         DO WHILE (STATUS .EQ. ADAM__OK .AND.
+                   TRANSFER_COUNT .LT. TRANSFERS)
+
+            TRANSFER_COUNT = TRANSFER_COUNT + 1
+            START = END + 1
+
+                                     - 5 -
+GSD - Global Section Datafile System                                      Page 6
+JCMT Note MTIN033.02                                            21 February 1988
+
+
+            END = MIN (SIZE, END + MAXTRANS)
+
+            CALL GSD_GET1C (GSDINDEX, 1, SIZE, START, END, ! Input
+                            CVALUES, ACTVALS, STATUS)      ! Output
+
+         ENDDO
+      ENDIF
+   ENDIF
+ENDDO
+
+     When you have finished reading the file just close it.
+     The above example was taken from PRINT.FOR (in GSD_PRINT_DIR) which is  the
+program for the GSD_PRINT command (see below).
+
+
+
+
+4  LINKING APPLICATIONS
+
+
+     The GSD library, which in the JCMT system is MT_GSDDIR, contains an options
+file GSDLIB/OPT.  The link command then is:
+
+LINK <applic>,MT_GSDDIR:GSD_LIB/OPT
+
+     All GSD source is compiled /DEBUG/EXT.
+
+
+
+
+5  GSDPRINT
+
+
+     The foreign DCL command GSDPRINT is provided to print out the contents of a
+GSD file.
+
+Invocation : GSDPR*INT <file specification>
+
+     Output is written to the <filename>.LIS file in the local directory.
+
+
+
+
+6  GSDFORMAT
+
+
+     The foreign DCL command GSDFORMAT is provided to print out the contents  of
+a GSD file, with documentation.
+
+Invocation : GSDFO*RMAT <file specification>[/FULL]
+
+     Output is written to the <filename>.SUM file in the local directory  unless
+the /FULL qualifier is given, which causes the output of array data.
+
+
+                                     - 6 -
+GSD - Global Section Datafile System                                      Page 7
+JCMT Note MTIN033.02                                            21 February 1988
+
+
+7  PERFORMANCE
+
+
+     The following speed tests have been performed on a VAX 750:
+      o  
+              GET0D - 0.17 msec
+      o  
+              GET0C - 0.23 msec
+      o  
+              PUT0D - 0.18 msec
+      o  
+              GET1D - 512 element REAL*8 array - 3.2 msec
+      o  
+              PUT1D - 512 element REAL*8 array - 3.5 msec
+
+     The time to read or write an unformatted 512 byte  record  via  RMS  direct
+access  is about 2 msec on a 750; this means that it would take at least 16 msec
+to access a 512 element REAL*8 array even without the housekeeping  required  to
+determine  the  correct  location  of  the  data  in  the  file.  GSD access are
+therefore at least 5 times faster than RMS.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     - 7 -
+
+
+
+
+
+
+
+
+
+
+
+
+                                   APPENDIX A
+
+                          GSD SUBROUTINE DESCRIPTIONS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     - 8 -
+GSD - Global Section Datafile System                                    Page A-2
+JCMT Note MTIN033.02                                            21 February 1988
+
+
++----------------------------------------------------------------------+
+|  GSD_CLOSE  |  Close a GSD file                                      |
++----------------------------------------------------------------------+
+|                                                                      |
+|  Close a GSD file                                                    |
+|                                                                      |
++----------------------------------------------------------------------+
+|                                                                      |
+|  CALL GSD_CLOSE(FD, STATUS)                                          |
+|                                                                      |
+|                                                                      |
+|  FD=INTEGER(INPUT)                                                   |
+|        File number as returned by GSD_CREATE od GSD_OPEN             |
+|                                                                      |
+|  STATUS=INTEGER(UPDATE)                                              |
+|        ADAM status variable :                                        |
+|        Possible returns : Input status ; system service status value |
+|                                                                      |
++ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -+
+|                                                                      |
+|  This procedure executes regardless of the input status.             |
+|  Delete the virtual address space using SYS$DELVA.                   |
+|  Deassign the channel using SYS$DASSGN                               |
+|                                                                      |
++----------------------------------------------------------------------+
+|  Jon Fairclough (UKTH::JHF)                                          |
++----------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     - 9 -
+GSD - Global Section Datafile System                                    Page A-3
+JCMT Note MTIN033.02                                            21 February 1988
+
+
++----------------------------------------------------------------------+
+|  GSD_CREATE_SCALAR  |  Create a scalar GSD header item               |
++----------------------------------------------------------------------+
+|                                                                      |
+|  Create a scalar GSD header item                                     |
+|                                                                      |
++----------------------------------------------------------------------+
+|                                                                      |
+|  CALL GSD_CREATE_SCALAR(FD, NAME, UNIT, DATA_TYPE, INDEX,            |
+|  :                          STATUS)                                  |
+|                                                                      |
+|                                                                      |
+|  FD=INTEGER(INPUT)                                                   |
+|        File number returned from a GSD_OPEN routine                  |
+|                                                                      |
+|  NAME=CHARACTER*(*)(INPUT)                                           |
+|        Name of GSD item                                              |
+|                                                                      |
+|  UNIT=CHARACTER*(*)(INPUT)                                           |
+|        Unit of the GSD item                                          |
+|                                                                      |
+|  DATA_TYPE=CHARACTER(INPUT)                                          |
+|        Data type code, one of: 'B', 'L', 'W', 'I', 'R', 'D', 'C'     |
+|                                                                      |
+|  INDEX(GSD__SZINDEX)=INTEGER(OUTPUT)                                 |
+|        Index for accessing GSD data item                             |
+|                                                                      |
+|  STATUS=INTEGER(UPDATE)                                              |
+|        ADAM status variable                                          |
+|        Possible returns : ADAM__OK       : Successful execution      |
+|                           GSD__UNKDATTYP : Unknown data type         |
+|                           GSD__INSVIRSTO : Insuffic' virtual storage |
+|                           GSD__TOOMNYITM : Too many items            |
+|                           GSD__FILNOTOPN : File not open             |
+|                           GSD__ILLFILNUM : Illegal file number       |
+|                           GSD__BADITMNAM : Bad item name             |
+|                                                                      |
++ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -+
+|                                                                      |
+|  Construct a GSD descriptor and put it in the file                   |
+|                                                                      |
++----------------------------------------------------------------------+
+|  Jon Fairclough (UKTH::JHF)                                          |
++----------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+
+                                     - 10 -
+GSD - Global Section Datafile System                                    Page A-4
+JCMT Note MTIN033.02                                            21 February 1988
+
+
++----------------------------------------------------------------------+
+|  GSD_FIND  |  Look up a GSD name and get its properties              |
++----------------------------------------------------------------------+
+|                                                                      |
+|  Look up a GSD name and get its properties                           |
+|                                                                      |
++----------------------------------------------------------------------+
+|                                                                      |
+|  CALL GSD_FIND(FD, NAME, NUMBER, UNIT, TYPE, ARRAY, INDEX, STATUS)   |
+|                                                                      |
+|                                                                      |
+|  FD=INTEGER(INPUT)                                                   |
+|         File number returned from a GSD_OPEN routine.                |
+|                                                                      |
+|  NAME=CHARACTER*(*)(INPUT)                                           |
+|         Name of the GSD item                                         |
+|                                                                      |
+|  NUMBER=INTEGER(OUTPUT)                                              |
+|         Ordinal Number of the GSD item in the file                   |
+|                                                                      |
+|  UNIT=CHARACTER*(*)(OUTPUT)                                          |
+|         Unit of the GSD item                                         |
+|                                                                      |
+|  TYPE=CHARACTER(OUTPUT)                                              |
+|         Data type of the GSD item; one of : B, L, W, I, R, D, C      |
+|                                                                      |
+|  ARRAY=LOGICAL(OUTPUT)                                               |
+|         True if the item is an array.                                |
+|         If true then use the GSD_INQ_SIZE routine to get the         |
+|         dimension values and array size.                             |
+|                                                                      |
+|  INDEX(GSD__SZINDEX)=INTEGER(OUTPUT)                                 |
+|         Index for accessing the GSD item.                            |
+|                                                                      |
+|  STATUS=INTEGER(UPDATE)                                              |
+|         ADAM status variable                                         |
+|         Possible returns : ADAM__OK       : Successful execution     |
+|                            GSD__ILLFILNUM : Illegal file number      |
+|                            GSD__FILNOTOPN : File not open            |
+|                            GSD__ITMNOTFND : Item not found           |
+|                                                                      |
++ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -+
+|                                                                      |
+|  Use a sequential lookup method to find the descriptor               |
+|  Read it from the file and extract the required information          |
+|                                                                      |
++----------------------------------------------------------------------+
+|  Jon Fairclough (UKTH::JHF)                                          |
++----------------------------------------------------------------------+
+
+
+
+
+
+
+                                     - 11 -
+GSD - Global Section Datafile System                                    Page A-5
+JCMT Note MTIN033.02                                            21 February 1988
+
+
++----------------------------------------------------------------------+
+|  GSD_GET0<T>  |  Get a scalar value from a GSD file                  |
++----------------------------------------------------------------------+
+|                                                                      |
+|  Get a scalar value from a GSD file                                  |
+|  There is a routine for each data type :                             |
+|  [T]  [TYPE]        [TYPECODE]                                       |
+|   B    BYTE          BYTE                                            |
+|   L    LOGICAL*1     LOGICAL                                         |
+|   W    INTEGER*2     WORD                                            |
+|   I    INTEGER*4     INTEGER                                         |
+|   R    REAL*4        REAL                                            |
+|   D    REAL*8        DOUBLE                                          |
+|   C    CHARACTER*(*) CHAR                                            |
+|                                                                      |
+|                                                                      |
++----------------------------------------------------------------------+
+|                                                                      |
+|  CALL GSD_GET0<T>(INDEX, <T>VALUE, STATUS)                           |
+|                                                                      |
+|                                                                      |
+|  INDEX(GSD__SZINDEX)=INTEGER(INPUT)                                  |
+|         Index for accessing the GSD data item.                       |
+|                                                                      |
+|  <T>VALUE=<TYPE>(OUTPUT)                                             |
+|         The value.  If the internal value type differs from          |
+|         <TYPE> then data type conversion will be performed.          |
+|                                                                      |
+|  STATUS=INTEGER(UPDATE)                                              |
+|         ADAM status variable                                         |
+|         Possible returns : ADAM__OK       : Successful execution     |
+|                            GSD__BADITMIND : Bad item INDEX           |
+|                            GSD__TYPCONERR : Type conversion error    |
+|                                                                      |
+|                                                                      |
++ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -+
+|                                                                      |
+|  Move the value into a value of the internal data type.              |
+|  Convert the value to the required data type.                        |
+|  Note : Assignment is used for data type conversion unless           |
+|         a character string conversion is required.                   |
+|  Note : If an arithmetic error occurs in type conversion then        |
+|         "bad" values are assigned as described in GSDPARS            |
+|                                                                      |
++----------------------------------------------------------------------+
+|  Jon Fairclough (UKTH::JHF)                                          |
++----------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+                                     - 12 -
+GSD - Global Section Datafile System                                    Page A-6
+JCMT Note MTIN033.02                                            21 February 1988
+
+
++----------------------------------------------------------------------+
+|  GSD_GET1<T>  |  Get array values from a GSD file                    |
++----------------------------------------------------------------------+
+|                                                                      |
+|  Get all or part of an array from a GSD file.                        |
+|  There is a routine for each data type :                             |
+|  [T]  [TYPE]        [TYPECODE]                                       |
+|   B    BYTE          BYTE                                            |
+|   L    LOGICAL*1     LOGICAL                                         |
+|   W    INTEGER*2     WORD                                            |
+|   I    INTEGER*4     INTEGER                                         |
+|   R    REAL*4        REAL                                            |
+|   D    REAL*8        DOUBLE                                          |
+|   C    CHARACTER*(*) CHAR                                            |
+|                                                                      |
+|                                                                      |
++----------------------------------------------------------------------+
+|                                                                      |
+|  CALL GSD_GET1<T>(INDEX, NO_DIMS, DIMVALS, START, END,               |
+|  :                <T>VALUES, ACTVALS, STATUS)                        |
+|                                                                      |
+|                                                                      |
+|  INDEX(GSD__SZINDEX)=INTEGER(INPUT)                                  |
+|         Index to the GSD data item.                                  |
+|                                                                      |
+|  NO_DIMS=INTEGER(INPUT)                                              |
+|         The number of dimensions in the array <T>VALUES.             |
+|         GSD_INQ_SIZE returns the number of dimensions used when      |
+|         writing the array.  The user is free to supply any value     |
+|         if it is wished to map the array differently.                |
+|                                                                      |
+|  DIMVALS(NO_DIMS)=INTEGER(INPUT)                                     |
+|         The bounds of the dimensions in the array <T>VALUES.         |
+|         GSD_INQ_SIZE returns the bounds of the array <T>VALUES       |
+|         used when writing the array.  The user is free to            |
+|         supply any set of values if it is wished to map the array    |
+|         differently.                                                 |
+|                                                                      |
+|  START(NO_DIMS)=INTEGER(INPUT)                                       |
+|         Cell specification of the starting value.                    |
+|         These are the array element subscripts of the start value.   |
+|                                                                      |
+|  END(NO_DIMS)=INTEGER(INPUT)                                         |
+|         Cell specification of the end value                          |
+|         These are the array element subscripts of the end value.     |
+|                                                                      |
+|  <T>VALUES(*)=<TYPE>(OUTPUT)                                         |
+|         The values.  If the internal value type differs from         |
+|         <TYPE> then data type conversion will be performed.          |
+|                                                                      |
+|  ACTVALS=INTEGER(OUTPUT)                                             |
+|         The actual number of values returned.                        |
+|                                                                      |
+|  STATUS=INTEGER(UPDATE)                                              |
+
+                                     - 13 -
+GSD - Global Section Datafile System                                    Page A-7
+JCMT Note MTIN033.02                                            21 February 1988
+
+
+|         ADAM status variable                                         |
+|         Possible returns : ADAM__OK       : Successful execution     |
+|                            GSD__BADITMIND : Bad item INDEX           |
+|                            GSD__TYPCONERR : Type conversion error    |
+|                            GSD__GETTOOMNY : Trying to get too many   |
+|                                             values                   |
+|                                                                      |
+|                                                                      |
++ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -+
+|                                                                      |
+|  Compute start and end cell locations.                               |
+|  Compute actual number of cells to move.                             |
+|  Compute number of bytes to move and the start and end addresses.    |
+|  Convert the value to the required data type if necessary.           |
+|  Move the values into the file.                                      |
+|                                                                      |
++----------------------------------------------------------------------+
+|  Jon Fairclough (UKTH::JHF)                                          |
++----------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     - 14 -
+GSD - Global Section Datafile System                                    Page A-8
+JCMT Note MTIN033.02                                            21 February 1988
+
+
++----------------------------------------------------------------------+
+|  GSD_INQUIRE_ARRAY  |  Inquire the characteristics of an array       |
++----------------------------------------------------------------------+
+|                                                                      |
+|  Inquire the size of an array.                                       |
+|                                                                      |
++----------------------------------------------------------------------+
+|                                                                      |
+|  CALL GSD_INQUIRE_ARRAY(INDEX, MAXDIMS,                              |
+|  :                      DIMNUMBERS, DIMNAMES, DIMUNITS,              |
+|  :                      DIMVALS, DIMINDEX, ACTDIMS, SIZE, STATUS)    |
+|                                                                      |
+|                                                                      |
+|  INDEX(GSD__SZINDEX)=INTEGER(INPUT)                                  |
+|         Array index returned by GSD_FIND or GSD_ITEM                 |
+|                                                                      |
+|  MAXDIMS=INTEGER(INPUT)                                              |
+|         Maximum number of dimensions required                        |
+|                                                                      |
+|  DIMNUMBERS(MAXDIMS)=INTEGER(OUTPUT)                                 |
+|         The ordinal numbers of the dimensioning scalsrs in the file  |
+|                                                                      |
+|  DIMNAMES(MAXDIMS)=CHARACTER*(*)(OUTPUT)                             |
+|         Names of dimensioning variables                              |
+|                                                                      |
+|  DIMUNITS(MAXDIMS)=CHARACTER*(*)(OUTPUT)                             |
+|         Units of the dimensioning variables                          |
+|                                                                      |
+|  DIMVALS(MAXDIMS)=INTEGER(OUTPUT)                                    |
+|         Values of dimensioning variables                             |
+|                                                                      |
+|  DIMINDEX(GSD__SZINDEX, MAXDIMS=INTEGER(OUTPUT)                      |
+|         Indices of the dimensioing quantities                        |
+|                                                                      |
+|  ACTDIMS=INTEGER(OUTPUT)                                             |
+|         Actual number of dimensions                                  |
+|                                                                      |
+|  SIZE=INTEGER(OUTPUT)                                                |
+|         Total size in cells of the array data type                   |
+|                                                                      |
+|  STATUS=INTEGER(UPDATE)                                              |
+|         ADAM status variable                                         |
+|         Returns : ADAM__OK       : Successful execution              |
+|                   GSD__ILLFILNUM : Illegal file number               |
+|                   GSD__FILNOTOPN : File not open                     |
+|                                                                      |
++ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -+
+|                                                                      |
+|  Get descriptor for this item                                        |
+|  Compute SIZE from total byte length and data_type                   |
+|                                                                      |
++----------------------------------------------------------------------+
+|  Jon Fairclough (UKTH::JHF)                                          |
++----------------------------------------------------------------------+
+
+                                     - 15 -
+GSD - Global Section Datafile System                                    Page A-9
+JCMT Note MTIN033.02                                            21 February 1988
+
+
++----------------------------------------------------------------------+
+|  GSD_ITEM  |  Look up a GSD item by number and get its properties    |
++----------------------------------------------------------------------+
+|                                                                      |
+|  Look up a GSD item by number and and get its properties             |
+|                                                                      |
++----------------------------------------------------------------------+
+|                                                                      |
+|  CALL GSD_ITEM(FD, NUMBER, NAME, UNIT, TYPE, ARRAY,                  |
+|  :             INDEX, STATUS)                                        |
+|                                                                      |
+|                                                                      |
+|  FD=INTEGER(INPUT)                                                   |
+|         File number returned from a GSD_OPEN routine.                |
+|                                                                      |
+|  NUMBER=INTEGER(INPUT)                                               |
+|         Ordinal number of the GSD item.                              |
+|                                                                      |
+|  NAME=CHARACTER*(*)(OUTPUT)                                          |
+|         Name of the GSD item.                                        |
+|                                                                      |
+|  UNIT=CHARACTER*(*)(OUTPUT)                                          |
+|         Unit of the GSD item.                                        |
+|                                                                      |
+|  TYPE=CHARACTER(OUTPUT)                                              |
+|         Data type of the GSD item; one of : B, L, W, I, R, D, C      |
+|                                                                      |
+|  ARRAY=LOGICAL(OUTPUT)                                               |
+|         True if the item is a ARRAY (array).                         |
+|                                                                      |
+|  INDEX(GSD__SZINDEX)=INTEGER(OUTPUT)                                 |
+|         Index for accessing the GSD item.                            |
+|                                                                      |
+|  STATUS=INTEGER(UPDATE)                                              |
+|         ADAM status variable                                         |
+|         Possible returns : ADAM__OK       : Successful execution     |
+|                            GSD__ILLFILNUM : Illegal file number      |
+|                            GSD__FILNOTOPN : File not open            |
+|                            GSD__ITMNOTFND : Item not found           |
+|                                                                      |
++ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -+
+|                                                                      |
+|  Get this descriptor from the file and extract the required          |
+|  properties.                                                         |
+|                                                                      |
++----------------------------------------------------------------------+
+|  Jon Fairclough (UKTH::JHF)                                          |
++----------------------------------------------------------------------+
+
+
+
+
+
+
+
+                                     - 16 -
+GSD - Global Section Datafile System                                   Page A-10
+JCMT Note MTIN033.02                                            21 February 1988
+
+
++----------------------------------------------------------------------+
+|  GSD_NRAO_TO_JCMT  |  Translate NRAO name to JCMT name               |
++----------------------------------------------------------------------+
+|                                                                      |
+|  Translate NRAO name to JCMT name using a lookup table               |
+|                                                                      |
++----------------------------------------------------------------------+
+|                                                                      |
+|  CALL GSD_NRAO_TO_JCMT(NRAO, JCMT, COMMENT, STATUS)                  |
+|                                                                      |
+|                                                                      |
+|  NRAO=CHARACTER*(*)(INPUT)                                           |
+|        NRAO name                                                     |
+|                                                                      |
+|  JCMT=CHARACTER*(*)(OUTPUT)                                          |
+|        JCMT name                                                     |
+|                                                                      |
+|  COMMENT=CHARACTER*80(OUTPUT)                                        |
+|        Long form of definition                                       |
+|                                                                      |
+|  STATUS=INTEGER(UPDATE)                                              |
+|        ADAM status variable                                          |
+|                                                                      |
++ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -+
+|                                                                      |
+|  Use look table in GSD_TRANSLATE provided by the STORAGE_TRANSLATE   |
+|  program.                                                            |
+|                                                                      |
++----------------------------------------------------------------------+
+|  Jon Fairclough (UKTH::JHF)                                          |
++----------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     - 17 -
+GSD - Global Section Datafile System                                   Page A-11
+JCMT Note MTIN033.02                                            21 February 1988
+
+
++----------------------------------------------------------------------+
+|  GSD_OPEN_READ  |  OPEN a GSD file for reading and map it            |
++----------------------------------------------------------------------+
+|                                                                      |
+|  Open a GSD file for reading and map it                              |
+|                                                                      |
++----------------------------------------------------------------------+
+|                                                                      |
+|  CALL GSD_OPEN_READ(FILE, FD, VERSION, LABEL, NO_ITEMS, STATUS)      |
+|                                                                      |
+|                                                                      |
+|  FILE=CHARACTER*(*)(INPUT)                                           |
+|         GSD file specification or logical name.                      |
+|                                                                      |
+|  FD=INTEGER(OUTPUT)                                                  |
+|         Number of the GSD file.                                      |
+|                                                                      |
+|  VERSION=REAL(OUTPUT)                                                |
+|         GSD file version number.                                     |
+|                                                                      |
+|  LABEL=CHARACTER*(*)                                                 |
+|         GSD file label.                                              |
+|                                                                      |
+|  NO_ITEMS=INTEGER(OUTPUT)                                            |
+|         The number of GSD items in the file.                         |
+|                                                                      |
+|  STATUS=INTEGER(UPDATE)                                              |
+|         ADAM status variable                                         |
+|         Possible returns : ADAM__OK       : Successful execution     |
+|                            GSD__TOOMNYFIL : Too many files open      |
+|                                                                      |
++ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -+
+|                                                                      |
+|  Get the logical unit for the GSD file                               |
+|  Open the GSD file for user i/o                                      |
+|  Release the logical unit of the GSD file                            |
+|  Map the GSD file as a section according to GSD_TUNE/READ_MASK       |
+|  Save the GSDFILE block                                              |
+|                                                                      |
++----------------------------------------------------------------------+
+|  Jon Fairclough (UKTH::JHF)                                          |
++----------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     - 18 -
+GSD - Global Section Datafile System                                   Page A-12
+JCMT Note MTIN033.02                                            21 February 1988
+
+
++----------------------------------------------------------------------+
+|  GSD_OPEN_UPDATE  |  OPEN a GSD file for updating and map it         |
++----------------------------------------------------------------------+
+|                                                                      |
+|  Open a GSD file for updating and map it                             |
+|                                                                      |
++----------------------------------------------------------------------+
+|                                                                      |
+|  CALL GSD_OPEN_UPDATE(FILE, FD, VERSION, LABEL, NO_ITEMS, STATUS)    |
+|                                                                      |
+|                                                                      |
+|  FILE=CHARACTER*(*)(INPUT)                                           |
+|         GSD file specification or logical name.                      |
+|                                                                      |
+|  FD=INTEGER(OUTPUT)                                                  |
+|         Number of the GSD file.                                      |
+|                                                                      |
+|  VERSION=REAL(OUTPUT)                                                |
+|         GSD file version number.                                     |
+|                                                                      |
+|  LABEL=CHARACTER*(*)                                                 |
+|         GSD file label.                                              |
+|                                                                      |
+|  NO_ITEMS=INTEGER(OUTPUT)                                            |
+|         The number of GSD items in the file.                         |
+|                                                                      |
+|  STATUS=INTEGER(UPDATE)                                              |
+|         ADAM status variable                                         |
+|         Possible returns : ADAM__OK       : Successful execution     |
+|                            GSD__TOOMNYFIL : Too many files open      |
+|                                                                      |
++ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -+
+|                                                                      |
+|  Get the logical unit for the GSD file                               |
+|  Open the GSD file for user i/o                                      |
+|  Release the logical unit of the GSD file                            |
+|  Map the GSD file as a according to GSD_TUNE/UPDATE_MASK             |
+|  Set up the GSDFILE block                                            |
+|                                                                      |
++----------------------------------------------------------------------+
+|  Jon Fairclough (UKTH::JHF)                                          |
++----------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     - 19 -
+GSD - Global Section Datafile System                                   Page A-13
+JCMT Note MTIN033.02                                            21 February 1988
+
+
++----------------------------------------------------------------------+
+|  GSD_OPEN_WRITE  |  Create a GSD file and map it                     |
++----------------------------------------------------------------------+
+|                                                                      |
+|  Create a GSD file and map it                                        |
+|                                                                      |
++----------------------------------------------------------------------+
+|                                                                      |
+|  CALL GSD_OPEN_WRITE(FILE, VERSION, LABEL, MAX_NO_ITEMS, PAGCNT,     |
+|  :                   FD, STATUS)                                     |
+|                                                                      |
+|                                                                      |
+|  FILE=CHARACTER*(*)(INPUT)                                           |
+|         GSD file name.                                               |
+|                                                                      |
+|  VERSION=REAL(INPUT)                                                 |
+|         GSD file version number.                                     |
+|                                                                      |
+|  LABEL=CHARACTER*(*)                                                 |
+|         GSD file label.                                              |
+|                                                                      |
+|  MAX_NO_ITEMS=INTEGER(INPUT)                                         |
+|         Maximum number of items that the file will contain.          |
+|                                                                      |
+|  PAGCNT=INTEGER(INPUT)                                               |
+|         Filesize in pages of 512 bytes.                              |
+|                                                                      |
+|  FD=INTEGER(OUTPUT)                                                  |
+|         Number of the GSD file.                                      |
+|                                                                      |
+|  STATUS=INTEGER(UPDATE)                                              |
+|         ADAM status variable                                         |
+|         Possible returns : ADAM__OK       : Successful execution     |
+|                            GSD__TOOMNYFIL : Too many files open      |
+|                                                                      |
++ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -+
+|                                                                      |
+|  Get the amount of memory required                                   |
+|  Get the logical unit for the GSD file                               |
+|  Open the GSD file for user i/o                                      |
+|  Release the logical unit of the GSD file                            |
+|  Map the GSD file according to the GSD_TUNE/WRITE_MASK               |
+|  Write file descriptor                                               |
+|  Set up GSDFILE block                                                |
+|                                                                      |
++----------------------------------------------------------------------+
+|  Jon Fairclough (UKTH::JHF)                                          |
++----------------------------------------------------------------------+
+
+
+
+
+
+
+
+                                     - 20 -
+GSD - Global Section Datafile System                                   Page A-14
+JCMT Note MTIN033.02                                            21 February 1988
+
+
++----------------------------------------------------------------------+
+|  GSD_PUT0<T>  |  Put a scalar value into a GSD file                  |
++----------------------------------------------------------------------+
+|                                                                      |
+|  Put a scalar value into a GSD file.                                 |
+|  There is a routine for each data type:                              |
+|  [T]  [TYPE]        [TYPECODE]                                       |
+|   B    BYTE          BYTE                                            |
+|   L    LOGICAL*1     LOGICAL                                         |
+|   W    INTEGER*2     WORD                                            |
+|   I    INTEGER*4     INTEGER                                         |
+|   R    REAL*4        REAL                                            |
+|   D    REAL*8        DOUBLE                                          |
+|   C    CHARACTER*(*) CHAR                                            |
+|                                                                      |
+|                                                                      |
++----------------------------------------------------------------------+
+|                                                                      |
+|  CALL GSD_PUT0<T>(INDEX, <T>VALUE, STATUS)                           |
+|                                                                      |
+|                                                                      |
+|  INDEX(GSD__SZINDEX)=INTEGER(INPUT)                                  |
+|         Index to GSD data item.                                      |
+|                                                                      |
+|  <T>VALUE=<TYPE>(INPUT)                                              |
+|         The value.  If the internal value type differs from          |
+|         <TYPE> then data type conversion will be performed.          |
+|                                                                      |
+|  STATUS=INTEGER(UPDATE)                                              |
+|         ADAM status variable                                         |
+|         Possible returns : ADAM__OK       : Successful execution     |
+|                            GSD__BADITMIND : Bad item INDEX           |
+|                            GSD__TYPCONERR : Type conversion error    |
+|                                                                      |
++ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -+
+|                                                                      |
+|  if this item dimensions an array then                               |
+|     extend/contract the file and rearrange all dependent arrays      |
+|  endif                                                               |
+|  Convert the value to the required data type.                        |
+|  Move the value into the required location.                          |
+|  Note : if an error occurs in type conversion than a bad value       |
+|         is put.  "Bad" values are defined in GSDPARS.  The status    |
+|         returned is GSD__TYPCONERR.                                  |
+|                                                                      |
++----------------------------------------------------------------------+
+|  Jon Fairclough (UKTH::JHF)                                          |
++----------------------------------------------------------------------+
+
+
+
+
+
+
+
+                                     - 21 -
+GSD - Global Section Datafile System                                   Page A-15
+JCMT Note MTIN033.02                                            21 February 1988
+
+
++----------------------------------------------------------------------+
+|  GSD_PUT1<T>  |  Put an array of values in a GSD file                |
++----------------------------------------------------------------------+
+|                                                                      |
+|  Put all or part of and array into a GSD file                        |
+|  There is a routine for each data type :                             |
+|  [T]  [TYPE]        [TYPECODE]                                       |
+|   B    BYTE          BYTE                                            |
+|   L    LOGICAL*1     LOGICAL                                         |
+|   W    INTEGER*2     WORD                                            |
+|   I    INTEGER*4     INTEGER                                         |
+|   R    REAL*4        REAL                                            |
+|   D    REAL*8        DOUBLE                                          |
+|   C    CHARACTER*(*) CHAR                                            |
+|                                                                      |
+|                                                                      |
++----------------------------------------------------------------------+
+|                                                                      |
+|  CALL GSD_PUT1<T>(INDEX, NO_DIMS, DIMVALS, START, END,               |
+|  :                <T>VALUES, ACTVALS, STATUS)                        |
+|                                                                      |
+|                                                                      |
+|  INDEX(GSD__SZINDEX)=INTEGER(INPUT)                                  |
+|         Index to GSD data.                                           |
+|                                                                      |
+|  NO_DIMS=INTEGER(INPUT)                                              |
+|         The number of dimensions in the array <T>VALUES.             |
+|         GSD_INQ_SIZE returns the number of dimensions used when      |
+|         creating the array.  The user is free to supply any value    |
+|         if it is wished to map the array differently.                |
+|                                                                      |
+|  DIMVALS(NO_DIMS)=INTEGER(INPUT)                                     |
+|         The bounds of the dimensions in the array <T>VALUES.         |
+|         GSD_INQ_SIZE returns the bounds of the array <T>VALUES       |
+|         used when writing the array.  The user is free to            |
+|         supply any set of values if it is wished to map the array    |
+|         differently.                                                 |
+|                                                                      |
+|  START(NO_DIMS)=INTEGER(INPUT)                                       |
+|         Cell specification of the starting value.                    |
+|         These are the array element subscripts of the start value.   |
+|                                                                      |
+|  END(NO_DIMS)=INTEGER(INPUT)                                         |
+|         Cell specification of the end value                          |
+|         These are the array element subscripts of the end value.     |
+|                                                                      |
+|  <T>VALUES(*)=<TYPE>(INPUT)                                          |
+|         The values.  If the internal value type differs from         |
+|         <TYPE> then data type conversion will be performed.          |
+|                                                                      |
+|  ACTVALS=INTEGER(OUTPUT)                                             |
+|         The actual number of values returned.                        |
+|                                                                      |
+|  STATUS=INTEGER(UPDATE)                                              |
+
+                                     - 22 -
+GSD - Global Section Datafile System                                   Page A-16
+JCMT Note MTIN033.02                                            21 February 1988
+
+
+|         ADAM status variable                                         |
+|         Possible returns : ADAM__OK       : Successful execution     |
+|                            GSD__BADITMIND : Bad item INDEX           |
+|                            GSD__TYPCONERR : Type conversion error    |
+|                            GSD__PUTTOOMNY : Trying to put too many   |
+|                                             values                   |
+|                                                                      |
+|                                                                      |
++ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -+
+|                                                                      |
+|  Compute start and end cell locations.                               |
+|  Compute actual number of cells to move.                             |
+|  Compute number of bytes to move and the start and end addresses.    |
+|  Convert the value to the required data type if necessary.           |
+|  Move the values into an array of the internal data type.            |
+|                                                                      |
++----------------------------------------------------------------------+
+|  Jon Fairclough (UKTH::JHF)                                          |
++----------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     - 23 -
+GSD - Global Section Datafile System                                   Page A-17
+JCMT Note MTIN033.02                                            21 February 1988
+
+
++----------------------------------------------------------------------+
+|  GSD_TUNE  |  Tune the GSD system                                    |
++----------------------------------------------------------------------+
+|                                                                      |
+|  Tune the GSD system for:                                            |
+|  OBJECT = 'READ_MASK'  user specified read mask for SYS$CRMPSC       |
+|  OBJECT = 'WRITE_MASK'  user specified write mask for SYS$CRMPSC     |
+|  OBJECT = 'UPDATE_MASK' user specified update mask for SYS$CRMPSC    |
+|  OBJECT = 'EXTEND_PAGCNT' minimum number of pages to extend file     |
+|  New object value remains in effect until a subsequent call to       |
+|  GSD_TUNE                                                            |
+|  Example:                                                            |
+|    INCLUDE '($SECDEF)'                                               |
+|   Open a private section for reading...                              |
+|    CALL GSD_TUNE ('READ_MASK',                                       |
+|                    SEC$M_EXPREG,                                     |
+|                    STATUS)                                           |
+|    CALL GSD_OPEN_READ...                                             |
+|   Open a private section for writing...                              |
+|    CALL GSD_TUNE ('WRITE_MASK',                                      |
+|                    SEC$M_DZRO .OR. SEC$M_EXPREG .OR. SEC$M_WRT,      |
+|                    STATUS)                                           |
+|    CALL GSD_OPEN_WRITE...                                            |
+|   Open a private section for updating                                |
+|    CALL GSD_TUNE ('UPDATE_MASK',                                     |
+|                    SEC$M_EXPREG .OR. SEC$M_WRT,                      |
+|                    STATUS)                                           |
+|    CALL GSD_OPEN_UPDATE...                                           |
+|   Note a global section has .OR. SEC$M_GBL                           |
+|   Set the file minimum number of pages to extend the file            |
+|                                                                      |
++----------------------------------------------------------------------+
+|                                                                      |
+|  CALL GSD_TUNE (OBJECT, STATUS)                                      |
+|                                                                      |
+|                                                                      |
+|  OBJECT=CHARACTER*(*)(INPUT)                                         |
+|         Name of object to be tuned                                   |
+|                                                                      |
+|  VALUE=INTEGER (INPUT)                                               |
+|         Value of object, the value IBAD (GSDPARS) forces a reset     |
+|         to the default                                               |
+|                                                                      |
+|  STATUS=INTEGER(UPDATE)                                              |
+|         ADAM status variable                                         |
+|                                                                      |
++ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -+
+|                                                                      |
+|  Just set the new object value                                       |
+|                                                                      |
++----------------------------------------------------------------------+
+|  Jon Fairclough (UKTH::JHF)                                          |
++----------------------------------------------------------------------+
+
+
+                                     - 24 -
+GSD - Global Section Datafile System                                   Page A-18
+JCMT Note MTIN033.02                                            21 February 1988
+
+
++----------------------------------------------------------------------+
+|  GSD_UPDATE  |  Update global section file                           |
++----------------------------------------------------------------------+
+|                                                                      |
+|  Update global section file.                                         |
+|  Modified pages are written out to disk; this routine should be used |
+|  to protect applications against system crashes or process deletion. |
+|                                                                      |
++----------------------------------------------------------------------+
+|                                                                      |
+|  CALL GSD_UPDATE(FD, STATUS)                                         |
+|                                                                      |
+|                                                                      |
+|  FD=INTEGER(INPUT)                                                   |
+|         File number of the GSD file.                                 |
+|                                                                      |
+|  STATUS=INTEGER(UPDATE)                                              |
+|         ADAM status variable                                         |
+|         Possible returns : ADAM__OK       : Successful return        |
+|                            GSD__HRDWARERR : Hardware error           |
+|                            GSD__FILNOTOPN : File not open            |
+|                            GSD__ILLFILNUM : Illegal file number      |
+|                                                                      |
++ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -+
+|                                                                      |
+|  Update the section file using SYS$UPDSEC                            |
+|                                                                      |
++----------------------------------------------------------------------+
+|  Jon Fairclough (UKTH::JHF)                                          |
++----------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     - 25 -
+
+
+
+
+
+
+
+
+
+
+
+
+                                   APPENDIX B
+
+
+
+
+B.1  TAPE DESCRIPTION
+
+
+     Data will be transported in DEC VAX/VMAX files on DEC BACKUP  tapes  or  on
+ANSI standard tapes.
+     BACKUP is a highly reliable facility for  writing  and  reading  tapes  and
+should be used wherever possible.
+
+
+
+
+B.2  FILE DESCRIPTION
+
+
+     Each file contains data for a single "observation".  In an "observation"  a
+telescope  executes  a  sequence  of movements centred on a position in the sky:
+the "target".  Common examples are maps or simply tracking an object.
+     The file consists of a "prolog" followed by "data".  The  prolog  describes
+the  data  and  can  be used for retrieving it.  The prolog consists of a single
+"file descriptor" and "item descriptors", one for each data item.
+     While the rest of this chapter describes the  prolog,  subsequent  chapters
+itemise  the  data  stored  in  the  suggested  variants  of  a GSD file.  It is
+important to remember that the data items contigously in  virtual  storage  (and
+possibly physical storage), in the sequence given.
+
+
+
+
+B.2.1  File Descriptor
+
+
+     The file begins with a 64 byte FILE DESCRIPTOR with the structure:
+
+*    File descriptor size is GSD__SZDSC
+      STRUCTURE / FILE_DESCRIPTOR /
+         REAL    VERSION                 ! File structure version
+         INTEGER MAX_NO_ITEMS            ! Maximum number of items
+                                         ! This should be set at file create
+                                         ! time to the number of descriptors
+                                         ! that you expect to create
+         INTEGER NO_ITEMS                ! Number of item descriptor created
+
+                                     - 26 -
+GSD - Global Section Datafile System                                    Page B-2
+JCMT Note MTIN033.02                                            21 February 1988
+
+
+         INTEGER STR_DATA                ! Start of scan data (in bytes)
+         INTEGER END_DATA                ! End of scan data (in bytes)
+         CHARACTER*40 COMMENT            ! Fill characters contain comment
+         INTEGER SIZE                    ! File size (in bytes)
+                                      !!!! add new items here and reduce comment
+      ENDSTRUCTURE
+*
+
+
+
+
+
+B.2.2  Item Descriptors
+
+
+     There then follow MAX_ITEM 64 byte ITEM DESCRIPTORS with the structure:
+
+      STRUCTURE / ITEM_DESCRIPTOR /
+         LOGICAL*1 ARRAY                 !  1  ! ARRAY data?
+         CHARACTER*(GSD__SZNAME) NAME    ! 16  ! Name of descriptor
+         INTEGER*2 NAMELEN               ! 18  ! Length of name
+         CHARACTER*(GSD__SZUNIT) UNIT    ! 28  ! Unit of descriptor
+         INTEGER*2 UNITLEN               ! 30  ! Length of unit
+         INTEGER*2 DATA_TYPE             ! 32  ! Data type code
+         INTEGER LOCATION                ! 36  ! Start byte of item data
+         INTEGER LENGTH                  ! 40  ! Number of bytes required
+         INTEGER NO_DIMS                 ! 44  ! Number of dimensions
+                                               ! If the value is -1 then this
+                                               ! is a scalar that dimensions
+                                               ! an array.
+         INTEGER DIMNUMBERS(GSD__MAXDIM) ! 64  ! Number of dimensioning scalar
+      ENDSTRUCTURE
+
+
+     Current values of GSD__SZNAME, GSD__SZUNIT and GSD__MAXDIM are 15, 10 and 5
+respectively.
+     The descriptor permits a definition of an array; this  obviously  has  some
+storage  overhead  but  does  make the prolog much simpler to decode.  Data type
+codes are as follows:
+
+Code            VAX FORTRAN Data type declaration
+
+1               Byte
+2               Logical*1
+3               Integer*2
+4               Integer*4
+5               Real*4
+6               Double precision or Real*8
+7               Character*16    (character*(GSD__SZCHAR))
+
+     Item descriptors for scalars must precede item descriptors for tables.   As
+storage  is  allocated  sequentially  item by item at run time, scalar data (the
+traditional "header") will precede any tabular data (the  traditional  array  or
+"image" or "spectrum").
+
+                                     - 27 -
+GSD - Global Section Datafile System                                    Page B-3
+JCMT Note MTIN033.02                                            21 February 1988
+
+
+B.2.3  Data
+
+
+     After the descriptors follow the data specified by them,  starting  at  the
+byte locations contained in the item descriptor.
+     If no value can be given to an item,  the  null  value  of  the  items  are
+assigned the following FORTRAN parameter values:
+
+      BYTE BBAD
+      PARAMETER (BBAD = '81'X)               ! -127
+      LOGICAL*1 LBAD
+      PARAMETER (LBAD = .FALSE.)
+      INTEGER*2 WBAD
+      PARAMETER (WBAD = '8001'X)             ! -32767
+      INTEGER*4 IBAD
+      PARAMETER (IBAD = '80000001'X)         ! -2147483647
+      REAL*4 RBAD
+      PARAMETER (RBAD = 'FFF7FFFF'X)         ! -1.7014109E+38
+      REAL*8 DBAD
+      PARAMETER (DBAD = 'FFFFFFFFFFF7FFFF'X) ! -1.701410233083081E+38
+      CHARACTER*16 CBAD
+      PARAMETER (CBAD = ' ')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     - 28 -
+
+
+
+
+
+
+
+
+
+
+
+
+                                   APPENDIX C
+
+                            FORTRAN I/O TO GSD FILES
+
+
+
+     The example program below shows how to open a GSD file directly.  Refer  to
+the GSD architecture description for information on how to decode the records.
+        PROGRAM TESTREAD
+*
+*       Test reading a GSD file via FORTRAN i/o
+*
+*       The GSD_OPEN_WRITE routine opens the file with the
+*       following relevant keywords:
+*
+*         ORGANIZATION='SEQUENTIAL',
+*         ACCESS='DIRECT',
+*         FORM='UNFORMATTED',
+*         RECORDTYPE='FIXED',
+*         RECL=128,                     ! Longwords
+*         CARRIAGECONTROL='NONE',
+
+        INCLUDE '($FORDEF)'
+        CHARACTER FILENAME*80,RECORD*512
+
+        WRITE (*,'(''$Give filename > '')')
+        READ (*,'(A)') FILENAME
+
+*      One doesn't need to use all the keywords above...
+        OPEN (UNIT=1,FILE=FILENAME,STATUS='OLD',READONLY,
+     :        ACCESS='DIRECT')
+
+        IREC=1
+10      READ (UNIT=1,REC=IREC,IOSTAT=IOSTAT) RECORD
+        IF (IOSTAT .NE. 0) GOTO 20
+        IREC =IREC+1
+        GOTO 10
+
+20      CONTINUE
+        IF (IOSTAT .LE. 0) THEN
+*         Ok (IOSTAT=0) or end of file (IOSTAT<0)
+           PRINT *,IREC, ' Records read'
+        ELSE
+*         Real I/o error?
+           CALL ERRSNS (,,,,IOSTAT)
+           IF (IOSTAT .EQ. FOR$_ATTACCNON) THEN
+
+                                     - 29 -
+GSD - Global Section Datafile System                                    Page C-2
+JCMT Note MTIN033.02                                            21 February 1988
+
+
+*            Okay - end of file
+              PRINT *,IREC, ' Records read'
+           ELSE
+              CALL LIB$STOP (%VAL(IOSTAT))
+           ENDIF
+        ENDIF
+
+        CLOSE(UNIT=1)
+
+        END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     - 30 -
