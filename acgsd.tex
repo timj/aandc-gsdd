@@ -316,33 +316,33 @@ sufficient metadata to specify the coordinates of the spectrum on the
 sky, the frequency scale and the calibrated
 units of the spectrum.
 
-\begin{table}
-\caption{Model classes used by the GSDD model at JCMT.}
+\begin{table*}
+\caption{Model classes used by the various GSDD models.}
 \label{tab:classes}
 \begin{center}
-\begin{tabular}{ll}
+\begin{tabular}{lll}
 \hline
-Class number & Meaning \\ \hline
-1 & Identity Parameters\\
-2 & Time Parameters\\
-3 & Position Parameters\\
-4 & Pointing Parameters \\
-5 & Environment Parameters \\
-6 & Mapping Parameters \\
-7 & Velocity Parameters \\
-8 & Engineering Parameters \\
-9 & Data Parameters \\
-10 & Receiver Parameters\\
-11 & Phase Control Table \\
-12 & Phase Value Table \\
-13 & Phase Timing Table \\
-14 & Data Value Table \\
-15 & Pointing History \\
-55 & Inclinometry \\
+Class number & JCMT Meaning & NRAO meaning\\ \hline
+1 & Identity Parameters & Basic Information\\
+2 & Time Parameters & Pointing Parameters \\
+3 & Position Parameters & Observing Parameters\\
+4 & Pointing Parameters & Positions\\
+5 & Environment Parameters & Environment\\
+6 & Mapping Parameters & Map Parameters\\
+7 & Velocity Parameters & Data Parameters\\
+8 & Engineering Parameters & Engineering Parameters \\
+9 & Data Parameters & Telescope Dependent Parameters\\
+10 & Receiver Parameters & Open Data Reduction Parameters\\
+11 & Phase Control Table & Phase Block \\
+12 & Phase Value Table & Descriptor Block for Each Receiver Channel\\
+13 & Phase Timing Table & Reduction Parameters \\
+14 & Data Value Table & --- \\
+15 & Pointing History & --- \\
+55 & Inclinometry & --- \\
 \hline
 \end{tabular}
 \end{center}
-\end{table}
+\end{table*}
 
 When designing the model related items were grouped into numbered
 classes and the parameter name was prefixed by that class number. For
