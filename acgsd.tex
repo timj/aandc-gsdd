@@ -47,7 +47,7 @@
 %% The amsthm package provides extended theorem environments
 %% \usepackage{amsthm}
 
-\usepackage[pdftex,pdfpagemode={UseOutlines},bookmarks,bookmarksopen,colorlinks,linkcolor={blue},citecolor={green},urlcolor={red}]{hyperref}
+\usepackage[draft,pdftex,pdfpagemode={UseOutlines},bookmarks,bookmarksopen,colorlinks,linkcolor={blue},citecolor={green},urlcolor={red}]{hyperref}
 \usepackage{hypernat}
 
 %% Alternatives to hyperref for testing
@@ -149,6 +149,7 @@
 
 \author[jac]{Tim Jenness\corref{cor1}\fnref{timj}}
 \ead{t.jenness@jach.hawaii.edu}
+\author[noao]{Elizabeth~B.~Stobie}
 \author[hp]{Jon~H.~Fairclough}
 \author[nrao]{Richard~M.~Prestage}
 \author[leiden,imapp]{Remo~P.~J.~Tilanus}
@@ -159,6 +160,7 @@
 
 \address[jac]{Joint Astronomy Centre, 660 N.\ A`oh\=ok\=u Place, Hilo, HI
   96720, USA}
+\address[noao]{National Optical Astronomy Observatory, 950 N Cherry Ave, Tucson, AZ 85719, USA}
 \address[hp]{HP Enterprise Services UK Ltd}
 \address[nrao]{National Radio Astronomy Observatory, P.O.\ Box 2, Green Bank, WV~24944, USA}
 \address[leiden]{Leiden Observatory, Leiden University, PO Box 9513, 2300 RA Leiden, The~Netherlands}
@@ -170,9 +172,9 @@
 %% Text of abstract
 
 The General Single-Dish Data format (GSDD) was developed in the
-mid-1980s as a file format to support millimeter and submillimeter
+mid-1980s as a data model to support millimeter and submillimeter
 instrumentation at NRAO, JCMT and IRAM. We discuss the implementation
-of the file format, provide an overview of the GSDD requirements and
+of the resultant file formats, provide an overview of the GSDD requirements and
 associated data model, cover its usage in the observatories and
 provide a retrospective on the format.
 
@@ -184,7 +186,9 @@ provide a retrospective on the format.
 %% MSC codes here, in the form: \MSC code \sep code
 %% or \MSC[2008] code \sep code (2000 is the default)
 
-data formats \sep submillimeter astronomy
+data formats \sep
+submillimetre: general \sep
+history and philosophy of astronomy
 
 \end{keyword}
 
@@ -216,28 +220,188 @@ data formats \sep submillimeter astronomy
 
 \section{Introduction}
 
-The General Single Dish Data format (GSDD) was developed in the
-1980s to solve the data processing and acquisition requirements of the
-NRAO, IRAM, University of Arizona and JCMT observatories \citep[see e.g.,][]{mtdn84,1987NRAO30}. The format, agreed in 1986
-\citep{mtdn85}, consisted of a data model for specifying millimeter
-and submillimeter observations (continuum and heterodyne
-instrumentation) and a specification of how the bytes would be
-represented on disk. The goal was to drive interoperability between
-the observatories to allow data taken at one telescope to be reduced
-by software packages developed at another.
+In the late 1970s and early 1980s millimetre and submillimetre
+single-dish astronomy was undergoing a significant period of growth \citep[see
+e.g.,][]{2013ASSP...37...39R} with the NRAO 12-m telescope leading the
+way \citep[see e.g.,][]{2005ASSL..323.....G} and with multiple
+observatories being developed such as the IRAM 30-m
+\citep{1981MitAG..54...61B}, the 15-m James Clerk Maxwell Telescope
+\citep[JCMT;][]{1985ESOC...22...63H}, the 10-m Sub-Millimeter
+Telescope \citep[SMT;][]{1985ESOC...22...71W}, the 15-m Swedish ESO
+Submm Telescope \citep[SEST;][]{1985ESOC...22...25D}, and the Caltech
+Submillimeter Observatory \citep[CSO;][]{1988BAAS...20..690P}. In this
+environment it was recognized by some institutions that the ability
+for data taken on one telescope to be reduced and analyzed by the
+software written at another telescope would be extremely useful and
+could lead to significant savings on software development effort.
 
-\section{Requirements}
+At this time the Flexible Image Transport System
+\citep[FITS;][]{1981A&AS...44..363W,2015Thomas} was considered mainly
+suitable as a means of exchanging image data using tapes
+\citep{1980SPIE..264..298G} and was not able to support complex
+mm/submm time-series data including many binary tables.
 
-As the sub-millimeter community began to develop in the 1980s it was
-desirable to develop or adopt a single format that could be used
-interchangeably. At the time two obvious options were available in the
+The General Single Dish Data format (GSDD) was developed in the 1980s
+to solve the data processing and acquisition requirements of the NRAO,
+IRAM, University of Arizona and JCMT observatories. The format, agreed
+in 1986 \citep[see e.g.,][]{mtdn84,1987NRAO30}, consisted of a data
+model for specifying millimeter and submillimeter observations
+(continuum and heterodyne instrumentation) and a specification of how
+the bytes would be represented on disk.
+
+\section{Data Model}
+
+To allow interoperability of data files between differing
+observatories it was important to develop a shared data model,
+taking particular care to allow simple interchange of reduced spectra
+between software packages. Reduced data has fewer instrument-specific
+anomalies and was deemed to be the simplest first step, requiring
+sufficient metadata to specify the coordinates of the spectrum on the
+sky, the frequency scale and the calibrated
+units of the spectrum.
+
+\begin{table*}
+\caption{Model classes used by the various GSDD models.}
+\label{tab:classes}
+\begin{center}
+\begin{tabular}{lll}
+\hline
+Class number & NRAO Meaning & JCMT meaning\\ \hline
+1         & Basic Information                                                 &    Identity Parameters        \\
+2         & Pointing Parameters                                               &    Time Parameters            \\
+3        & Observing Parameters                                               &    Position Parameters        \\
+4          & Positions                                                        &    Pointing Parameters        \\
+5      & Environment                                                          &    Environment Parameters     \\
+6        & Map Parameters                                                     &    Mapping Parameters         \\
+7          & Data Parameters                                                  &    Velocity Parameters        \\
+8       & Engineering Parameters                                              &    Engineering Parameters   \\
+9           & Telescope Dependent Parameters                                  &    Data Parameters            \\
+10       & Open Data Reduction Parameters                                     &   Receiver Parameters         \\
+11       & Phase Block                                                        &   Phase Control Table         \\
+12        & Descriptor Block for Each Receiver Channel                        &   Phase Value Table           \\
+13       & Spectral Values                                                    &   Phase Timing Table          \\
+14          & ---                                                             &   Data Value Table            \\
+15           & ---                                                           &   Pointing History            \\
+55                                        & ---                               &   Inclinometry                \\
+\hline
+\end{tabular}
+\end{center}
+\end{table*}
+
+When designing the model related items were grouped into numbered
+classes and the parameter name was prefixed by that class number. The
+class groupings are shown in Table~\ref{tab:classes} and indicate that
+there was some disagreement in naming convention after the standard
+was agreed.\footnote{Given the agreement in item names, it is likely
+  that the class names are due to a documentation error at JCMT rather
+  than an implementation error at JCMT.} Despite this documented
+difference in class naming\citep{mtdn85}, 71 data items were named
+consistently in the NRAO and JCMT implementations, and those are
+detailed in Table~\ref{tab:core}. For example \texttt{C13DAT} referred
+to the spectrum and bolometer data, \texttt{C1SNO} the scan number,
+and \texttt{C7VR} the source radial velocity.
+
+At the JCMT these GSDD names (known locally as the ``NRAO'' names)
+were written to disk files but were mapped to local equivalents in
+the acquisition computers. For example \texttt{C12RF}, the rest
+frequency, mapped to \texttt{FE\_NUREST} in the acquisition system and
+was equivalent to the \texttt{RESTFREQ} FITS keyword. A full list of
+the equivalences for JCMT can be found in \citet{SUN229}.
+
+One key feature of the GSDD design was that some classes were
+explicitly reserved for local use. Class 9 was used for telescope
+dependent parameters and the defined set differed between Green Bank
+and the 12m with JCMT not using class 9 at all.
+
+\begin{table*}[t]
+\centering
+\caption{Core components of GSDD data model.}
+\label{tab:core}
+\begin{tabular}{|lp{1.5in}|lp{1.5in}|lp{1.5in}|}
+\hline
+\textbf{C1BKE} & Backend & \textbf{C4CSC} & Code for coordinate system & \textbf{C6YGC} & Starting Y grid position \\
+\textbf{C1DP} & Precision & \textbf{C4EDC} & Epoch declination / Declination of date & \textbf{C6YNP} & Number of Y grid points \\
+\textbf{C1OBS} & Observer Initials / Observer Name & \textbf{C4EL} & Elevation at C3UT & \textbf{C7BCV} & Bad channel value \\
+\textbf{C1ONA} & Observer name & \textbf{C4EPH} & Epoch of coordinates & \textbf{C7CAL} & Calibration type \\
+\textbf{C1PID} & Project ID & \textbf{C4ERA} & Epoch Right Ascension & \textbf{C7OSN} & Calibration scan/observation number \\
+\textbf{C1RCV} & Frontend & \textbf{C4GB} & Galactic Latitude & \textbf{C7VC} & Velocity correction \\
+\textbf{C1SNO} & Scan number / Observation number & \textbf{C4GL} & Galactic Longitude & \textbf{C7VR} & Radial velocity of source \\
+\textbf{C1STC} & Type of observation & \textbf{C4RX} & Reference X position & \textbf{C7VRD} & Velocity definition code \\
+\textbf{C1TEL} & Telescope name & \textbf{C4RY} & Reference Y position & \textbf{C8AAE} & Aperture efficient \\
+\textbf{C2FL} & EW focus & \textbf{C4SX} & Source X & \textbf{C8ABE} & Beam efficiency \\
+\textbf{C2FR} & Radial focus & \textbf{C4SY} & Source Y & \textbf{C8EF} & Forward spillover \& scattering efficieny \\
+\textbf{C2FV} & NS focus & \textbf{C5AT} & Ambient Temperature & \textbf{C8EL} & Rear spillover \& scattering efficiency \\
+\textbf{C2ORI} & Secondary orientation & \textbf{C5DP} & Dew point & \textbf{C8GN} & Antenna gain \\
+\textbf{C2XPC} & Az/RA pointing correction & \textbf{C5IR} & Refractive index & \textbf{C11VD} & Phase table names \\
+\textbf{C2YPC} & El/Dec pointing correction & \textbf{C5MM} & Atmospheric vapor pressure & \textbf{C12BW} & Bandwidth \\
+\textbf{C3CL} & Length of cycle & \textbf{C5PRS} & Atmospheric pressure & \textbf{C12CF} & Observed frequency \\
+\textbf{C3DAT} & UT date (YYYY.MMDD format) & \textbf{C5RH} & Relative humidity & \textbf{C12CT} & Calibration temperature \\
+\textbf{C3LST} & LST at start & \textbf{C6DX} & Delta X offset & \textbf{C12FR} & Frequency resolution \\
+\textbf{C3NRC} & Number of rx/backend channels & \textbf{C6DY} & Delta Y offset & \textbf{C12RF} & Rest frequency \\
+\textbf{C3NSV} & Number of switching/phase table variables & \textbf{C6FC} & Reference frame coord code & \textbf{C12RST} & Reference system temperature \\
+\textbf{C3PPC} & Number of phases per cycle & \textbf{C6MSA} & Scanning angle & \textbf{C12RT} & Receiver temperature \\
+\textbf{C3SRT} & Integration time & \textbf{C6NP} & Number of grid points & \textbf{C12SST} & Source system temperature \\
+\textbf{C3UT} & UT hour of observation / UT1 & \textbf{C6XGC} & Starting X grid position & \textbf{C12WO} & Water opacity \\
+\textbf{C4AZ} & Azimuth at C3UT & \textbf{C6XNP} & Number of X grid points &   &   \\
+\hline
+\end{tabular}
+\end{table*}
+
+\section{National Radio Astronomy Observatory}
+
+\subsection{12-m Telescope}
+
+The 12-m Telescope was upgraded to write GSDD format data in the
+summer of 1986 \citep{tcus23,1987NRAO30}; requiring that the data
+analysis system was also updated to understand it.
+
+{\color{red}
+Are these PDFL format? Does the 12-m still write in GSDD format?
+VAX floating point?
+}
+
+
+\subsection{UniPOPS}
+\ldots
+
+{\color{red}
+
+  UNIPOPS used SDD format which is like GSD but used IEEE floating
+  point natively rather than VAX floating point \citep{UNIPOPS}.
+
+  SDD format (Fig.~\ref{fig:nraosdd}) in that UNIPOPS document seems slightly different to the
+  JCMT implementation. It also evolved by changing the integer data
+  type. SDD uses the same Class names from GSDD.
+
+  How does PDFL compare to SDD?
+
+}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.5\columnwidth]{sdd-file-layout}
+\end{center}
+\caption{Layout of a UniPOPS data file. The concepts are similar to
+  those used in the GSD format (Fig.~\ref{fig:jcmtgsd}). The bootstrap
+  field describes the basic layout of the file and the index indicates
+  where each of the scans are located in the file. A key difference
+  between GSD and SDD is that GSD contains a single observation
+  whereas an SDD file contains many observations for a single science
+  program.}
+\label{fig:nraosdd}
+\end{figure}
+
+
+\section{James Clerk Maxwell Telescope}
+
+\subsection{Requirements}
+
+During the development of the JCMT software libraries at the Mullard
+Radio Astronomy Observatory a number of options were considered for
+the raw data file format.  The two obvious options were available in the
 astronomical community in the form of the Flexible Image Transport System
 \citep[FITS;][]{1981A&AS...44..363W} and the Starlink Hierarchical
-Data System \citep[HDS;][]{1982QJRAS..23..485D,2015HDS}.
-
-A millimeter observation requires that many items of information are
-stored that are multi-dimensional and time-varying requiring a storage
-system that could support this and be self-describing.
+Data System \citep[HDS;][\ascl{1502.009}]{1982QJRAS..23..485D,2015HDS}.
 
 FITS was discounted as the primary data format because of the large
 amount of overhead required to format the header information when
@@ -246,25 +410,44 @@ data array or table in a file. FITS files at the time were not capable
 of storing binary tables and ASCII tables were all that was possible
 \citep{1988A&AS...73..365H}. It was also felt that the DEC Backup
 Utility was more reliable for transport and archiving than using a
-FITS tape format. It was felt that whilst the FITS community would
+FITS tape format. Whilst the FITS community would
 eventually support multiple data arrays and binary tables, it was not
 possible to wait for that to happen.
 
 HDS was discarded for I/O efficiency reasons and the inability for the
-entire file to be mapped into memory in one operation. Given the
-performance requirements for the JCMT data acquisition system it was
-important that a file could be mapped using VMS system services as a
-Global Section to allow other applications to get read access to the
-contents of the file whilst it was being written. This led to the JCMT
-implementation of the library being known as the Global Section
-Datafile System \citep[GSD;][]{mtin33}\footnote{This naming of the
-  library as GSD eventually led to JCMT users referring to the files
-  as being of ``GSD format'' rather than ``GSDD format''.}.
+entire file to be mapped into memory in one operation. Additionally it
+was felt that the HDS library API required too many calls to do simple
+tasks. One further option was to use the NRAO 12-m file format (PDFL)
+but that also suffered from serious I/O issues and could not be used
+on the acquisition hardware initially targeted for JCMT.
+
+The computer used during testing and commissioning in 1985/86 was a
+VAX 11/730 which had severe performance limitations. This was upgraded
+to a MicroVAX just before operations started at JCMT in 1987 but
+performance was the key design driver: the control system was required
+to minimize the overheads in data capture and therefore maximize the
+observing time.
+
+Given the performance requirements for the JCMT data acquisition
+system it was important that a file could be mapped using VMS system
+services as a Global Section to allow other applications to get read
+access to the contents of the file whilst it was being written.  This
+led to the JCMT implementation of the library being known as the
+Global Section Datafile System \citep[GSD;][]{mtin33}\footnote{This
+  naming of the library as GSD eventually led to JCMT users referring
+  to the files as being of ``GSD format'' rather than ``GSDD
+  format''.}.
 
 These requirements led to a new format being devised and an associated
-I/O library.
+I/O library which used the GSDD data model, with the file format design
+influenced by the NRAO approach to a self-describing GSDD
+implementation and also the concept of an ``in memory data base
+management system'' from the \texttt{MON} library being used in the
+JCMT control system.  JCMT adopted the GSDD data model in the hope
+that downstream the data reduction systems could be compatible through
+the shared metadata conventions.
 
-\section{File Format Design}
+\subsection{File Format Design}
 
 \begin{figure}
 \begin{center}
@@ -281,7 +464,7 @@ The layout of a JCMT GSDD format file is show in
 Fig.~\ref{fig:jcmtgsd} \citep[see also][]{mtdn84}. The file is split
 into three segments: the file descriptor, the item descriptors and the
 data itself. The file descriptor contains a general description of the
-file indicating it's version, the number of items written and the
+file indicating its version, the number of items written and the
 position of the data array. The item descriptors define each of the
 items in terms of the label and units and the position in the data
 array. For array items (GSDD supported up to 5 dimensions), the
@@ -294,79 +477,19 @@ scalar items \texttt{C3NSV} and \texttt{C3PPC}, with a negative number
 of dimensions indicating that an item is a scalar that defines an
 array dimension.
 
-The GSDD JCMT format supports the standard Fortran data
+The JCMT format implementing GSDD supports the standard Fortran data
 types of byte, word, logical, integer, real, double and character
-strings. To simplify the format, character strings have a fixed size
-of 16 characters, item names are fixed at 15 characters and unit
-strings are fixed at 10 characters. The format supported the concept
-of a ``null'' value by reserving the most negative value of each data
-type for that purpose (using a single space as the null character value
-and false as the null logical value). Additionally, the JCMT GSD
-library supported data type conversion, allowing a user to request a
-value in a different type to how it was stored natively in the file.
+strings, and uses VAX floating point format. To simplify the format,
+character strings have a fixed size of 16 characters, item names are
+fixed at 15 characters and unit strings are fixed at 10
+characters. The format supported the concept of a ``null'' value by
+reserving the most negative value of each data type for that purpose
+(using a single space as the null character value and false as the
+null logical value). Additionally, the JCMT GSD library supported data
+type conversion, allowing a user to request a value in a different
+type to how it was stored natively in the file.
 
-\section{Data Model}
-
-To allow interoperability of data files between differing
-observatories it was also important to develop a shared data model,
-taking particular care to allow simple interchange of reduced spectra
-between software packages. Reduced data has fewer instrument-specific
-anomalies and was deemed to be the simplest first step, requiring
-sufficient metadata to specify the coordinates of the spectrum on the
-sky, the frequency scale and the calibrated
-units of the spectrum.
-
-\begin{table*}
-\caption{Model classes used by the various GSDD models.}
-\label{tab:classes}
-\begin{center}
-\begin{tabular}{lll}
-\hline
-Class number & JCMT Meaning & NRAO meaning\\ \hline
-1 & Identity Parameters & Basic Information\\
-2 & Time Parameters & Pointing Parameters \\
-3 & Position Parameters & Observing Parameters\\
-4 & Pointing Parameters & Positions\\
-5 & Environment Parameters & Environment\\
-6 & Mapping Parameters & Map Parameters\\
-7 & Velocity Parameters & Data Parameters\\
-8 & Engineering Parameters & Engineering Parameters \\
-9 & Data Parameters & Telescope Dependent Parameters\\
-10 & Receiver Parameters & Open Data Reduction Parameters\\
-11 & Phase Control Table & Phase Block \\
-12 & Phase Value Table & Descriptor Block for Each Receiver Channel\\
-13 & Phase Timing Table & Reduction Parameters \\
-14 & Data Value Table & --- \\
-15 & Pointing History & --- \\
-55 & Inclinometry & --- \\
-\hline
-\end{tabular}
-\end{center}
-\end{table*}
-
-When designing the model related items were grouped into numbered
-classes and the parameter name was prefixed by that class number. For
-example \texttt{C13DAT} referred to the spectrum and bolometer data,
-\texttt{C1SNO} the scan number, and \texttt{C7VR} the source radial velocity.
-
-At the JCMT these ``NRAO'' names were mapped to local equivalents in
-the acquisition computers (for example \texttt{C12RF}, the rest
-frequency, mapped to \texttt{FE\_NUREST} in the acquisition system and
-was equivalent to the \texttt{RESTFREQ} FITS keyword). A full list of
-the equivalences can be found in \citet{SUN229}.
-
-{\color{red}
-Some of these class names now seem strange given that
-\texttt{C13DAT} is the data of interest but is not in Class 14, and
-the time, \texttt{C3DAT} is not in Class 2\ldots Is there an NRAO
-data model document anywhere?
-}
-
-
-
-\section{Format Usage}
-
-\subsection{James Clerk Maxwell Telescope}
+\subsection{Format Usage}
 
 The JCMT took data in the GSDD format for all instruments (heterodyne
 and continuum) from the telescope commissioning (circa 1986) to the
@@ -387,109 +510,120 @@ Centre and approximately 440\,000 GSDD format files are in the
 archive, totalling approximately 30\,GB. In order to access these data
 files on a Unix system a new read-only version of the GSD library was
 written in C \citep{SUN229} and integrated into the standard data
-reduction tools SPECX \citep[][\ascl{1310.008}]{SPECX}, COADD
+reduction tools SPECX \citep[][\ascl{1310.008}]{SPECX,1990JCMTP...9...25P}, COADD
 \citep[][\ascl{1411.020}]{COADD}  and JCMTDR
 \citep[][\ascl{1406.019}]{SUN132}.  The GSDD format is relatively
 simple and the main complication in the new C (and later pure Java)
 implementations was the conversion of VAX floating point format to
-IEEE format.
+IEEE format. Furthermore, computers were significantly more powerful
+by the time the Unix version was written that there was no need to use
+memory mapping; the entire contents of a file is read into memory.
+GSD was solely used as a data acquisition format at JCMT, with there
+being one application on the VAX to enable the editing of contents if
+there was a need to fix some metadata. Data reduction applications
+never wrote data out in GSD format and the Unix port of the library
+did not have the ability to write a GSD file.
+A Perl interface to the Unix C GSD library \citep{1999ASPC..172..494J}
+was implemented to allow the preview of spectra for remote observers
+when doing flexible scheduling \citep{1997ASPC..125..401J}.
 
 There is currently a plan at the Joint Astronomy Centre to convert the
-heterodyne files to the modern ACSIS format such that they can be
+heterodyne files to the modern ACSIS format \citep{OCS_ICD_022} such that they can be
 reduced using the standard JCMT data reduction pipelines
-\citep{2015ACSISDR}. The standard SMURF data reduction application
+\citep{2015ACSISDR,2008ASPC..394..565J}. The standard SMURF data reduction application
 (\ascl{1310.007}\nocite{2013ascl.soft10007J}) contains the ability to
 read GSD files and migrate them to the modern format \citep{SUN259}.
 
-The GSDD files from the earlier continuum instruments, such as UKT14 \citep{1990MNRAS.243..126D}, will
-remain in the archive although they will not be visible in the JCMT
-Science Archive \citep{2015Economou}.
+The GSD files from the earlier continuum instruments, such as UKT14
+\citep{1990MNRAS.243..126D}, will remain in the archive although they
+will not be visible in the JCMT Science Archive \citep{2015Economou}.
 
-\subsection{National Radio Astronomy Observatory}
-
-\ldots
-
-{\color{red}
-
-  UNIPOPS used SDD format which is like GSD but used IEEE floating
-  point natively rather than VAX floating point \citep{UNIPOPS}.
-
-  SDD format in that UNIPOPS document seems slightly different to the
-  JCMT implementation. It also evolved by changing the integer data
-  type.
-
-  Was the NRAO format the same on the VAX? Was it used for acquisition
-  or just data processing?
-}
 
 \section{Retrospective}
 
-{\color{red}
+GSDD has had a mixed history and in this section we look back on the
+good and bad of GSDD
 
-What happened at NRAO? Did IRAM take any notice of GSDD? They looked
-like they were part of the 1986 discussion.
+\subsection{The hidden standard}
 
-There was a meeting at Green Bank in late
+The key failure of GSDD was that most of the users of the format did
+not realise that there was a standard and therefore there was no
+impetus for people to continue to communicate as systems were
+evolved. The initial developers of the JCMT system were not the people
+maintaining the acquisitions software in Hawaii; the lead developer of
+the 12m GSDD system left NRAO before the end of the
+decade. Interviewing people from NRAO and JCMT following the
+respective implementations of GSDD compatible systems it was very rare
+for anyone to remember that there was an intent for a standard to be
+in place. As can be seen from the evolution of the JCMT class names
+and the divergence of data models, items were added to the respective
+data formats without any communication between the nominal GSDD
+partners. 12-m development continued with tweaking of the acquisition
+and reduction formats independently.  As the GSDD model evolved, the
+NRAO implementation resulted in 24 items that are not present in the
+JCMT implementation (not including the classes explicitly specified to
+be locally defined), and 154 items that are defined by JCMT but not
+defined by NRAO.
+
+The goal of unified data reduction software understanding GSDD never
+materialized. Indeed, interoperability usually occurred, if at all, by exporting
+the files into a completely different format that could be understood
+by \htmladdnormallinkfoot{\textsc{class}}{http://www.iram.fr/IRAMFR/GILDAS}
+\citep[][\ascl{1305.010}]{2005sf2a.conf..721P}.
+
+In summary, it is impossible for a standard to survive as a standard
+if no-one knows they are using a standard.
+
+\subsection{A success apart}
+
+Despite the lack of communication between implementors and the drift
+in specifications, the GSDD format itself can be thought of as a
+success when the format is looked at independently. The JCMT GSD
+format was used for many years and files in this format are still
+available. The related format continues to be used at the 12-m Telescope.
+
+
+\subsection{Feeder for SDFITS}
+
+GSDD was a very early attempt for independently run observatories to
+agree on a shared data model. The goals of true interoperability of
+raw telescope data amongst multiple data reduction software packages
+was an important goal that was ahead of its time. Arguably they key
+outcome of GSDD was that it motivated people to work together towards
+a shared data format based on FITS. The GSDD experience fed in to a
+1989 workshop held at Green Bank in late
 1989\footnote{\url{http://fits.gsfc.nasa.gov/dishfits/dishfits.8910}}
-to discuss how the millimeter community could migrate to a
-single-dish format based on FITS.
+that discussed how the millimeter community could migrate to a
+single-dish FITS format. This was a key motivator for the adoption
+into the FITS standard of binary tables \citep{1995A&AS..113..159C}
+and ultimately led to the SDFITS standard \citep{2000ASPC..216..243G}.
 
-Looks like this helped drive the adoption of binary tables in FITS
-\citep{1995A&AS..113..159C} and ultimately the SDFITS standard
-\citep{2000ASPC..216..243G}. Collaboration between JCMT and NRAO
-dissolved as JCMT continued to use and develop ``GSD'' but NRAO
-migrated to SDFITS.
+\subsection{Communication}
 
-Was GSD a successful format? Yes, in terms of its longevity at JCMT.
-
-When the JCMT control system was built, computing performance was a
-major concern. For this reason HDS and FITS, which were not designed
-for real-time operation and were deemed too slow. The JCMT software
-team had experience of in-memory data management - those who had
-worked at MRAO had used shared memory for data capture and those from
-SERC who had worked with the ADAM MON system knew how to manage a
-shared database. The GSD software library took ideas from the MON
-system to provide a suite of routines for memory management that
-provided the required performance. It was a forerunner of the
-in-memory databases we see today.
-
-Are there any lessons on the standardization process that we can
-report on? Why did it fail? What could have been done differently?
-
-GSD was documented and stable. The UK had Starlink to publish the
+The JCMT GSD library was documented and stable and the UK had the
+Starlink Project \citep{1982QJRAS..23..485D} to publish the
 software and data files to the UK community. Access to that network
 from other countries, such as the US, was problematic, and hindered
 the spread of the software and prevented take up. Fears of lack of
 support also drive people to create their own in-house
-solutions. Today, the internet and the culture of open-source
+solutions. Today, 30 years on, the Internet and the culture of open-source
 development make that much less likely and a good idea has a better
 chance of surviving and growing.
 
-}
-
-It was solely used as a data acquisition format at JCMT, with there
-being one application on the VAX to enable the editing of contents if
-there was a need to fix some metadata. Data reduction applications
-never wrote data out in GSDD format, as evidenced by there not being
-any requirement to have the ability to write new files in the
-applications ported to Unix.
-
-{\color{red}
-A perl interface to the Unix C GSD library to allow preview of spectra
-for remote observers when doing flexible scheduling
-\citep{1997ASPC..125..401J}.
-}
-
-
-
-
 \section{Conclusions}
 
-{\color{red}
-Maybe will be covered in previous section.
-}
+The GSDD data model was used at NRAO and JCMT for many years
+but failed in its original goal of unifying single dish millimetre
+astronomy and simplifying data reduction software reuse. As data
+reduction packages have evolved it has become clear that the most
+important aspect of such packages is format conversion such that the
+software can map the external data model to an internal data model. It
+is simply too hard to motivate individual observatories to target a
+global standard for raw data. Interoperability of reduced data
+products has significantly improved since the mid-1980s such that
+there is a general expectation that reduced data cubes will be
+viewable in general tools.
 
-The GSDD format was used for twenty years at the JCMT\ldots
 
 \section*{Acknowledgments}
 
