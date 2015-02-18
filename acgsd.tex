@@ -622,6 +622,23 @@ by \textsc{class}.
 In summary, it is impossible for a standard to survive as a standard
 if no-one knows they are using a standard.
 
+\subsection{Embrace Flexibility}
+
+A major blessing of GSDD is that the standard actually allowed sites
+to alter the format and data model as they saw fit.  But, sites had to
+follow some minor rules in order to guarantee that any other site's
+GSDD reader could still manage the files.  Such rules as: don't touch
+the pre-defined keywords (which were to have predefined byte sizes and
+were always to be in a certain order at the start of a class), you're
+free to add new keywords to any class but only at the end of the
+pre-defined section of each class, modify class 9 for your particular
+telescope, hack away at class 10 in any way you want, and be sure to
+use the well-defined pre-amble to designate the byte at which every
+class begins.  We maintain that GSDD was actually a very good
+implementation for its time because these rules could be easily
+adhered to while simultaneously giving sufficient versatility to each
+telescope.
+
 \subsection{A success apart}
 
 Despite the lack of communication between implementors and the drift
@@ -649,13 +666,26 @@ and ultimately led to the SDFITS standard \citep{2000ASPC..216..243G}.
 
 \subsection{Communication}
 
+A failing of GSDD is that when developers had real, practical reasons
+to break a rule (e.g., needing a double precision word for a
+pre-defined keyword when the standard required single precision, a
+string needing 32 char instead of 16, changing the byte representation
+from that of a VAX to IEEE), a forum had not been set up that could
+negotiate modifications to the standard.  This is unlike the FITS
+world where revisions to the definition have to pass through a
+standards group.  A key lesson is that when a first-class standard is
+set up, the agreement should go beyond the expectation that ad hoc
+conversations between staff at different observatories are a
+sufficient means of keeping the standard viable.
+
 The JCMT GSD library was documented and stable and the UK had the
-Starlink Project \citep{1982QJRAS..23..485D} to publish the
-software and data files to the UK community. Access to that network
-from other countries, such as the US, was problematic, and hindered
-the spread of the software and prevented take up. Fears of lack of
-support also drive people to create their own in-house
-solutions. Today, 30 years on, the Internet and the culture of open-source
+Starlink Project \citep{1982QJRAS..23..485D} to publish the software
+and data files to the UK community. Access to that network from other
+countries, such as the US, was problematic, and hindered the spread of
+the software and prevented take up. Fears of lack of support also
+drive people to create their own in-house solutions.
+
+Today, 30 years on, the Internet and the culture of open-source
 development make that much less likely and a good idea has a better
 chance of surviving and growing.
 
