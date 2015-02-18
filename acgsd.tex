@@ -639,6 +639,15 @@ implementation for its time because these rules could be easily
 adhered to while simultaneously giving sufficient versatility to each
 telescope.
 
+\subsection{Clear separation of model from file format}
+
+Whether by accident or design, the GSDD standard resulted in multiple
+software implementations writing the data to disk in different formats
+and using different techniques. The JCMT GSD format was never written
+on anything other than a VAX but the NRAO format migrated from PDFL to
+SDD. GSDD benefited by explicitly defining the data model for
+single-dish observing distinct from bytes on the disk.
+
 \subsection{A success apart}
 
 Despite the lack of communication between implementors and the drift
