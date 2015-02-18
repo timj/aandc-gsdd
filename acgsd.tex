@@ -362,22 +362,56 @@ VAX floating point?
 
 
 \subsection{UniPOPS}
-\ldots
 
-{\color{red}
+In 1988 the NRAO decided for a number of reasons to unify the data
+reduction systems for its single-dish telescopes: the Tucson 12-m, and
+the Green Bank 300ft and 140ft telescopes.  At the time all three
+telescopes used what looked like very similar data reduction system,
+the People Oriented Parsing System (POPS) {\color{red} (need
+  reference)}.  But, at the code level the applications in Green Bank
+and Tucson had been diverging rapidly since the early 1980's,
+essentially due to the different computer architectures at the two
+sites (early 1970's Modcomps in Green Bank and mid-1980 DEC VAX's in
+Tuscon).  The NRAO wanted to reduce maintenance costs as different
+staff was needed to maintain and develop each version.  The NRAO was
+also migrating to Unix-based (primarily Sun) computers, a change that
+would require major modifications to POPS.  {\color{red} (Do we want to
+  mention this was also when Betty and Lorrie Morgan left the NRAO,
+  which we anticipated would severely reduce further development of
+  independent versions of POPS?)}  The unified analysis system, UniPOPS
+\citep{UNIPOPS} {\color{red} (can we get ASCL entry? Need source
+  code.)}, was started early 1989 and first released to users early
+1991.  Although the 300ft collapsed in 1988, the 140ft was
+decommissioned for astronomy in 1999, UniPOPS is still in use today at
+some level by the University of Arizona who took over the running of
+the 12-m telescope in 2004 {\color{red} (check date)}.
 
-  UNIPOPS used SDD format which is like GSD but used IEEE floating
-  point natively rather than VAX floating point \citep{UNIPOPS}.
+Since the majority of the FORTRAN code that was modified to create
+UniPOPS came from the 12-m version of POPS, the UniPOPS developers
+decided that UniPOPS would also inherit with little modification the
+underlying data structure and export formats of the 12-m version of
+POPS.  The UniPOPS data structure is, thus, identical to the PDFL
+export files, which was the 12-m version of GSDD.  Adopting 140\,ft
+and 300\,ft data to use the SDD format of SDD {\color{red} (typo?)} was
+relatively easy, good evidence that GSDD was indeed a rather versatile
+and useful standard.  {\color{red} (SDD is not spelled out at first
+  usage.)}
 
-  SDD format (Fig.~\ref{fig:nraosdd}) in that UNIPOPS document seems slightly different to the
-  JCMT implementation. It also evolved by changing the integer data
-  type. SDD uses the same Class names from GSDD.
+Two modifications were made to the PDFL files when they were
+incorporated into UniPOPS, solely to boost the performance of the
+system.  The binary representation was changed from that of the DEC
+architecture to that of Sun workstations.  And, the index that was at
+the start of a PDFL file was extended to include such items as the sky
+location and observing frequency so as to make it possible to do more
+efficient searches through the data.  To distinguish the UniPOPS
+Sun-specific exported files from VAX PDFL files, the NRAO developers
+changed the name of the export format to SDD.  Other than a
+modification that expanded the capabilities of the index section of
+the NRAO SDD files, the SDD format adopted for UniPOPS
+(Fig.~\ref{fig:nraosdd}) remained unchanged until UniPOPS was retired
+at the NRAO in the mid-2000's.
 
-  How does PDFL compare to SDD?
-
-}
-
-\begin{figure}
+\begin{figure}[t]
 \begin{center}
 \includegraphics[width=0.5\columnwidth]{sdd-file-layout}
 \end{center}
@@ -391,6 +425,23 @@ VAX floating point?
 \label{fig:nraosdd}
 \end{figure}
 
+By the late 1980's, users of the NRAO telescopes were very interested
+in seeing a FITS format implemented for the NRAO's single-dish
+telescopes (see \S\,\ref{sec:sdfits}). By the mid 1990's,
+UniPOPS could export and import data in SDFITS, and SDD, as well as many
+of the historical NRAO formats.  The NRAO found that very few users
+went away with SDFITs format while most took home SDD files.  Since
+users were installing UniPOPs on their home computers, they probably
+found transporting SDD files as being a bit more convenient than
+SDFITS files.  It was probably very rare that a UniPOPS SDD file was
+imported into another analysis system.  For example, a separate
+utility was developed that would prepare data files that could be
+imported into the
+\htmladdnormallinkfoot{\textsc{class}}{http://www.iram.fr/IRAMFR/GILDAS}
+\citep[][\ascl{1305.010}]{2005sf2a.conf..721P} data reduction
+system. Furthermore, when SDFITs was released, few FITS readers at the
+time could actually usefully import binary tables.  Thus, we suspect
+that frequent observers grew into the habit of avoiding SDFITS files.
 
 \section{James Clerk Maxwell Telescope}
 
@@ -584,6 +635,7 @@ available. The related format continues to be used at the 12-m Telescope.
 
 
 \subsection{Feeder for SDFITS}
+\label{sec:sdfits}
 
 GSDD was a very early attempt for independently run observatories to
 agree on a shared data model. The goals of true interoperability of
