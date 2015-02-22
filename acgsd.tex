@@ -182,9 +182,9 @@ Cambridge, CB3~0HE, UK}
 
 The General Single-Dish Data format (GSDD) was developed in the
 mid-1980s as a data model to support millimeter and submillimeter
-instrumentation at NRAO, JCMT and IRAM. We discuss the implementation
-of the resultant file formats, provide an overview of the GSDD requirements and
-associated data model, cover its usage in the observatories and
+instrumentation at NRAO, JCMT and IRAM. We provide an overview of the GSDD
+requirements and associated data model, discuss the implementation
+of the resultant file formats, describe its usage in the observatories and
 provide a retrospective on the format.
 
 \end{abstract}
@@ -252,11 +252,22 @@ mm/submm time-series data including many binary tables.
 
 The General Single Dish Data format (GSDD) was developed in the 1980s
 to solve the data processing and acquisition requirements of the NRAO,
-IRAM, University of Arizona and JCMT observatories. The format, agreed
+IRAM, University of Arizona and JCMT observatories.
+Initial discussions between NRAO 12m and IRAM staff began in 1983, and
+subsequently included JCMT representatives. At around this same time,
+however, IRAM started development of the Continuum and Line Analysis
+Single-dish Software
+\htmladdnormallinkfoot{\textsc{class}}{http://www.iram.fr/IRAMFR/GILDAS}
+\citep[][\ascl{1305.010}]{2005sf2a.conf..721P} data reduction
+package, and they did not follow up on the GSDD initiative.
+The GSDD format, agreed
 in 1986 \citep[see e.g.,][]{mtdn84,1987NRAO30}, consisted of a data
 model for specifying millimeter and submillimeter observations
 (continuum and heterodyne instrumentation) and a specification of how
 the bytes would be represented on disk.
+The format was described in both a JCMT technical note and an NRAO Newsletter
+article, but a formal definition of the format was not published in the
+literature.
 
 \section{Data Model}
 
@@ -264,7 +275,7 @@ To allow interoperability of data files between differing
 observatories it was important to develop a shared data model,
 taking particular care to allow simple interchange of reduced spectra
 between software packages. Reduced data has fewer instrument-specific
-anomalies and was deemed to be the simplest first step, requiring
+variations and was deemed to be the simplest first step, requiring
 sufficient metadata to specify the coordinates of the spectrum on the
 sky, the frequency scale and the calibrated
 units of the spectrum.
@@ -369,22 +380,19 @@ analysis system was also updated to understand it.
 In 1988 the NRAO decided for a number of reasons to unify the data
 reduction systems for its single-dish telescopes: the Tucson 12-m, and
 the Green Bank 300ft and 140ft telescopes.  At the time all three
-telescopes used what looked like very similar data reduction system,
+telescopes used what looked like a very similar data reduction system,
 the People Oriented Parsing System (POPS) {\color{red} (need
   reference)}.  But, at the code level the applications in Green Bank
 and Tucson had been diverging rapidly since the early 1980's,
 essentially due to the different computer architectures at the two
 sites (early 1970's Modcomps in Green Bank and mid-1980 DEC VAX's in
 Tuscon).  The NRAO wanted to reduce maintenance costs as different
-staff was needed to maintain and develop each version.  The NRAO was
+staff were needed to maintain and develop each version.  The NRAO was
 also migrating to Unix-based (primarily Sun) computers, a change that
-would require major modifications to POPS.  {\color{red} (Do we want to
-  mention this was also when Betty and Lorrie Morgan left the NRAO,
-  which we anticipated would severely reduce further development of
-  independent versions of POPS?)}  The unified analysis system, UniPOPS
+would require major modifications to POPS. The unified analysis system, UniPOPS
 \citep{UNIPOPS} {\color{red} (can we get ASCL entry? Need source
-  code.)}, was started early 1989 and first released to users early
-1991.  Although the 300ft collapsed in 1988, the 140ft was
+  code.)}, was started in early 1989 and first released to users in early
+1991.  Although the 300ft collapsed in 1988, and the 140ft was
 decommissioned for astronomy in 1999, UniPOPS is still in use today at
 some level by the University of Arizona who took over the running of
 the 12-m telescope in 2004 {\color{red} (check date)}.
@@ -393,12 +401,11 @@ Since the majority of the FORTRAN code that was modified to create
 UniPOPS came from the 12-m version of POPS, the UniPOPS developers
 decided that UniPOPS would also inherit with little modification the
 underlying data structure and export formats of the 12-m version of
-POPS.  The UniPOPS data structure is, thus, identical to the PDFL
-export files, which was the 12-m version of GSDD.  Adopting 140\,ft
-and 300\,ft data to use the SDD format of SDD {\color{red} (typo?)} was
+POPS.  The UniPOPS data structure is, thus, identical to the POPS Data File
+(PDFL) export file format, which was the 12-m version of GSDD.  Adapting 140\,ft
+and 300\,ft data to use the GSDD format was
 relatively easy, good evidence that GSDD was indeed a rather versatile
-and useful standard.  {\color{red} (SDD is not spelled out at first
-  usage.)}
+and useful standard.
 
 Two modifications were made to the PDFL files when they were
 incorporated into UniPOPS, solely to boost the performance of the
@@ -408,9 +415,9 @@ the start of a PDFL file was extended to include such items as the sky
 location and observing frequency so as to make it possible to do more
 efficient searches through the data.  To distinguish the UniPOPS
 Sun-specific exported files from VAX PDFL files, the NRAO developers
-changed the name of the export format to SDD.  Other than a
-modification that expanded the capabilities of the index section of
-the NRAO SDD files, the SDD format adopted for UniPOPS
+changed the name of the export format to Single Dish Data (SDD) format.
+Other than a modification that expanded the capabilities of the index
+section of the NRAO SDD files, the SDD format adopted for UniPOPS
 (Fig.~\ref{fig:nraosdd}) remained unchanged until UniPOPS was retired
 at the NRAO in the mid-2000's.
 
@@ -431,18 +438,17 @@ at the NRAO in the mid-2000's.
 By the late 1980's, users of the NRAO telescopes were very interested
 in seeing a FITS format implemented for the NRAO's single-dish
 telescopes (see \S\,\ref{sec:sdfits}). By the mid 1990's,
-UniPOPS could export and import data in SDFITS, and SDD, as well as many
+UniPOPS could export and import data in Single Dish FITS (SDFITS) and
+SDD formats, as well as many
 of the historical NRAO formats.  The NRAO found that very few users
-went away with SDFITs format while most took home SDD files.  Since
+went away with SDFITs format; most took home SDD files.  Since
 users were installing UniPOPs on their home computers, they probably
-found transporting SDD files as being a bit more convenient than
+found transporting SDD files more convenient than using
 SDFITS files.  It was probably very rare that a UniPOPS SDD file was
 imported into another analysis system.  For example, a separate
 utility was developed that would prepare data files that could be
-imported into the
-\htmladdnormallinkfoot{\textsc{class}}{http://www.iram.fr/IRAMFR/GILDAS}
-\citep[][\ascl{1305.010}]{2005sf2a.conf..721P} data reduction
-system. Furthermore, when SDFITs was released, few FITS readers at the
+imported into the {\textsc CLASS} package.
+Furthermore, when SDFITs was released, few FITS readers at the
 time could actually usefully import binary tables.  Thus, we suspect
 that frequent observers grew into the habit of avoiding SDFITS files.
 
@@ -451,15 +457,16 @@ that frequent observers grew into the habit of avoiding SDFITS files.
 \subsection{Requirements}
 
 During the development of the JCMT software libraries at the Mullard
-Radio Astronomy Observatory a number of options were considered for
-the raw data file format.  The two obvious options were available in the
+Radio Astronomy Observatory, a number of options were considered for
+the raw data file format.  Two obvious options were available in the
 astronomical community in the form of the Flexible Image Transport System
 \citep[FITS;][]{1981A&AS...44..363W} and the Starlink Hierarchical
 Data System \citep[HDS;][\ascl{1502.009}]{1982QJRAS..23..485D,2015HDS}.
 
 FITS was discounted as the primary data format because of the large
 amount of overhead required to format the header information when
-writing files and the inability of the format to store more than one
+writing files and the inability of the format (at that time) to store
+more than one
 data array or table in a file. FITS files at the time were not capable
 of storing binary tables and ASCII tables were all that was possible
 \citep{1988A&AS...73..365H}. It was also felt that the DEC Backup
@@ -487,7 +494,9 @@ system it was important that a file could be mapped using VMS system
 services as a Global Section to allow other applications to get read
 access to the contents of the file whilst it was being written.  This
 led to the JCMT implementation of the library being known as the
-Global Section Datafile System \citep[GSD;][]{mtin33}\footnote{This
+Global Section Datafile System \citep[GSD;][]{mtin33}\footnote{In retrospect,
+the similarity of acronyms between GSD and GSDD -- two quite separate
+concpepts -- was rather unfortunate. The
   naming of the library as GSD eventually led to JCMT users referring
   to the files as being of ``GSD format'' rather than ``GSDD
   format''.}.
@@ -507,14 +516,14 @@ the shared metadata conventions.
 \begin{center}
 \includegraphics[width=0.5\columnwidth]{gsd-file-layout}
 \end{center}
-\caption{Layout of a JCMT GSDD data file. The file descriptor indicates
+\caption{Layout of a JCMT GSD data file. The file descriptor indicates
 where the data starts and the number of items in the data. The item
 descriptors describe each of those items and where they are located in
 the data segment.}
 \label{fig:jcmtgsd}
 \end{figure}
 
-The layout of a JCMT GSDD format file is show in
+The layout of a JCMT GSD format file is shown in
 Fig.~\ref{fig:jcmtgsd} \citep[see also][]{mtdn84}. The file is split
 into three segments: the file descriptor, the item descriptors and the
 data itself. The file descriptor contains a general description of the
@@ -559,7 +568,7 @@ in Fortran and making extensive use of VAX system calls. When
 the last instrument moved off of the VAX/VMS data acquisitions computers
 the format could no longer be used and was retired.
 
-The GSDD data files were archived at the Canadian Astronomy Data
+The GSDD data files are archived at the Canadian Astronomy Data
 Centre and approximately 440\,000 GSDD format files are in the
 archive, totalling approximately 30\,GB. In order to access these data
 files on a Unix system a new read-only version of the GSD library was
@@ -569,7 +578,7 @@ reduction tools SPECX \citep[][\ascl{1310.008}]{SPECX,1990JCMTP...9...25P}, COAD
 \citep[][\ascl{1406.019}]{SUN132}.  The GSDD format is relatively
 simple and the main complication in the new C (and later pure Java)
 implementations was the conversion of VAX floating point format to
-IEEE format. Furthermore, computers were significantly more powerful
+IEEE format. Furthermore, computers were sufficiently more powerful
 by the time the Unix version was written that there was no need to use
 memory mapping; the entire contents of a file is read into memory.
 GSD was solely used as a data acquisition format at JCMT, with there
@@ -601,13 +610,13 @@ good and bad of GSDD.
 \subsection{The hidden standard}
 
 The key failure of GSDD was that most of the users of the format did
-not realize that there was a standard and therefore there was no
-impetus for people to continue to communicate as systems were
+not realize that it was a standard and therefore there was no
+impetus for people to continue to communicate as systems
 evolved. The initial developers of the JCMT system were not the people
 maintaining the acquisitions software in Hawaii; the lead developer of
-the 12m GSDD system left NRAO before the end of the
-decade. Interviewing people from NRAO and JCMT following the
-respective implementations of GSDD compatible systems it was very rare
+the 12m GSDD system left NRAO before the end of the 1980s.
+Interviewing people from NRAO and JCMT following the
+respective implementations of GSDD compatible systems, it was very rare
 for anyone to remember that there was an intent for a standard to be
 in place. As can be seen from the evolution of the JCMT class names
 and the divergence of data models, items were added to the respective
@@ -622,22 +631,22 @@ defined by NRAO.
 The goal of unified data reduction software understanding GSDD never
 materialized. Indeed, interoperability usually occurred, if at all, by exporting
 the files into a completely different format that could be understood
-by \textsc{class}.
+by CLASS.
 
-In summary, it is impossible for a standard to survive as a standard
+In conclusion, it is impossible for a standard to survive as a standard
 if no-one knows they are using a standard.
 
 \subsection{Embrace Flexibility}
 
-A major blessing of GSDD is that the standard actually allowed sites
+A major advantage of GSDD is that the standard actually allowed sites
 to alter the format and data model as they saw fit.  But, sites had to
 follow some minor rules in order to guarantee that any other site's
-GSDD reader could still manage the files.  Such rules as: don't touch
+GSDD reader could still manage the files.  Such rules as: do not touch
 the pre-defined keywords (which were to have predefined byte sizes and
-were always to be in a certain order at the start of a class), you're
+were always to be in a certain order at the start of a class), you are
 free to add new keywords to any class but only at the end of the
 pre-defined section of each class, modify class 9 for your particular
-telescope, hack away at class 10 in any way you want, and be sure to
+telescope, modify class 10 as convenient, and be sure to
 use the well-defined pre-amble to designate the byte at which every
 class begins.  We maintain that GSDD was actually a very good
 implementation for its time because these rules could be easily
@@ -657,7 +666,7 @@ single-dish observing distinct from bytes on the disk.
 
 Despite the lack of communication between implementors and the drift
 in specifications, the GSDD format itself can be thought of as a
-success when the format is looked at independently. The JCMT GSD
+success when the uses of the format are looked at independently. The JCMT GSD
 format was used for many years and files in this format are still
 available. The related format continues to be used at the 12-m Telescope.
 
