@@ -114,6 +114,7 @@
 % Aim to be consistent, and correct, about how we refer to sections
 \newcommand*\secref[1]{Sect.~\ref{#1}}
 \newcommand*\appref[1]{\ref{#1}}
+\newcommand{\ascl}[1]{\href{http://www.ascl.net/#1}{ascl:#1}}
 
 \begin{document}
 
@@ -140,7 +141,8 @@
 %% \address{Address\fnref{label3}}
 %% \fntext[label3]{}
 
-\title{The General Single-Dish Data Format: A Retrospective}
+\title{The General Single-Dish Data Format: A Retrospective\tnoteref{ascl}}
+\tnotetext[ascl]{These codes are registered at the ASCL with the code entries \ascl{1503.009} and \ascl{1503.007}.}
 
 %% use optional labels to link authors explicitly to addresses:
 %% \author[label1,label2]{<author name>}
@@ -222,7 +224,7 @@ history and philosophy of astronomy
 %% Misc
 
 %% Links
-\newcommand{\ascl}[1]{\href{http://www.ascl.net/#1}{ascl:#1}}
+
 
 %% main text
 
