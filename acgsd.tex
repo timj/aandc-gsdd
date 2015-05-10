@@ -319,9 +319,11 @@ was agreed.\footnote{Given the agreement in item names, it is likely
   that the class names are due to a documentation error at JCMT rather
   than an implementation error at JCMT.} Despite this documented
 difference in class naming \citep{mtdn85}, 71 data items were named
-consistently in the NRAO and JCMT implementations, and those are
-detailed in Table~\ref{tab:core}. For example \texttt{C13DAT} referred
-to the spectrum and continuum data, \texttt{C1SNO} the scan number,
+consistently in the NRAO and JCMT implementations\footnote{72 if the
+telescope-specific \texttt{C9OT}, Observing Tolerance, item is included which was present in the
+NRAO 12m definition and at JCMT but not used for Green Bank} and those are
+detailed in Table~\ref{tab:core}. For example \texttt{C3DAT} referred
+to the UT date of the observation, \texttt{C1SNO} the scan number,
 and \texttt{C7VR} the source radial velocity.
 
 At the JCMT these GSDD names (known locally as the ``NRAO'' names)
@@ -334,11 +336,12 @@ the equivalences for JCMT can be found in \citet{SUN229}.
 One key feature of the GSDD design was that some classes were
 explicitly reserved for local use. Class 9 was used for telescope
 dependent parameters and the defined set differed between Green Bank
-and the 12m with JCMT not using class 9 at all.
+and the 12m with JCMT adopting a single item, \texttt{C9OT} from the 12m.
 
 \begin{table*}[t]
 \centering
-\caption{Core components of GSDD data model.}
+\caption{Core components of GSDD data model present in both NRAO and
+  JCMT implementations.}
 \label{tab:core}
 \begin{tabular}{|lp{1.5in}|lp{1.5in}|lp{1.5in}|}
 \hline
@@ -350,7 +353,7 @@ and the 12m with JCMT not using class 9 at all.
 \textbf{C1RCV} & Frontend & \textbf{C4GB} & Galactic Latitude & \textbf{C7VC} & Velocity correction \\
 \textbf{C1SNO} & Scan number / Observation number & \textbf{C4GL} & Galactic Longitude & \textbf{C7VR} & Radial velocity of source \\
 \textbf{C1STC} & Type of observation & \textbf{C4RX} & Reference X position & \textbf{C7VRD} & Velocity definition code \\
-\textbf{C1TEL} & Telescope name & \textbf{C4RY} & Reference Y position & \textbf{C8AAE} & Aperture efficient \\
+\textbf{C1TEL} & Telescope name & \textbf{C4RY} & Reference Y position & \textbf{C8AAE} & Aperture efficiency \\
 \textbf{C2FL} & EW focus & \textbf{C4SX} & Source X & \textbf{C8ABE} & Beam efficiency \\
 \textbf{C2FR} & Radial focus & \textbf{C4SY} & Source Y & \textbf{C8EF} & Forward spillover \& scattering efficiency \\
 \textbf{C2FV} & NS focus & \textbf{C5AT} & Ambient Temperature & \textbf{C8EL} & Rear spillover \& scattering efficiency \\
@@ -369,6 +372,92 @@ and the 12m with JCMT not using class 9 at all.
 \hline
 \end{tabular}
 \end{table*}
+
+The NRAO implementation, not including class 9, includes 26 items not
+found in the JCMT version. The reasons they were not adopted at JCMT
+are:
+
+\begin{description}
+
+\item[\texttt{C1DLN} \texttt{C1HLN}] are not needed at JCMT
+  because the length of the header region and the length of the data
+  region are encoded in the file format design.
+
+\item[\texttt{C1SNA}] is the source object name and exists as two separate
+  items at JCMT, \texttt{C1SNA1} and \texttt{C1SNA2}, to allow the
+  object name to be specified in two parts or with an alternative name
+  given. \texttt{C1SNA1} is the primary source name and is equivalent
+  to the \texttt{OBJECT} FITS keyword. Historically the alternate or
+  secondary part of the name was rarely used at JCMT so the name
+  change, in hindsight, turned out to be unnecessary.
+
+\item[\texttt{C2PC}] was used at NRAO to specify a four-element
+  secondary pointing correction. The JCMT version specifies this as
+  four discrete scalar items, \texttt{C2PC1} to \texttt{C2PC2}, rather
+  than using an array.
+
+\item[\texttt{C2UXP} \texttt{C2UYP}] are the user Az/RA and El/Dec
+  pointing corrections in arcsec but at JCMT these were simply called
+  \texttt{UAZ} and \texttt{UEL} with no class prefix and no RA/Dec
+  equivalent.
+
+\item[\texttt{C4DO}] is a three-element array labeled ``Descriptive
+  Origin'' describing the position and angle of the coordinate system
+  defined by the observer. At JCMT this was implemented as three
+  distinct items \texttt{C4DO1} through \texttt{C4DO3} and specified
+  the observing cell size and position angle with respect to local
+  vertical. There was disagreement between NRAO and JCMT on the
+  definition here as the three elements at NRAO referred to the
+  horizontal and vertical position and the position angle with respect
+  to the horizontal axis. Documents and source code from JCMT indicate
+  these items were not used and are duplicates of items \texttt{C6DX},
+  \texttt{C6DY} and \texttt{C6MSA}.
+
+\item[\texttt{C4IX} \texttt{C4IY}] are the coordinates of the
+  telescope as measured by the encoders. This information was not
+  recorded by JCMT.
+
+\item[\texttt{C6XZ} \texttt{C6YZ}] specify the position of the map
+  origin. These coordinates are not stored at JCMT as the map is
+  defined in terms of offsets from the specified tracking centre.
+
+\item[\texttt{C7FW}] is the beam full width at half maximum in arcsec
+  at NRAO but at JCMT the item used is \texttt{C7HP} and most JCMT data
+  files do not seem to set it.
+
+\item[\texttt{C11*}] is nominally the phase block. At JCMT
+  \texttt{C11VD} specifies the names of the columns of the phase table
+  information stored in \texttt{C11PHA} where the dimensionality is
+  specified by \texttt{C3NSV} (number of phase table variables) and
+  \texttt{C3PPC} (number of phases per cycle). NRAO use \texttt{C11VV}
+  to store the values of a single switch state and the phase table is
+  \texttt{C11PHT}.
+
+\item[\texttt{C12IT} \texttt{C12NI} \texttt{C12SPN}] indicate the integration time,
+  the number of integrations and the starting point in the data block
+  for each receiver channel. {\color{red} I guess ``receiver channel''
+    is the equivalent of a JCMT backend section?}. JCMT data require
+  that each backend section has the same integrations, requiring no
+  keywords to indicate this.
+
+\item[\texttt{C12ST} \texttt{C12RMS}] are the computed source
+  temperature and the RMS value. The JCMT online observing system did
+  not calculate this.
+
+\item[\texttt{C12SP}] is a description of the polarization type and
+  angle encoded in an eight character field. This item was not used at
+  JCMT.
+
+\item[\texttt{C12RP} \texttt{C12X0} \texttt{C12DX}] {\color{red} No
+    idea what X-axis means in this context.}
+
+\item[\texttt{C12WT}] is the water temperature. Not measured directly
+  at JCMT during this period.
+
+\item[\texttt{C12OO} \texttt{C12OT}] is the oxygen opacity and
+  temperature. Not measured at JCMT.
+
+\end{description}
 
 \section{National Radio Astronomy Observatory}
 
