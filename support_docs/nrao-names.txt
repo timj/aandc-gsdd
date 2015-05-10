@@ -1,0 +1,132 @@
+C1HLN C1DLN C1SNO C1OBS C1ONA C1TEL C1PID C1SNA C1STC C1RCV C1BKE C1DP
+
+Length of Header [Bytes]
+Length of Data [Bytes]
+Scan Number
+Observer Initials
+Observer Name
+Telescope Descriptor
+Project Identification
+Source Name
+Type of Data and Observing Mode
+Frontend Descriptor
+Backend Descriptor
+Data Precision of Spectrum
+
+C2XPC C2YPC C2UXP C2UYP C2PC C2ORI C2FR C2FV C2FL
+
+Total Az/RA Pointing Correction [Arcsec]
+Total El/Dec Pointing Correction [Arcsec]
+User Az/RA Pointing Correction [Arcsec]
+User El/Dec Pointing Correction [Arcsec]
+Pointing Constants(4)
+Receiver Box or Secondary Orientation [Deg]
+Radial Focus [mm]
+North—South Focus [mm]
+East—West Focus [mm]
+
+
+C3DAT C3UT C3LST C3NRC C3NSV C3PPC C3CL C3SRT
+
+Universal Time Date  [yyyy.mmdd]
+Universal Time [hours]
+LST [hours]
+Number of Receiver Channels
+Number of Switching Variables
+Number of Phases per Cycle
+Length of Cycle [sec]
+Length of Sample [sec]
+
+C4EPH C4SX C4SY C4RX C4RY C4ERA C4EDC C4GL C4GB C4AZ C4EL C4IX C4IY C4DO C4CSC
+
+Epoch [Years]
+Commanded Source X [Deg]
+Commanded Source Y [Deg]
+Commanded Reference X [Deg]
+Commanded Reference Y [Deg]
+Commanded Epoch Right Ascension [Deg]
+Commanded Epoch Declination [Deg]
+Commanded Galactic Longitiude [Deg]
+Commanded Galactic Latitude [Deg]
+Commanded Azimuth [Deg]
+Commanded Elevation [Deg]
+Indicated X Position [Deg]
+Indicated Y Position [Deg]
+Descriptive Origin(3)
+Coordinate System Code
+
+C5AT C5PRS C5RH C5IR C5DP C5MM
+
+Ambient Temperature [Deg C]
+Pressure [MM HG]
+Relative Humidity [%]
+Index of Refraction
+Dew Point [Deg C]
+MM H20 [MM]
+
+
+C6MSA C6XZ C6YZ C6DX C6DY C6NP C6XNP C6YNP C6XGC C6YGC C6FC
+
+Map Scanning Angle [Deg]
+X Position at Map Reference Position Zero [Deg]
+Y Position at Map Reference Position Zero [Deg]
+Delta X or X Rate [Arcsec or Arcsec/sec]
+Delta Y or Y Rate [Arcsec or Arcsec/sec]
+Number of Grid Points
+Number of X Grid Points
+Number of Y Grid Points
+Starting X Grid Cell Number
+Starting Y Grid Cell Number
+XY Reference Frame Code
+
+C7FW C7OSN C7BCV C7VC C7VR C7VRD C7CAL
+
+Beam Fuliwidth at Half Maximum [Arcsec]
+Off Scan Number
+BadChannel Value
+Velocity Correction [km/s]
+Velocity with respect to Reference [km/s]
+Velocity Definition and Reference
+Type of Calibration
+
+C8AAE C8ABE C8GN C8EL C8EF
+
+Antenna Aperture Efficiency
+Antenna Beam Efficiency [ETA(MB)]
+Antenna Gain
+ETAL Rear Spillover & Scattering Efficiency
+ETAFSS Forward Spillover & Scattering Eff
+
+C9OT
+
+Observing Tolerance [arcsec]
+
+C11VV C11VD C11TP
+
+Variable Value
+Variable Descriptor
+Phase Table
+
+C12CF C12RF C12FR C12BW C12RT C12CT C12SST C12RST C12ST C12RMS C12RP C12X0 C12DX C12IT C12NI C12SPN C12WO C12WT C12OO C12OT C12SP
+
+Observed Frequency [MHz]
+Rest Frequency or Total Power Calibration [MHz]
+Frequency Resolution or SP Calibration [MHz]
+Bandwidth [MHz]
+Receiver Temperature [K]
+Calibration Temperature [K]
+Source System Temperature [K]
+Reference System Temperature [K]
+Source Temperature
+RMS of Mean
+Reference Point Number
+X Value at the Reference Point
+Delta X
+Total Integration Time [sec]
+Number of Integrations
+Starting Point Number
+H2O Opacity
+H2O Temperature [K]
+O2 Opacity
+O2 Temperature [K]
+Polarization
