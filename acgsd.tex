@@ -183,7 +183,8 @@ Cambridge, CB3~0HE, UK}
 
 The General Single-Dish Data format (GSDD) was developed in the
 mid-1980s as a data model to support centimeter, millimeter and submillimeter
-instrumentation at NRAO, JCMT and IRAM. We provide an overview of the GSDD
+instrumentation at NRAO, JCMT, the University of Arizona and IRAM. We
+provide an overview of the GSDD
 requirements and associated data model, discuss the implementation
 of the resultant file formats, describe its usage in the observatories and
 provide a retrospective on the format.
@@ -246,31 +247,43 @@ software written at another telescope would be extremely useful and
 could lead to significant savings on software development effort.
 
 At this time the Flexible Image Transport System
-\citep[FITS;][]{1981A&AS...44..363W,2015Thomas} was considered mainly
+\citep[FITS;][]{1981A&AS...44..363W} was considered mainly
 suitable as a means of exchanging image data using tapes
-\citep{1980SPIE..264..298G}. At the time the FITS standard, which then
-lacked the capability to use binary tables, was not deemed an
+\citep{1980SPIE..264..298G}. The FITS standard, which then
+lacked the capability to use binary tables and could only store a
+single ASCII table were file, was not deemed an
 efficient format to store complex mm/submm time-series and
-spectral-line data from single-dish telescopes.
+spectral-line data from single-dish telescopes that usually required
+many sets of tabular data.
 
 The General Single Dish Data format (GSDD) was developed in the 1980s
 to solve the data processing and acquisition requirements of the NRAO,
-IRAM, University of Arizona and JCMT observatories.
-Initial discussions between NRAO 12m and IRAM staff began in 1983, and
+IRAM, University of Arizona and JCMT observatories.  Initial
+discussions between NRAO 12m and IRAM staff began in 1983, and
 subsequently included JCMT representatives. At around this same time,
 however, IRAM started development of the Continuum and Line Analysis
 Single-dish Software
 \htmladdnormallinkfoot{\textsc{class}}{http://www.iram.fr/IRAMFR/GILDAS}
-\citep[][\ascl{1305.010}]{2005sf2a.conf..721P} data reduction
-package, and they did not follow up on the GSDD initiative.
-The GSDD format, agreed
-in 1986 \citep[see e.g.,][]{mtdn84,1987NRAO30}, consisted of a data
-model for specifying centimeter, millimeter and submillimeter
-observations (continuum and spectral-line instrumentation) and a
-specification of how the bytes would be represented on disk.
-The format was described in both a JCMT technical note and an NRAO Newsletter
-article, but a formal definition of the format was not published in the
-literature.
+\citep[][\ascl{1305.010}]{2005sf2a.conf..721P} data reduction package,
+and they did not follow up on the GSDD initiative.\footnote{The
+  authors have been unable to find anyone from IRAM or the University
+  of Arizona that recalls the GSDD discussions and can provide
+  information from their side. JCMT and NRAO documents confirm the
+  additional parties but no meeting minutes are available. An IRAM
+  memo from January 1983 indicates they were strongly in favor of a
+  FITS variant called IRAM Disk-oriented FITS (IDFITS) that supported
+  VAX floating point, array header keywords, variable length headers
+  (up to 80 characters) and \texttt{CONTINUE} cards and stored the
+  data in separate files from the header information.}  The GSDD
+format, agreed in 1986 \citep[see e.g.,][]{mtdn84,1987NRAO30},
+consisted of a data model for specifying centimeter, millimeter and
+submillimeter observations (continuum and spectral-line
+instrumentation) and a specification of how the bytes would be
+represented on disk.  The format was described in both a JCMT
+technical note and an NRAO Newsletter article, but a formal definition
+of the format was not published in the literature. In this article we
+present the first description of the model and provide a retrospective
+on the history and usage of the format.
 
 \section{Data Model}
 
