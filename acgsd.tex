@@ -630,23 +630,35 @@ but that also suffered from serious I/O issues and could not be used
 on the acquisition hardware initially targeted for JCMT.
 
 The computer used during testing and commissioning in 1985/86 was a
-VAX 11/730 which had severe performance limitations. This was upgraded
-to a MicroVAX just before operations started at JCMT in 1987 but
-performance was the key design driver: the control system was required
-to minimize the overheads in data capture and therefore maximize the
-observing time.
-
-Given the performance requirements for the JCMT data acquisition
-system it was important that a file could be mapped using VMS system
-services as a Global Section to allow other applications to get read
-access to the contents of the file whilst it was being written.  This
-led to the JCMT implementation of the library being known as the
-Global Section Datafile System \citep[GSD;][]{mtin33}\footnote{In retrospect,
-the similarity of acronyms between GSD and GSDD -- two quite separate
-concepts -- was rather unfortunate. The
-  naming of the library as GSD eventually led to JCMT users referring
-  to the files as being of ``GSD format'' and it being assumed that ``GSDD
-  format'' was an historical artefact.}.
+VAX 11/730 with 4\,MB of RAM and which had severe performance
+limitations. This was upgraded to a MicroVAXwith 16\,MB of RAM just
+before operations started at JCMT in 1987 but performance was the key
+design driver: the control system was required to minimize the
+overheads in data capture and therefore maximize the observing
+time. The VAX Record Management System (RMS) was the basis of all
+records based file handling. The performance of this system was not
+suitable for real-time operation as you did not want to the system to
+pause opening or closing or extending a file in the middle of the data
+collection. Furthermore, limits on the maximum record length in RMS
+meant that additional complexity would be required when writing out
+data from long observations. The JCMT library implementation was
+designed to utilize the VAX System Services library that allowed the
+program to map a section of virtual memory and then manage the scalar
+and array data in that memory directly in the program. This was very
+fast and did not cause the problems encountered with RMS. Performance
+benchmarks on a VAX 750 \citep{mtin33} suggested that I/O operations
+using RMS were approximately five times slower than using a Global
+Section. The use of a Global Section also allowed other applications
+to get read access to the contents of the file whilst it was being
+written and also meant that the data already acquired would be usable
+even if the acqusition software crashed mid-observation. This use of
+Global Sections led to the JCMT implementation of the library being
+known as the Global Section Datafile System
+\citep[GSD;][]{mtin33}\footnote{In retrospect, the similarity of
+  acronyms between GSD and GSDD -- two quite separate concepts -- was
+  rather unfortunate. The naming of the library as GSD eventually led
+  to JCMT users referring to the files as being of ``GSD format'' and
+  it being assumed that ``GSDD format'' was an historical artefact.}.
 
 These requirements led to a new format being devised and an associated
 I/O library which used the GSDD data model, with the file format design
@@ -671,7 +683,9 @@ the shared metadata conventions.
 where the data starts and the number of items in the data. The item
 descriptors describe each of those items and where they are located in
 the data segment. The size of each dimension in array items is defined
-in terms of other scalar items.}
+in terms of other scalar items. The file was pre-allocated by the
+acquistion system at the start of the observation rather than being
+continually extended.}
 \label{fig:jcmtgsd}
 \end{figure}
 
