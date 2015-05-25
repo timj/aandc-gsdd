@@ -299,6 +299,12 @@ individual ons and offs or individual cals but storing calibrated
 spectra from the heterodyne systems and chop subtracted time-series
 for the continuum instruments.
 
+The model was designed to handle general sub-mm observing techniques
+using different switching techniques, such as position switching, beam
+switching and frequency switching, and included on-the-fly mapping
+techniques (where the telescope is moved during acquisition) as well
+as stare and gridded observations.
+
 \begin{table}
 \caption{Base classes defined for GSDD. The final two classes listed,
   14 and 55, were only defined at JCMT.}
@@ -371,12 +377,12 @@ and the 12m with JCMT adopting a single item, \texttt{C9OT} from the
 \begin{tabular}{|lp{1.5in}|lp{1.5in}|lp{1.5in}|}
 \hline
 \textbf{C1BKE} & Backend & \textbf{C4CSC} & Code for coordinate system & \textbf{C6YGC} & Starting Y grid position \\
-\textbf{C1DP} & Precision & \textbf{C4EDC} & Epoch declination / Declination of date & \textbf{C6YNP} & Number of Y grid points \\
-\textbf{C1OBS} & Observer Initials / Observer Name & \textbf{C4EL} & Elevation at C3UT & \textbf{C7BCV} & Bad channel value \\
+\textbf{C1DP} & Precision of the data in bits and data type & \textbf{C4EDC} & Epoch declination / Declination of date & \textbf{C6YNP} & Number of Y grid points \\
+\textbf{C1OBS} & Observer Initials & \textbf{C4EL} & Elevation at C3UT & \textbf{C7BCV} & Bad channel value \\
 \textbf{C1ONA} & Observer name & \textbf{C4EPH} & Epoch of coordinates & \textbf{C7CAL} & Calibration type \\
 \textbf{C1PID} & Project ID & \textbf{C4ERA} & Epoch Right Ascension & \textbf{C7OSN} & Calibration scan/observation number \\
 \textbf{C1RCV} & Frontend & \textbf{C4GB} & Galactic Latitude & \textbf{C7VC} & Velocity correction \\
-\textbf{C1SNO} & Scan number / Observation number & \textbf{C4GL} & Galactic Longitude & \textbf{C7VR} & Radial velocity of source \\
+\textbf{C1SNO} & Scan/Observation number & \textbf{C4GL} & Galactic Longitude & \textbf{C7VR} & Radial velocity of source \\
 \textbf{C1STC} & Type of observation & \textbf{C4RX} & Reference X position & \textbf{C7VRD} & Velocity definition code \\
 \textbf{C1TEL} & Telescope name & \textbf{C4RY} & Reference Y position & \textbf{C8AAE} & Aperture efficiency \\
 \textbf{C2FL} & EW focus & \textbf{C4SX} & Source X & \textbf{C8ABE} & Beam efficiency \\
@@ -400,7 +406,8 @@ and the 12m with JCMT adopting a single item, \texttt{C9OT} from the
 
 The NRAO implementation, not including class 9, includes 26 items not
 found in the JCMT version. The reasons they were not adopted at JCMT
-are:
+are described in the following list, which also details other
+differences between the two implementations.
 
 \begin{description}
 
@@ -416,6 +423,11 @@ are:
   secondary part of the name was rarely used at JCMT so the name
   change, in hindsight, turned out to be unnecessary.
 
+\item[\texttt{C1ONA}] JCMT used this as a synonym for \texttt{C1OBS}
+  and instead added \texttt{C1ONA1} to indicate the name of the
+  support scientist for the observing run and \texttt{C1ONA2} to
+  indicate the name of the telescope operator.
+
 \item[\texttt{C2PC}] was used at NRAO to specify a four-element
   secondary pointing correction. The JCMT version specifies this as
   four discrete scalar items, \texttt{C2PC1} to \texttt{C2PC2}, rather
@@ -425,6 +437,16 @@ are:
   pointing corrections in arcsec but at JCMT these were simply called
   \texttt{UAZ} and \texttt{UEL} with no class prefix and no RA/Dec
   equivalent.
+
+\item[\texttt{C4CSC}] The JCMT coordinate system codes \citep{mtdn12}
+  were a two character code including RB (B1950), RJ (J2000), RD
+  (Apparent RA, Dec), GA (Galactic) and AZ (azimuth elevation), PL (a
+  planet), EC (ecliptic), EQ (equatorial at telescope), UD (user
+  defined). NRAO used a completely distinct set of codes: GALACTIC,
+  1950RADC, EPOCRADC (epoch RA, Dec), MEANRADC (mean RA, Dec at
+  start), APPRADC, APPHADC (Apparent hour angle, Dec), 1950ECL (1950
+  Ecliptic), EPOCECL (epoch ecliptic), MEANECL, APPECL, AZEL, USERDEF
+  (user defined), 2000RADC, INDRADC (indicated RA, Dec).
 
 \item[\texttt{C4DO}] is a three-element array labeled ``Descriptive
   Origin'' describing the position and angle of the coordinate system
@@ -755,6 +777,19 @@ by \textsc{class}.
 
 In conclusion, it is impossible for a standard to survive as a standard
 if no-one knows they are using a standard.
+
+\subsection{A model must define the values and units}
+
+Whilst the data model provided a reasonable baseline for how to name
+items, it broke down almost immediately when it came to storing values
+in those items. For example, the coordinate codes, \texttt{C4CSC},
+were not standardised, the reference frame coordinate code,
+\texttt{C6FC}, had a whole different concept at JCMT and NRAO and,
+indeed, the specification of how observing grids were defined at both
+observatories differed despite sharing the same underlying item
+names. If an attempt had ever been made to transfer data between
+observatories special code would have to be written to import the
+data, removing most of the gains of a shared model.
 
 \subsection{Embrace Flexibility}
 

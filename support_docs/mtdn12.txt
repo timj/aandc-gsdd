@@ -1,0 +1,244 @@
+Telescope drive tasks - Coordinate systems - revised prop...              Page 1
+MTDN/12.1
+
+
+SCIENCE AND ENGINEERING RESEARCH COUNCIL                               MTDN/12.1
+CAVENDISH LABORATORY
+MULLARD RADIO ASTRONOMY OBSERVATORY
+
+
+MT Project                                                             Issued by
+MT Design Note 12.1
+
+                                                                              SK
+                                                                    30 July 1985
+
+--------------------------------------------------------------------------------
+
+         _________ _____ _____ _ __________ _______ _ _______ _________         Telescope drive tasks - Coordinate systems - revised proposals
+
+
+
+
+1  General
+
+
+     As far as possible polar coordinates should be limited to (a)  user  input,
+and   (b)   final  values  for  azimuth  and  altitude  encoders;  all  internal
+calculations should be done in cartesians.  Most of the  coordinate  conversions
+are  then  rotation matrices, some of which are fixed, some time-dependent, some
+source-dependent.  Real*8  precision  should  be  used  throughout  (some  minor
+savings  may be possible by using real*4 in places, but the gain is probably not
+worth the possible trouble).  Pat Wallace routines should  be  used  as  far  as
+possible.
+
+
+
+
+2  Coordinate Systems
+
+
+     All cartesian axes are right-handed systems, with (where  relevant)  z-axis
+in  direction  of  north  pole  and  x-axis  in the direction of the zero of the
+longitude coordinate.  The following may  be  identified  (and  referred  to  by
+two-letter mnemonics):
+
+  AZ:  Azimuth and altitude at telescope.
+
+  EQ:  Equatorial at telescope.
+
+  RD:  RA/Dec of date.
+
+  CD:  Coordinate system based on the currently defined Centre  as  seen  at
+    date  of  observation (i.e. simply a rotated version of RD).  The z-axis
+    is in the direction of the Centre; the xy-plane is then  the  'plane  of
+    the  sky'  tangential  at the Centre.  The y-axis is defined as being in
+    the direction of the northward line through the Centre; the pole of  the
+    RD system lies in the yz-plane.  The x- and y-axes are in the directions
+    of increasing RA and Dec at the Centre (NB:  left-handed  as  seen  from
+Telescope drive tasks - Coordinate systems - revised prop...              Page 2
+MTDN/12.1
+
+
+    telescope since we are looking in the +z direction).
+
+  RJ:  RA/Dec in J2000 coordinates.
+
+  RB:  RA/Dec in B1950 coordinates.
+
+  GA:  Galactic.
+
+  EC:  Ecliptic (I suppose these may be  ED,  EJ  or  EB  but  are  ecliptic
+    coordinates really used much?).
+
+  CJ, CB and CG:  As for CD but with pole of J2000, B1950 or galaxy defining
+    the  x  and  y axes; the direction of the Centre is along the +z axis in
+    all cases.
+
+  UD:  User-defined.
+
+
+
+
+3  Conversions Between Coordinate Systems
+
+
+     The above systems form three groups within each of  which  the  conversions
+are  pure  rotations.   Conversions within groups can then be done by orthogonal
+matrices (inverse = transpose), which following Pat Wallace's programming  style
+would be written e.g. rmeq2az(3,3), or req2az(3,3).  The groups are
+
+  1) AZ, EQ, RD, CD
+
+  2) RJ, CJ, GA, CG, UD (presumably)
+
+  3) RB, CB
+
+I omit ecliptic systems.
+
+     Within group 1, req2az is permanently fixed; rrd2eq (and hence rrd2az) is a
+function  only of time of day; rcd2rd is fixed for each Centre.  [Note:  diurnal
+aberration is at the limits of importance for position coordinate work, and  has
+not been considered yet; it matters for radial velocity].
+
+     Group 2 differs from group 1 by precession and nutation (rotation matrices,
+functions  of  date  of  observation),  and  by  annual  aberration,  which is a
+non-linear distortion of the space and therefore not a  matrix.   But  within  a
+small   patch   of   sky,   aberration   can   be  treated  as  a  linear  scale
+compression/expansion/shear of up to 20 arcsec per 60 degrees; it can  therefore
+be dealt with by a matrix, though a fresh matrix will needed for each new patch.
+Maximum error is 0.5*(20arcsec)*(offset)**2,  i.e.  0.1  arcsec  for  6  degrees
+offset.  I assume that the area of interest around each Centre can be treated as
+one 'patch'.  [Treating aberration as a simple rotation locally,  i.e.  ignoring
+scale  changes,  gives errors of 0.5 arcsec for 3 degrees offset and is regarded
+as not acceptable].  The basic conversion routine is sla_map (mean  to  apparent
+place).
+Telescope drive tasks - Coordinate systems - revised prop...              Page 3
+MTDN/12.1
+
+
+     Galactic coordinates are now defined on the J2000 system;  conversion  from
+GA to SJ is a fixed rotation matrix.
+
+     Group 3 is separate from group 2 by the factors relating  B1950  and  J2000
+systems.  All B1950 coordinates should (properly) be converted to J2000 and then
+precessed by the new formulae to the date of observation.  The routine sla_fk425
+('FK4' to 'FK5') does the conversion.  I am sure we should adopt this approach.
+
+
+
+
+4  Computation Sequences
+
+
+     The observing primitives imply the  following  sequences  of  computations,
+without reference to which task does the work.
+
+
+
+
+4.1  Centre
+
+
+     The arguments of the call are coordinates and  a  coordinate  system.   The
+program  computes the vector C (3D unit vector in direction of the Centre) in RD
+coordinates via whatever intermediate coordinates are necessary.  [Note:  If the
+coordinate  system  is  'alt-az', some of what follows will be side-stepped; the
+alt-az case is not considered here in detail].
+
+
+
+
+4.2  Local
+
+
+4.2.1  Local coordinate system -
+
+     The first argument is the Local coordinate system (e.g. 'galactic'),  which
+may  be  different  from that of Centre (e.g. 'B1950').  The program first finds
+the vector C in the Local system (it may already be available from  computations
+above).   It  now defines two vectors N and E, which correspond to directions on
+the sky 'north' and 'east' of C by some angle theta (say 1  degree),  north  and
+east  being in the Local system.  In what may be termed the CL coordinates (= CG
+in present example), the vectors  C,  N  and  E  are  (0,0,1),  (0,sin,cos)  and
+(sin,0,cos)  where sin and cos are sin(theta) and cos(theta).  The vectors N and
+E are now converted to RD  coordinates  by  the  rigorous  formulae  (sla_fk425,
+sla_map etc).
+
+     The next task is to deduce the matrix cl2rd such that
+
+        general vector in RD  =  (matrix cl2rd) x (same vector in CL)
+
+It is obtained by inversion of the matrix relation
+
+Telescope drive tasks - Coordinate systems - revised prop...              Page 4
+MTDN/12.1
+
+
+        matrix CNE_RD  =  (matrix cl2rd) x (matrix CNE_CL)
+
+where the three columns of CNE_RD and CNE_RD contain the three vectors C, N  and
+E  in  the  RD and CL systems respectively.  The matrix cl2rd obtained should be
+independent of the value of theta provided it is not  so  large  that  linearity
+breaks  down,  or  so  small  that  the  CNE  matrices  become  ill-conditioned.
+[Experiment needed to find suitable value].
+
+
+
+
+4.2.2  Axes -
+
+     The Axes arguments specify a 'unit cell' in the xy plane of the CL  system,
+effectively as a 2D matrix r2l (Raster to Local).  A general point P is given as
+a 2D vector (Px, Py) in raster-space, which corresponds to the 2D vector
+
+        vector P in xy of CL  =  (matrix r2l) x (vector P in raster-space)
+
+Here the Ps are regarded as in 'natural' units (whole sky = unit  circle).   The
+3D  vector  P  is  obtained by assigning a (+ve) z-component to give a vector of
+unit length.  [Note:  This treats the sky as being mapped onto the  CL  xy-plane
+by  projection  parallel to the CL z-axis.  An alternative procedure would be to
+assign +1 to the z-component of P and then normalise P to a  unit  vector;  this
+would  be  equivalent to mapping the sky onto the CL xy-plane by projection from
+the centre of the celestial sphere.  What do users want?   What  ought  they  to
+want?  Ought both (and others perhaps) be provided?  ].
+
+
+
+
+4.3  Other Observing Primitives
+
+
+     Once the above has been completed, subsequent primitives can be handled  by
+the following sequence:
+
+        convert P from raster-space to CL xy-space (2D matrix)
+        assign z-component to P
+        convert P from CL to RD (3D matrix)
+        convert P from RD to EQ (3D matrix, function of sidereal time)
+        convert P from EQ to AZ (fixed 3D matrix)
+        convert P in AZ to spherical polars
+        correct altitude for refraction
+
+The above operations must be done for the relevant sidereal time, which only the
+telescope  dtask  will really know.  Diurnal aberration should be done somewhere
+in it.
+Telescope drive tasks - Coordinate systems - revised prop...              Page 5
+Division Of Computations Between Tasks
+
+
+5  Division Of Computations Between Tasks
+
+
+     The obvious division seems to be
+
+  c-task: set up matrices r2l and cl2rd for each new Centre or Local primitive
+            (or possibly more often if these matrices change significantly
+            during an observation); r2l could incorporate the conversion from
+            user's units to natural units
+
+  d-task: convert 2D P in raster-space to az-alt as in 4.3 above
+
+
+     SK and DJT agree to this division;  SK  will  provide  DJT  with  necessary
+subroutines which handle the coordinate-related computations in the c-task.
