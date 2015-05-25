@@ -416,6 +416,11 @@ differences between the two implementations.
   because the length of the header region and the length of the data
   region are encoded in the file format design.
 
+\item[\texttt{C1DP}] This is used to specify the precision and data
+  type used to store the instrument data. This was used in early
+  variants of the JCMT system but was later dropped due to the data
+  format being able to report the data type associated with each item.
+
 \item[\texttt{C1SNA}] is the source object name and exists as two separate
   items at JCMT, \texttt{C1SNA1} and \texttt{C1SNA2}, to allow the
   object name to be specified in two parts or with an alternative name
@@ -428,6 +433,18 @@ differences between the two implementations.
   and instead added \texttt{C1ONA1} to indicate the name of the
   support scientist for the observing run and \texttt{C1ONA2} to
   indicate the name of the telescope operator.
+
+\item[\texttt{C1STC}] specifies the type of observation. At NRAO this
+  was defined as two 4 character strings defining the type of data and
+  the observing mode. For example \texttt{LINEPSSW} for a
+  position-switched spectral line observation. JCMT used this item
+  solely to define the switching mode (position-switched, beam switch,
+  frequency switch and no switch), preferring instead to use
+  \texttt{C1FTYP} to specify the frontend type (heterodyne versus
+  bolometer) and \texttt{C1BTYP} to indicate the backend type (line
+  versus continuum). In
+  later versions JCMT dropped \texttt{C1STC} completely, preferring to
+  specify the switching mode explicitly in \texttt{C6MODE}.
 
 \item[\texttt{C2PC}] was used at NRAO to specify a four-element
   secondary pointing correction. The JCMT version specifies this as
@@ -468,9 +485,33 @@ differences between the two implementations.
   telescope as measured by the encoders. This information was not
   recorded by JCMT.
 
+\item[\texttt{C6FC}] is the coordinate frame to use when offsetting,
+  which allows the offset system to be distinct from the telescope
+  tracking centre. At NRAO this was an eight character string made up
+  of two four character components (polar versus cartesian and step
+  versus scanning). At JCMT this item was an integer indicating which
+  coordinate frame should be used with options of AZ=1, EQ=3, RD=4,
+  RB=6, RJ=7 and GA=8 (using the same definition explained in item
+  \texttt{C4CSC}.
+
 \item[\texttt{C6XZ} \texttt{C6YZ}] specify the position of the map
   origin. These coordinates are not stored at JCMT as the map is
   defined in terms of offsets from the specified tracking centre.
+
+\item[\texttt{C7VRD}] is defined as the velocity definition and
+  reference at NRAO, by combining two four character strings into a
+  single item. It describes how the source radial velocity,
+  \texttt{C7VRD}, should be intrepreted. The allowed velocity
+  definitions were RADI (radio), OPTL (optical) and RELV
+  (relativistic). The velocity reference was allowed to be LSR (Local
+  Standard of Rest), HELO (Heliocentric), EART (earth), BARI
+  (barycentre) and OBS (observer). At JCMT this item was reserved
+  entirely for the velocity definition but deprecated in later
+  versions. The velocity definition was later defined in
+  \texttt{C12VDEF} (allowed values being RADIO, OPTICAL and
+  RELATIVISTIC) and the standard of rest indicated in \texttt{C12VREF}
+  (allowed values being TOPO(centric), LSR, HELI(ocentric),
+  GEO(centric), BARY(centric) and TELL(uric)).
 
 \item[\texttt{C7FW}] is the beam full width at half maximum in arcsec
   at NRAO but at JCMT the item used is \texttt{C7HP} and most JCMT data
