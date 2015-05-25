@@ -773,14 +773,44 @@ implementation for its time because these rules could be easily
 adhered to while simultaneously giving sufficient versatility to each
 telescope.
 
+\subsection{Too much flexibility is not always good}
+
+The alternative view is that allowing a class 9 for particular
+telescopes to use as they liked is an impediment to
+standardization. In many cases an item being added to class 9 could be
+made generically useful with some discussion or may well be very
+similar to an item already in use by another telescope. The use of the
+escape hatch class should be treated as a last resort after debate has
+been had within the community. Only when it is determined that a
+particular item is unique for a telescope should class 9 be used, and
+even then a case could be made that it would still be more helpful for
+the item to be placed in the correct class and documented as such, to
+help the next telescope that required similar functionality. In some
+sense this was the approach used at JCMT (without the communication
+effort) which was simply to ignore class 9 completely and add items to
+the ``correct'' classes without discussion in the wider community. In
+retrospect it would have been better to attempt to standardize even at
+the expense of having to spend more time in discussion.
+
 \subsection{Clear separation of model from file format}
 
 Whether by accident or design, the GSDD standard resulted in multiple
 software implementations writing the data to disk in different formats
 and using different techniques. The JCMT GSD format was never written
 on anything other than a VAX but the NRAO format migrated from PDFL to
-SDD. GSDD benefited by explicitly defining the data model for
-single-dish observing distinct from bytes on the disk.
+SDD going from VAX to Unix. GSDD benefited by explicitly defining the
+data model for single-dish observing distinct from bytes on the
+disk. Unfortunately this also meant that and data reduction software
+wishing to read the data would need to implement multiple file
+readers. The reality is this work was never done. Given the focus of
+both institutions on the use of GSDD in data acquisition using
+different hardware platforms and different performance constraints,
+this split is not surprising, but it is interesting to contemplate how
+interoperability would have improved if the standards effort had also
+included the definition of an interchange format. Being easily able to
+compare a JCMT spectrum with a NRAO 12-m spectrum from within the same
+data analysis package would have been extremely useful to the young
+sub-mm community.
 
 \subsection{A success apart}
 
