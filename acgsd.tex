@@ -369,37 +369,38 @@ dependent parameters and the defined set differed between Green Bank
 and the 12m with JCMT adopting a single item, \texttt{C9OT} from the
 12m.
 
-\begin{table*}[t]
+\begin{table*}[!ht]
 \centering
 \caption{Core components of GSDD data model present in both NRAO and
-  JCMT implementations.}
+  JCMT implementations. Relevant units are given in square brackets
+  using the NRAO convention. JCMT data files contain unit information explicitly.}
 \label{tab:core}
 \begin{tabular}{|lp{1.5in}|lp{1.5in}|lp{1.5in}|}
 \hline
 \textbf{C1BKE} & Backend & \textbf{C4CSC} & Code for coordinate system & \textbf{C6YGC} & Starting Y grid position \\
-\textbf{C1DP} & Precision of the data in bits and data type & \textbf{C4EDC} & Epoch declination / Declination of date & \textbf{C6YNP} & Number of Y grid points \\
-\textbf{C1OBS} & Observer Initials & \textbf{C4EL} & Elevation at C3UT & \textbf{C7BCV} & Bad channel value \\
-\textbf{C1ONA} & Observer name & \textbf{C4EPH} & Epoch of coordinates & \textbf{C7CAL} & Calibration type \\
-\textbf{C1PID} & Project ID & \textbf{C4ERA} & Epoch Right Ascension & \textbf{C7OSN} & Calibration scan/observation number \\
-\textbf{C1RCV} & Frontend & \textbf{C4GB} & Galactic Latitude & \textbf{C7VC} & Velocity correction \\
-\textbf{C1SNO} & Scan/Observation number & \textbf{C4GL} & Galactic Longitude & \textbf{C7VR} & Radial velocity of source \\
-\textbf{C1STC} & Type of observation & \textbf{C4RX} & Reference X position & \textbf{C7VRD} & Velocity definition code \\
-\textbf{C1TEL} & Telescope name & \textbf{C4RY} & Reference Y position & \textbf{C8AAE} & Aperture efficiency \\
-\textbf{C2FL} & EW focus & \textbf{C4SX} & Source X & \textbf{C8ABE} & Beam efficiency \\
-\textbf{C2FR} & Radial focus & \textbf{C4SY} & Source Y & \textbf{C8EF} & Forward spillover \& scattering efficiency \\
-\textbf{C2FV} & NS focus & \textbf{C5AT} & Ambient Temperature & \textbf{C8EL} & Rear spillover \& scattering efficiency \\
-\textbf{C2ORI} & Secondary orientation & \textbf{C5DP} & Dew point & \textbf{C8GN} & Antenna gain \\
-\textbf{C2XPC} & Az/RA pointing correction & \textbf{C5IR} & Refractive index & \textbf{C11VD} & Phase table names \\
-\textbf{C2YPC} & El/Dec pointing correction & \textbf{C5MM} & Atmospheric vapor pressure & \textbf{C12BW} & Bandwidth \\
-\textbf{C3CL} & Length of cycle & \textbf{C5PRS} & Atmospheric pressure & \textbf{C12CF} & Observed frequency \\
-\textbf{C3DAT} & UT date (YYYY.MMDD format) & \textbf{C5RH} & Relative humidity & \textbf{C12CT} & Calibration temperature \\
-\textbf{C3LST} & LST at start & \textbf{C6DX} & Delta X offset & \textbf{C12FR} & Frequency resolution \\
-\textbf{C3NRC} & Number of rx/backend channels & \textbf{C6DY} & Delta Y offset & \textbf{C12RF} & Rest frequency \\
-\textbf{C3NSV} & Number of switching/phase table variables & \textbf{C6FC} & Reference frame coord code & \textbf{C12RST} & Reference system temperature \\
-\textbf{C3PPC} & Number of phases per cycle & \textbf{C6MSA} & Scanning angle & \textbf{C12RT} & Receiver temperature \\
-\textbf{C3SRT} & Integration time & \textbf{C6NP} & Number of grid points & \textbf{C12SST} & Source system temperature \\
-\textbf{C3UT} & UT hour of observation & \textbf{C6XGC} & Starting X grid position & \textbf{C12WO} & Water opacity \\
-\textbf{C4AZ} & Azimuth at C3UT & \textbf{C6XNP} & Number of X grid points &   &   \\
+\textbf{C1DP} & Precision of the data in bits and data type & \textbf{C4EDC} & Epoch declination [deg] & \textbf{C6YNP} & Number of Y grid points \\
+\textbf{C1OBS} & Observer Initials & \textbf{C4EL} & Elevation at C3UT [deg] & \textbf{C7BCV} & Bad channel value \\
+\textbf{C1ONA} & Observer name & \textbf{C4EPH} & Epoch of coordinates [years]& \textbf{C7CAL} & Calibration type \\
+\textbf{C1PID} & Project ID & \textbf{C4ERA} & Epoch Right Ascension [deg]& \textbf{C7OSN} & Calibration scan/observation number \\
+\textbf{C1RCV} & Frontend & \textbf{C4GB} & Galactic Latitude [deg]& \textbf{C7VC} & Velocity correction [km/s]\\
+\textbf{C1SNO} & Scan/Observation number & \textbf{C4GL} & Galactic Longitude [deg]& \textbf{C7VR} & Radial velocity of source [km/s]\\
+\textbf{C1STC} & Type of observation & \textbf{C4RX} & Reference X position [deg]& \textbf{C7VRD} & Velocity definition code \\
+\textbf{C1TEL} & Telescope name & \textbf{C4RY} & Reference Y position [deg]& \textbf{C8AAE} & Aperture efficiency \\
+\textbf{C2FL} & EW focus & \textbf{C4SX} & Source X [deg]& \textbf{C8ABE} & Beam efficiency \\
+\textbf{C2FR} & Radial focus & \textbf{C4SY} & Source Y [deg]& \textbf{C8EF} & Forward spillover \& scattering efficiency \\
+\textbf{C2FV} & NS focus & \textbf{C5AT} & Ambient Temperature [$^\circ$C]& \textbf{C8EL} & Rear spillover \& scattering efficiency \\
+\textbf{C2ORI} & Secondary orientation & \textbf{C5DP} & Dew point [$^\circ$C]& \textbf{C8GN} & Antenna gain \\
+\textbf{C2XPC} & Az/RA pointing correction [arcsec] & \textbf{C5IR} & Refractive index & \textbf{C11VD} & Phase table names \\
+\textbf{C2YPC} & El/Dec pointing correction [arcsec] & \textbf{C5MM} & Atmospheric vapor pressure [mm]& \textbf{C12BW} & Bandwidth \\
+\textbf{C3CL} & Length of cycle [sec] & \textbf{C5PRS} & Atmospheric pressure [mm~Hg]& \textbf{C12CF} & Observed frequency [MHz]\\
+\textbf{C3DAT} & UT date (YYYY.MMDD format) & \textbf{C5RH} & Relative humidity [\%]& \textbf{C12CT} & Calibration temperature [K]\\
+\textbf{C3LST} & LST at start [hours] & \textbf{C6DX} & Delta X offset [arcsec]& \textbf{C12FR} & Frequency resolution [MHz]\\
+\textbf{C3NRC} & Number of rx/backend channels & \textbf{C6DY} & Delta Y offset [arcsec]& \textbf{C12RF} & Rest frequency [MHz]\\
+\textbf{C3NSV} & Number of switching/phase table variables & \textbf{C6FC} & Reference frame coord code & \textbf{C12RST} & Reference system temperature [K]\\
+\textbf{C3PPC} & Number of phases per cycle & \textbf{C6MSA} & Scanning angle [deg]& \textbf{C12RT} & Receiver temperature [K]\\
+\textbf{C3SRT} & Integration time [sec] & \textbf{C6NP} & Number of grid points & \textbf{C12SST} & Source system temperature [K]\\
+\textbf{C3UT} & UT of observation [hours] & \textbf{C6XGC} & Starting X grid position & \textbf{C12WO} & Water opacity \\
+\textbf{C4AZ} & Azimuth at C3UT [deg]  & \textbf{C6XNP} & Number of X grid points &   &   \\
 \hline
 \end{tabular}
 \end{table*}
