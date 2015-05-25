@@ -289,53 +289,59 @@ on the history and usage of the format.
 \section{Data Model}
 
 To allow interoperability of data files between differing
-observatories it was important to develop a shared data model,
-taking particular care to allow simple interchange of reduced spectra
-between software packages. Reduced data has fewer instrument-specific
-variations and was deemed to be the simplest first step, requiring
-sufficient metadata to specify the coordinates of the spectrum on the
-sky, the frequency scale and the calibrated
-units of the spectrum.
+observatories it was important to develop a shared data model. The
+initial approach was to define the simplest possible model to allow
+sharing of reduced spectra between multiple data reduction software
+packages. Since JCMT was still in the development phase during these
+discussions the focus became how to represent the raw instrument data
+on disk. This was simplified somewhat by the JCMT system not storing
+individual ons and offs or individual cals but storing calibrated
+spectra from the heterodyne systems and chop subtracted time-series
+for the continuum instruments.
 
-\begin{table*}
-\caption{Model classes used by the various GSDD models.}
+\begin{table}
+\caption{Base classes defined for GSDD. The final two classes listed,
+  14 and 55, were only defined at JCMT.}
 \label{tab:classes}
 \begin{center}
-\begin{tabular}{lll}
+\begin{tabular}{ll}
 \hline
-Class number & NRAO Meaning & JCMT meaning\\ \hline
-1         & Basic Information                                                 &    Identity Parameters        \\
-2         & Pointing Parameters                                               &    Time Parameters            \\
-3        & Observing Parameters                                               &    Position Parameters        \\
-4          & Positions                                                        &    Pointing Parameters        \\
-5      & Environment                                                          &    Environment Parameters     \\
-6        & Map Parameters                                                     &    Mapping Parameters         \\
-7          & Data Parameters                                                  &    Velocity Parameters        \\
-8       & Engineering Parameters                                              &    Engineering Parameters   \\
-9           & Telescope Dependent Parameters                                  &    Data Parameters            \\
-10       & Open Data Reduction Parameters                                     &   Receiver Parameters         \\
-11       & Phase Block                                                        &   Phase Control Table         \\
-12        & Descriptor Block for Each Receiver Channel                        &   Phase Value Table           \\
-13       & Spectral Values                                                    &   Phase Timing Table          \\
-14          & ---                                                             &   Data Value Table            \\
-15           & ---                                                           &   Pointing History            \\
-55                                        & ---                               &   Inclinometry                \\
+Class number &Class name \\ \hline
+1         & Basic Information \\
+2         & Pointing Parameters  \\
+3         & Observing Parameters \\
+4         & Positions \\
+5         & Environment \\
+6         & Map Parameters \\
+7         & Data Parameters \\
+8         & Engineering Parameters \\
+9         & Telescope Dependent Parameters \\
+10        & Open Data Reduction Parameters \\
+11        & Phase Block \\
+12        & Receiver configurations\\
+13        & Data Values \\
+14        & Pointing History (JCMT) \\
+55        & Inclinometry (JCMT)\\
 \hline
 \end{tabular}
 \end{center}
-\end{table*}
+\end{table}
 
 When designing the model related items were grouped into numbered
 classes and the parameter name was prefixed by that class number. The
-class groupings are shown in Table~\ref{tab:classes} and indicate that
-there was some disagreement in naming convention after the standard
-was agreed.\footnote{Given the agreement in item names, it is likely
-  that the class names are due to a documentation error at JCMT rather
-  than an implementation error at JCMT.} Despite this documented
-difference in class naming \citep{mtdn85}, 71 data items were named
-consistently in the NRAO and JCMT implementations\footnote{72 if the
-telescope-specific \texttt{C9OT}, Observing Tolerance, item is included which was present in the
-NRAO 12m definition and at JCMT but not used for Green Bank} and those are
+class groupings are shown in Table~\ref{tab:classes}. In early JCMT
+documents \citep[e.g.][]{mtdn84} there is disagreement in the class
+numbering, for example using \texttt{C3EPH} for the epoch of the
+coordinates rather than \texttt{C4EPH}, reflecting the uncertainty in
+the standardized model, but eventually \citep[see e.g.][]{mtdn85}
+the NRAO convention was adopted and the core model solidified.
+Seventy one data items were defined in the shared NRAO/JCMT GSDD data
+model.\footnote{72 if the telescope-specific \texttt{C9OT}, Observing
+  Tolerance, item is included which was present in the NRAO 12m
+  definition and at JCMT but not used for Green Bank. In some very
+  early files JCMT erroneously used \texttt{C90T} for this item due to
+  a transcription error confusing the letter ``O'' with the number
+  zero. This sometimes implies that JCMT used class 90.} and those are
 detailed in Table~\ref{tab:core}. For example \texttt{C3DAT} referred
 to the UT date of the observation, \texttt{C1SNO} the scan number,
 and \texttt{C7VR} the source radial velocity.
@@ -343,14 +349,19 @@ and \texttt{C7VR} the source radial velocity.
 At the JCMT these GSDD names (known locally as the ``NRAO'' names)
 were written to disk files but were mapped to local equivalents in
 the acquisition computers. For example \texttt{C12RF}, the rest
-frequency, mapped to \texttt{FE\_NUREST} in the acquisition system and
+frequency, mapped to \texttt{FE\_NUREST} in the acquisition shared
+memory system and
 was equivalent to the \texttt{RESTFREQ} FITS keyword. A full list of
-the equivalences for JCMT can be found in \citet{SUN229}.
+the equivalences for JCMT can be found in \citet{SUN229}. As new
+instrumentation arrived at JCMT the data model diverged with many new
+items being added without consultation with NRAO. These items are
+listed in \ref{app:jcmt}.
 
-One key feature of the GSDD design was that some classes were
+One feature of the GSDD design was that some classes were
 explicitly reserved for local use. Class 9 was used for telescope
 dependent parameters and the defined set differed between Green Bank
-and the 12m with JCMT adopting a single item, \texttt{C9OT} from the 12m.
+and the 12m with JCMT adopting a single item, \texttt{C9OT} from the
+12m.
 
 \begin{table*}[t]
 \centering
@@ -474,8 +485,8 @@ are:
 \end{description}
 
 Additionally, whilst JCMT did use \texttt{C5IR} to report the mean
-refractive index, the JCMT format also stored the three refraction constants
-defined in the model \citep{mtin26} as \texttt{C5IR1}, \texttt{C5IR2}
+refractive index, the JCMT implementation also stored the three refraction constants
+defined in the JCMT refraction model \citep{mtin26} as \texttt{C5IR1}, \texttt{C5IR2}
 and \texttt{C5IR3}.
 
 \section{National Radio Astronomy Observatory}
