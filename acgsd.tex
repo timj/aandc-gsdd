@@ -661,17 +661,20 @@ known as the Global Section Datafile System
   it being assumed that ``GSDD format'' was an historical artefact.}.
 
 These requirements led to a new format being devised and an associated
-I/O library which used the GSDD data model, with the file format design
-influenced by the NRAO idea of a self-describing GSDD
+I/O library which used the GSDD data model, with the file format
+design influenced by the NRAO idea of a self-describing GSDD
 implementation and also the concept of an ``in memory data base
-management system'' from the \texttt{MON} library being used in the
-JCMT control system.\footnote{The \texttt{MON} library was a shared
-  memory system, based on Global Sections, in use at the JCMT to allow
-  the individual control system tasks to easily share state
-  information. It was the precursor to the Noticeboard System
-  \citep[NBS;][]{SUN77}.}  JCMT adopted the GSDD data model in the hope
-that downstream the data reduction systems could be compatible through
-the shared metadata conventions.
+management system''\footnote{A database system designed to work
+  entirely in memory rather than requiring lots of disk I/O. See also
+  \url{http://en.wikipedia.org/wiki/In-memory_database}.} from the
+\texttt{MON} library being used in the JCMT control
+system.\footnote{The \texttt{MON} library was a shared memory system,
+  based on Global Sections, in use at the JCMT to allow the individual
+  control system tasks to easily share state information. It was the
+  precursor to the Noticeboard System \citep[NBS;][]{SUN77}.}  JCMT
+adopted the GSDD data model in the hope that downstream the data
+reduction systems could be compatible through the shared metadata
+conventions.
 
 Unlike the NRAO PDFL/SDD files which grow throughout the night as more
 data are taken, a JCMT GSD file was only required to store data from a
