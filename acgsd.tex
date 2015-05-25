@@ -772,19 +772,31 @@ handling \citep{SUN70}.\footnote{HDS also supported automatic type
 
 \subsection{Format Usage}
 
-The JCMT took data in the GSDD format for all instruments (heterodyne
+The JCMT took data in the GSD format for all instruments (heterodyne
 and continuum) from the telescope commissioning (circa 1986) to the
-delivery of SCUBA in 1996 \citep{1999MNRAS.303..659H}. The GSDD format
+delivery of SCUBA in 1996 \citep{1999MNRAS.303..659H}. The GSD format
 continued to be used for heterodyne instruments until the delivery of
-the new ACSIS correlator in 2006 \citep{2009MNRAS.399.1026B}. SCUBA
+the new ACSIS correlator in 2006 \citep{2009MNRAS.399.1026B}.  SCUBA
 and the new instruments wrote data in the Starlink extensible
 \emph{N}-dimensional Data Format \citep[NDF;][]{2015NDF}, although
 SCUBA's data model did not exactly match that used for ACSIS and
-SCUBA-2 \citep{2013MNRAS.430.2513H} data. The GSD data access library
-was a VAX-specific library \citep{1986QJRAS..27..675.,mtdn84} written
-in Fortran and making extensive use of VAX system calls. When
-the last instrument moved off of the VAX/VMS data acquisitions computers
-the format could no longer be used and was retired.
+SCUBA-2 \citep{2013MNRAS.430.2513H} data. NDF had a key advantage that
+it was being used throughout the Starlink Software Collection as the
+primary data format \citep{1992ASPC...25..126A}. Writing data using
+NDF meant that JCMT data files had immediate access to all the
+visualization and analysis applications already available to the
+community such as KAPPA \citep[][\ascl{1403.022}]{SUN95}.
+
+The GSD data access library was a VAX-specific library
+\citep{1986QJRAS..27..675.,mtdn84} written in Fortran and making
+extensive use of VAX system calls. When the last instrument moved off
+of the VAX/VMS data acquisitions computers the format could no longer
+be used and was retired. There was little motivation to port the data
+model to the newer instruments as it was clear by this time that GSDD
+had not succeeded and that NDF would be more useful to the JCMT user
+community despite this requiring new ways of describing raw JCMT
+data. There was seen to be no advantage to moving the GSDD class and
+item names to the newer NDF-based raw data models.
 
 The GSDD data files are archived at the Canadian Astronomy Data
 Centre and approximately 440\,000 GSD format files are in the
@@ -808,17 +820,24 @@ A Perl interface to the Unix C GSD library \citep{1999ASPC..172..494J}
 was implemented to allow the preview of spectra for remote observers
 when doing flexible scheduling \citep{1997ASPC..125..401J}.
 
-There is currently a plan at the Joint Astronomy Centre to convert the
-heterodyne files to the modern ACSIS format \citep{OCS_ICD_022} such that they can be
-reduced using the standard JCMT data reduction pipelines
-\citep{2015ACSISDR,2008ASPC..394..565J}. The standard SMURF data reduction application
-(\ascl{1310.007}\nocite{2013ascl.soft10007J}) contains the ability to
-read GSD files and migrate them to the modern format \citep{SUN259}.
-
-The GSD files from the earlier continuum instruments, such as UKT14
-\citep{1990MNRAS.243..126D}, will remain in the archive although they
-will not be visible in the JCMT Science Archive \citep{2015Economou}.
-
+The GSD format files are no longer part of the publically available
+query system at the CADC. This was driven by funding constraints when
+the CADC system was re-engineered to use a common internal data model
+\citep{2013ASPC..475..159R} and a requirement that federal interfaces
+be compliant with Canadian language regulations. The JCMT Science
+Archive \citep[JSA;][]{2015Economou} therefore does not contain GSD
+data.  To extend the useful life of the GSD format observations and to
+make the observations available to the widest possible community
+through the JSA and the Virtual Observatory, there is a project to
+convert the GSD heterodyne files archived at CADC to the modern ACSIS
+format \citep{OCS_ICD_022} such that they can be reduced using the
+standard JCMT data reduction pipelines
+\citep{2015ACSISDR,2008ASPC..394..565J}. The SMURF data reduction
+application (\ascl{1310.007}\nocite{2013ascl.soft10007J}) contains the
+ability to read GSD files and migrate them to the modern format
+\citep{SUN259}.  The GSD files from the earlier continuum instruments,
+such as UKT14 \citep{1990MNRAS.243..126D}, will remain in the archive
+although they will not be visible through the JSA interface.
 
 \section{Retrospective}
 
