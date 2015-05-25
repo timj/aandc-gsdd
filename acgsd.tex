@@ -731,7 +731,11 @@ defines an array dimension. For example, the \texttt{C11PHA} array
 entry in a JCMT DAS spectrum \citep{1986SPIE..598..134B} is
 dimensioned according to the scalar items \texttt{C3NSV}, the number
 of phase table variables, and \texttt{C3PPC}, the number of phases per
-cycle.
+cycle. The item descriptor for \texttt{C11PHA} would therefore contain
+a \texttt{dimensions} array of two elements containing the item
+numbers (position in the item descriptor section) for \texttt{C3PPC}
+and \texttt{C11PHA}. A library user would then look up those two items
+to determine the dimensionality of \texttt{C11PHA}.
 
 This file design resulted in a fully self-describing system
 where there was no requirement for items to be grouped by class in the
