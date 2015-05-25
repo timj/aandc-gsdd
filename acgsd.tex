@@ -610,19 +610,22 @@ Data System \citep[HDS;][\ascl{1502.009}]{1982QJRAS..23..485D,2015HDS}.
 FITS was discounted as the primary data format because of the large
 amount of overhead required to format the header information when
 writing files and the inability of the format (at that time) to store
-more than one
-data array or table in a file. FITS files at the time were not capable
-of storing binary tables and ASCII tables were all that was possible
-\citep{1988A&AS...73..365H}. It was also felt that the DEC Backup
-Utility was more reliable for transport and archiving than using a
-FITS tape format. Whilst the FITS community would
-eventually support multiple data arrays and binary tables, it was not
-possible to wait for that to happen.
+more than one data array or table in a file. FITS files at the time
+were not capable of storing binary tables and ASCII tables were all
+that was possible \citep{1988A&AS...73..365H} and those were not
+standardised until 1987. It was also felt that the DEC Backup Utility
+was more reliable for transport and archiving than using a specialist
+FITS tape format. Whilst the FITS community would eventually support
+multiple data arrays \citep{1988A&AS...73..359G} and binary tables
+\citep{1995A&AS..113..159C}, it was not possible to wait for that to
+happen.
 
 HDS was discarded for I/O efficiency reasons and the inability for the
 entire file to be mapped into memory in one operation. Additionally it
 was felt that the HDS library API required too many calls to do simple
-tasks. One further option was to use the NRAO 12-m file format (PDFL)
+tasks, and although these calls could be wrapped in higher level
+subroutines, the overhead associated with the many lower level calls
+would be too high. One further option was to use the NRAO 12-m file format (PDFL)
 but that also suffered from serious I/O issues and could not be used
 on the acquisition hardware initially targeted for JCMT.
 
@@ -647,10 +650,14 @@ concepts -- was rather unfortunate. The
 
 These requirements led to a new format being devised and an associated
 I/O library which used the GSDD data model, with the file format design
-influenced by the NRAO approach to a self-describing GSDD
+influenced by the NRAO idea of a self-describing GSDD
 implementation and also the concept of an ``in memory data base
 management system'' from the \texttt{MON} library being used in the
-JCMT control system.  JCMT adopted the GSDD data model in the hope
+JCMT control system.\footnote{The \texttt{MON} library was a shared
+  memory system, based on Global Sections, in use at the JCMT to allow
+  the individual control system tasks to easily share state
+  information. It was the precursor to the Noticeboard System
+  \citep[NBS;][]{SUN77}.}  JCMT adopted the GSDD data model in the hope
 that downstream the data reduction systems could be compatible through
 the shared metadata conventions.
 
@@ -663,7 +670,8 @@ the shared metadata conventions.
 \caption{Layout of a JCMT GSD data file. The file descriptor indicates
 where the data starts and the number of items in the data. The item
 descriptors describe each of those items and where they are located in
-the data segment.}
+the data segment. The size of each dimension in array items is defined
+in terms of other scalar items.}
 \label{fig:jcmtgsd}
 \end{figure}
 
@@ -671,23 +679,48 @@ The layout of a JCMT GSD format file is shown in
 Fig.~\ref{fig:jcmtgsd} \citep[see also][]{mtdn84}. The file is split
 into three segments: the file descriptor, the item descriptors and the
 data itself. The file descriptor contains a general description of the
-file indicating its version, the number of items written and the
+file indicating its version, the number of items written and the start
 position of the data array. The item descriptors define each of the
-items in terms of the label and units and the position in the data
-array. For array items (GSDD supported up to 5 dimensions), the
+items in terms of the label and units and the position within the data
+array. The data itself is a single block at the end of the file
+following the item descriptions; the item descriptions having defined
+exactly where in the data array a relevant item is located and how
+many bytes in the data array it occupied.
+
+For array items (GSD supported up to 5 dimensions), the
 identity of each dimension is specified in terms of the number of a
 scalar item. This allows the label and unit to be associated with each
-dimension of an array item in addition to the size of the
-dimension. For example, the \texttt{C11PHA} array entry in a JCMT DAS
-spectrum \citep{1986SPIE..598..134B} is dimensioned according to the
-scalar items \texttt{C3NSV} and \texttt{C3PPC}, with a negative number
-of dimensions indicating that an item is a scalar that defines an
-array dimension.
+dimension of an array item in addition to the size of the dimension. A
+negative number of dimensions indicated that an item is a scalar that
+defines an array dimension. For example, the \texttt{C11PHA} array
+entry in a JCMT DAS spectrum \citep{1986SPIE..598..134B} is
+dimensioned according to the scalar items \texttt{C3NSV}, the number
+of phase table variables, and \texttt{C3PPC}, the number of phases per
+cycle.
+
+This file design resulted in a fully self-describing system
+where there was no requirement for items to be grouped by class in the
+file and no requirement for the order of items to be pre-determined
+(an issue for the NRAO implementation where the order was specified in
+a compiled include file requiring that the order of items within a
+class be preserved and also that new items could only be added to the
+end of a class). A user of the format could either
+request an item by number or request an item by name. Storing the
+units with the data also allowed for more flexibility in data model
+representation at the expense of more logic in the application code
+that might have to understand unit conversions. Application software
+would use the file version number to decide which variant of a data
+model was present in the file. At JCMT this became important as the
+system evolved in the first few years.\footnote{Version 4 of the JCMT
+  data model was the first stable implementation, released late in
+  1988, and the final version was release 5.3. It is version 5.3 that
+  is documented here.}
 
 The JCMT format implementing GSDD supports the standard Fortran data
 types of byte, word, logical, integer, real, double and character
 strings, and uses VAX floating point format \citep[see][for more
-information on VAX floating point format]{Payne:1980:VFP:641845.641849}. To simplify the format,
+information on VAX floating point
+format]{Payne:1980:VFP:641845.641849}. To simplify the format,
 character strings have a fixed size of 16 characters, item names are
 fixed at 15 characters and unit strings are fixed at 10
 characters. The format supported the concept of a ``null'' value by
@@ -695,7 +728,15 @@ reserving the most negative value of each data type for that purpose
 (using a single space as the null character value and false as the
 null logical value). Additionally, the JCMT GSD library supported data
 type conversion, allowing a user to request a value in a different
-type to how it was stored natively in the file.
+type to how it was stored natively in the file. This was an important
+aspect of the library interface, simplifying code required by the
+reduction software, enabling users of the library to request data in
+the form most suitable for them. This feature was influenced by
+earlier work on the Starlink Catalog Access and Reporting (SCAR)
+relational database management system for astronomical catalog
+handling \citep{SUN70}.\footnote{HDS also supported automatic type
+  conversion \citep{SSN27}. The authors are not sure when equivalent
+  facilities were added to FITS I/O libraries.}
 
 \subsection{Format Usage}
 
