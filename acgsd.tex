@@ -398,7 +398,7 @@ and the 12m with JCMT adopting a single item, \texttt{C9OT} from the
 \textbf{C3NSV} & Number of switching/phase table variables & \textbf{C6FC} & Reference frame coord code & \textbf{C12RST} & Reference system temperature \\
 \textbf{C3PPC} & Number of phases per cycle & \textbf{C6MSA} & Scanning angle & \textbf{C12RT} & Receiver temperature \\
 \textbf{C3SRT} & Integration time & \textbf{C6NP} & Number of grid points & \textbf{C12SST} & Source system temperature \\
-\textbf{C3UT} & UT hour of observation / UT1 & \textbf{C6XGC} & Starting X grid position & \textbf{C12WO} & Water opacity \\
+\textbf{C3UT} & UT hour of observation & \textbf{C6XGC} & Starting X grid position & \textbf{C12WO} & Water opacity \\
 \textbf{C4AZ} & Azimuth at C3UT & \textbf{C6XNP} & Number of X grid points &   &   \\
 \hline
 \end{tabular}
@@ -437,6 +437,9 @@ differences between the two implementations.
   pointing corrections in arcsec but at JCMT these were simply called
   \texttt{UAZ} and \texttt{UEL} with no class prefix and no RA/Dec
   equivalent.
+
+\item[\texttt{C3UT}] is the Universal Time in decimal hours, yet at
+  JCMT it was decided that this should refer to UT1.
 
 \item[\texttt{C4CSC}] The JCMT coordinate system codes \citep{mtdn12}
   were a two character code including RB (B1950), RJ (J2000), RD
