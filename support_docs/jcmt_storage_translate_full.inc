@@ -1028,7 +1028,7 @@
       DATA FITS_TYPE   (170)/'GENERAL '/
       DATA FITS_NAME   (170)/'OBSTOL  '/
 *
-      DATA NRAO_NAME   (171)/'C90T           '/
+      DATA NRAO_NAME   (171)/'C9OT           '/
       DATA JCMT_NAME   (171)/'TEL_TOLERANCE  '/
       DATA JCMT_COMMENT(171)/'Observing tolerance                                                             '/
       DATA FITS_TYPE   (171)/'GENERAL '/
