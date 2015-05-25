@@ -673,6 +673,24 @@ JCMT control system.\footnote{The \texttt{MON} library was a shared
 that downstream the data reduction systems could be compatible through
 the shared metadata conventions.
 
+Unlike the NRAO PDFL/SDD files which grow throughout the night as more
+data are taken, a JCMT GSD file was only required to store data from a
+single observation. At JCMT an observation was defined as data being
+taken in a single switching mode at a single tracking position with a
+single instrument frontend/backend combination. A single observation
+could include multiple offsets in a grid or on-the-fly map and
+includes the full map area, rather than a single row or column. This
+approach resulted in more files to track in a night but was felt to
+simplify the acqusition software (each observation was completely
+independent of what had gone before), and make it easier to share
+subsets of a night's data amongst different observers (a pre-requisite
+for flexible scheduling) and simplify queries for individual
+observations from the data archive. Of course, this meant that the
+data reduction packages had to do more work to collate related
+observations into a coherent data set as they now worked with many
+independent files rather than being able to treat a night's observing
+as a single coherent entity.
+
 \subsection{File Format Design}
 
 \begin{figure}
