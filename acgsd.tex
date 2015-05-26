@@ -405,6 +405,32 @@ and the 12m with JCMT adopting a single item, \texttt{C9OT} from the
 \end{tabular}
 \end{table*}
 
+\begin{table}
+\caption{Coordinate codes used at NRAO and JCMT for item
+  \texttt{C4CSC}.}
+\label{tab:coordcodes}
+\begin{center}
+\begin{tabular}{lll}
+\hline
+ & NRAO & JCMT \\ \hline
+Galactic & GALACTIC & GA \\
+B1950 RA/Dec & 1950RADC & RB \\
+Epoch RA/Dec & EPOCRADC & RD \\
+Mean RA/Dec & MEANRADC & -- \\
+Apparent RA/Dec & APPRADC & -- \\
+Apparent HA/Dec & APPHADC & EQ \\
+1950 Ecliptic & 1950ECL & EC \\
+Epoch ecliptic & EPOCECL & -- \\
+Apparent ecliptic & APPECL & -- \\
+Azimuth/Elevation & AZEL & AZ \\
+User defined & USERDEF & UD \\
+J2000 RA/Dec & 2000RADC & RJ \\
+Indicated Ra/Dec & INDRADC & -- \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
 The NRAO implementation, not including class 9, includes 26 items not
 found in the JCMT version. The reasons they were not adopted at JCMT
 are described in the following list, which also details other
@@ -462,14 +488,10 @@ compatibility problems.
   JCMT it was decided that this should refer to UT1.
 
 \item[\texttt{C4CSC}] The JCMT coordinate system codes \citep{mtdn12}
-  were a two character code including RB (B1950), RJ (J2000), RD
-  (Apparent RA, Dec), GA (Galactic) and AZ (azimuth elevation), PL (a
-  planet), EC (ecliptic), EQ (equatorial at telescope), UD (user
-  defined). NRAO used a completely distinct set of codes: GALACTIC,
-  1950RADC, EPOCRADC (epoch RA, Dec), MEANRADC (mean RA, Dec at
-  start), APPRADC, APPHADC (Apparent hour angle, Dec), 1950ECL (1950
-  Ecliptic), EPOCECL (epoch ecliptic), MEANECL, APPECL, AZEL, USERDEF
-  (user defined), 2000RADC, INDRADC (indicated RA, Dec).
+  were a two-character code such as RB to indicate B1950 RA/Dec.
+  NRAO used a completely distinct set of codes using eight
+  characters; RB being equivalent to 1950RADC. The full list is shown
+  in Table~\ref{tab:coordcodes}.
 
 \item[\texttt{C4DO}] is a three-element array labeled ``Descriptive
   Origin'' describing the position and angle of the coordinate system
