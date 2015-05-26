@@ -968,19 +968,25 @@ data, removing most of the gains of a shared model.
 \subsection{Embrace Flexibility}
 
 A major advantage of GSDD is that the standard actually allowed sites
-to alter the format and data model as they saw fit.  But, sites had to
-follow some minor rules in order to guarantee that any other site's
-GSDD reader could still manage the files.  Such rules as: do not touch
-the pre-defined keywords (which were to have predefined byte sizes and
-were always to be in a certain order at the start of a class), you are
-free to add new keywords to any class but only at the end of the
-pre-defined section of each class, modify class 9 for your particular
-telescope, modify class 10 as convenient, and be sure to
-use the well-defined pre-amble to designate the byte at which every
-class begins.  We maintain that GSDD was actually a very good
-implementation for its time because these rules could be easily
-adhered to while simultaneously giving sufficient versatility to each
-telescope.
+to alter the format and data model as they saw fit.  But, sites using
+the NRAO file format had to follow some minor rules in order to
+guarantee that any other site's GSDD reader could still manage the
+files.  Such rules as: do not touch the pre-defined keywords (which
+were to have predefined byte sizes and were always to be in a certain
+order at the start of a class), you are free to add new keywords to
+any class but only at the end of the pre-defined section of each
+class, modify class 9 for your particular telescope, modify class 10
+as convenient, and be sure to use the well-defined pre-amble to
+designate the byte at which every class begins.  We maintain that GSDD
+was actually a very good implementation for its time because these
+rules could be easily adhered to while simultaneously giving
+sufficient versatility to each telescope. The JCMT GSD file format
+encouraged far more flexibility than this since the constraints on
+class keyword ordering were removed and software did not need to
+compile-in knowledge of where the individual items were meant to be
+located in the file. This led to much more explosive and
+dynamic modifications to the data model in the early years of
+telescope operations.
 
 \subsection{Too much flexibility is not always good}
 
