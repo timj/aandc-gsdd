@@ -1084,6 +1084,61 @@ Today, 30 years on, the Internet and the culture of open-source
 development make that much less likely and a good idea has a better
 chance of surviving and growing.
 
+\section{Thoughts on the Future}
+
+Many of the lessons exposed by the history of GSDD have already been
+learned in the 30 years since the key decisions were made and much
+improved communications infrastructure has changed the way that people
+work.  The current debate on future developments of data formats for
+astronomy \citep[see e.g.][]{2015Thomas,2015Mink,2015MinkADASS}
+indicates that there is a desire within the community for a format
+that builds on the lessons learned using the FITS format to develop a
+format with more modern underpinnings.  As noted in the debate
+described in \citet{2015MinkADASS}, representing data on disk is
+becoming a secondary concern relative to the discussion of data
+models. A data model can be serialized into many different transport
+and archive formats but the application software should really be
+worrying about the data model that is being used. This is, after all,
+the underlying \emph{business logic} that enables science to progress.
+It may be true that all data models can be represented in a FITS file
+but that doesn't mean that a FITS file is the most compact or most
+efficiently accessed format. Changing the underlying file format used
+in astronomy may simplify infrastructure libraries and result in new
+abilities not available from within FITS but the easiest way to
+migrate people to a new format may well be to do it without people
+knowing what underlying format really is being used by their
+applications.  As we move forward with discussions on data formats and
+look again at hierarchical approaches
+\citep[e.g.][]{2015Price,2015HDS,2015ASDF}, these may adjust the way
+that people view data models. A hierarchical view is very different to
+a flat view and data modelers should not be constrained by how their
+models are represented on disk.
+
+GSDD failed to unify the single-dish radio telescope community to use
+a single file format. Focusing on the data model as a first step was
+probably the correct decision at the time but it was poorly
+implemented with little buy-in from the people writing the
+software. Failing to agree on units, coordinate codes and the approach
+to adding future keywords removed any chance of GSDD being a
+generically useful data model for the community.
+Ideally a GSDD data model library would have been written to
+abstract the file format completely from the user. Recall that this was
+all occuring before object-oriented programming was a common
+paradigm. If GSDD were being implemented now it would be obvious how
+to wrap the millimetre observing into object-oriented classes
+involving specific receiver types and observing modes.
+
+Abstracting the data model from the underlying file format is an idea
+whose time has come. The Large Synoptic Survey Telescope data
+management system \citep{2008arXiv0805.2366I,2010SPIE.7740E..1NK} uses
+a \emph{butler} to mediate file access. The user requests data from
+the system and the butler then pulls all the relevant data items
+together (from a database or from files or from a combination of the
+two) and instantiates an object representing that data. For LSST this
+\texttt{Exposure} class represents something relevant to an optical
+imager, but it could just as easily return an object that understands
+millimeter observing.
+
 \section{Conclusions}
 
 The GSDD data model was used at NRAO and JCMT for many years
