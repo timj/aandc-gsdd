@@ -336,11 +336,14 @@ Class number &Class name \\ \hline
 When designing the model related items were grouped into numbered
 classes and the parameter name was prefixed by that class number. The
 class groupings are shown in Table~\ref{tab:classes}. In early JCMT
-documents \citep[e.g.][]{mtdn84} there is disagreement in the class
-numbering, for example using \texttt{C3EPH} for the epoch of the
+documents \citep[e.g.][]{mtdn1,mtdn84} there is disagreement in the class
+numbering, for example using \texttt{S2EPH}\footnote{In early
+  iterations \texttt{S} was used to indicate a scalar item and
+  \texttt{V} a vector item, followed by the class number.} or \texttt{C3EPH} for the epoch of the
 coordinates rather than \texttt{C4EPH}, reflecting the uncertainty in
 the standardized model, but eventually \citep[see e.g.][]{mtdn85}
-the NRAO convention was adopted and the core model solidified.
+the NRAO convention was adopted and the core model solidified
+\citep[][defined the NRAO naming scheme]{tcus5}.
 Seventy one data items were defined in the shared NRAO/JCMT GSDD data
 model.\footnote{72 if the telescope-specific \texttt{C9OT}, Observing
   Tolerance, item is included which was present in the NRAO 12m
@@ -372,7 +375,7 @@ and the 12m with JCMT adopting a single item, \texttt{C9OT} from the
 \begin{table*}[!ht]
 \centering
 \caption{Core components of GSDD data model present in both NRAO and
-  JCMT implementations. Relevant units are given in square brackets
+  JCMT implementations \citep{tcus5}. Relevant units are given in square brackets
   using the NRAO convention. JCMT data files contain unit information explicitly.}
 \label{tab:core}
 \begin{tabular}{|lp{1.5in}|lp{1.5in}|lp{1.5in}|}
