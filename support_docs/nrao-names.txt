@@ -1,7 +1,7 @@
 C1HLN C1DLN C1SNO C1OBS C1ONA C1TEL C1PID C1SNA C1STC C1RCV C1BKE C1DP
 
-Length of Header [Bytes]
-Length of Data [Bytes]
+Length of Header [bytes]
+Length of Data [bytes]
 Scan Number
 Observer Initials
 Observer Name
@@ -15,12 +15,12 @@ Data Precision of Spectrum
 
 C2XPC C2YPC C2UXP C2UYP C2PC C2ORI C2FR C2FV C2FL
 
-Total Az/RA Pointing Correction [Arcsec]
-Total El/Dec Pointing Correction [Arcsec]
-User Az/RA Pointing Correction [Arcsec]
-User El/Dec Pointing Correction [Arcsec]
+Total Az/RA Pointing Correction [arcsec]
+Total El/Dec Pointing Correction [arcsec]
+User Az/RA Pointing Correction [arcsec]
+User El/Dec Pointing Correction [arcsec]
 Pointing Constants(4)
-Receiver Box or Secondary Orientation [Deg]
+Receiver Box or Secondary Orientation [deg]
 Radial Focus [mm]
 North—South Focus [mm]
 East—West Focus [mm]
@@ -40,38 +40,38 @@ Length of Sample [sec]
 C4EPH C4SX C4SY C4RX C4RY C4ERA C4EDC C4GL C4GB C4AZ C4EL C4IX C4IY C4DO C4CSC
 
 Epoch [Years]
-Commanded Source X [Deg]
-Commanded Source Y [Deg]
-Commanded Reference X [Deg]
-Commanded Reference Y [Deg]
-Commanded Epoch Right Ascension [Deg]
-Commanded Epoch Declination [Deg]
-Commanded Galactic Longitiude [Deg]
-Commanded Galactic Latitude [Deg]
-Commanded Azimuth [Deg]
-Commanded Elevation [Deg]
-Indicated X Position [Deg]
-Indicated Y Position [Deg]
+Commanded Source X [deg]
+Commanded Source Y [deg]
+Commanded Reference X [deg]
+Commanded Reference Y [deg]
+Commanded Epoch Right Ascension [deg]
+Commanded Epoch Declination [deg]
+Commanded Galactic Longitiude [deg]
+Commanded Galactic Latitude [deg]
+Commanded Azimuth [deg]
+Commanded Elevation [deg]
+Indicated X Position [deg]
+Indicated Y Position [deg]
 Descriptive Origin(3)
 Coordinate System Code
 
 C5AT C5PRS C5RH C5IR C5DP C5MM
 
-Ambient Temperature [Deg C]
-Pressure [MM HG]
+Ambient Temperature [deg C]
+Pressure [mm Hg]
 Relative Humidity [%]
 Index of Refraction
-Dew Point [Deg C]
-MM H20 [MM]
+Dew Point [deg C]
+MM H20 [mm]
 
 
 C6MSA C6XZ C6YZ C6DX C6DY C6NP C6XNP C6YNP C6XGC C6YGC C6FC
 
-Map Scanning Angle [Deg]
-X Position at Map Reference Position Zero [Deg]
-Y Position at Map Reference Position Zero [Deg]
-Delta X or X Rate [Arcsec or Arcsec/sec]
-Delta Y or Y Rate [Arcsec or Arcsec/sec]
+Map Scanning Angle [deg]
+X Position at Map Reference Position Zero [deg]
+Y Position at Map Reference Position Zero [deg]
+Delta X or X Rate [arcsec or arcsec/sec]
+Delta Y or Y Rate [arcsec or arcsec/sec]
 Number of Grid Points
 Number of X Grid Points
 Number of Y Grid Points
@@ -81,7 +81,7 @@ XY Reference Frame Code
 
 C7FW C7OSN C7BCV C7VC C7VR C7VRD C7CAL
 
-Beam Fullwidth at Half Maximum [Arcsec]
+Beam Fullwidth at Half Maximum [arcsec]
 Off Scan Number
 BadChannel Value
 Velocity Correction [km/s]
