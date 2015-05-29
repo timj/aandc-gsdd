@@ -81,7 +81,7 @@ XY Reference Frame Code
 
 C7FW C7OSN C7BCV C7VC C7VR C7VRD C7CAL
 
-Beam Fuliwidth at Half Maximum [Arcsec]
+Beam Fullwidth at Half Maximum [Arcsec]
 Off Scan Number
 BadChannel Value
 Velocity Correction [km/s]
