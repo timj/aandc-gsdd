@@ -138,8 +138,9 @@ def make_item_table(jcmtonly, jcmtitems, ncols=2, caption="A caption"):
 jcmtnames, jcmtitems = read_jcmt()
 nraonames, nraoitems = read_nrao()
 
-nraoonly = nraoitems
+nraoonlydict = nraoitems
 jcmtonly = []
+shared = []
 
 PRINTINFO = False
 
@@ -147,16 +148,21 @@ for i in jcmtnames:
     if i in nraoitems:
         if PRINTINFO:
             print("Item match: {}".format(i))
-        del nraoonly[i]
+        del nraoonlydict[i]
+        shared.append(i)
     else:
         if PRINTINFO:
             print("JCMT: {}".format(i))
         jcmtonly.append(i)
 
-if PRINTINFO:
-    for k in sorted(nraoonly.keys(), key=sortbyclassnum):
+# Store sorted list of items for NRAO
+nraoonly = []
+for k in sorted(nraoonlydict.keys(), key=sortbyclassnum):
+    if PRINTINFO:
         print("NRAO: {}".format(k))
+    nraoonly.append(k)
 
 make_item_table( jcmtonly[0:56], jcmtitems)
 make_item_table( jcmtonly[57:112], jcmtitems)
 make_item_table( jcmtonly[112:], jcmtitems)
+make_item_table( nraoonly, nraoitems)
