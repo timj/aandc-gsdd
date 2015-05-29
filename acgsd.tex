@@ -628,28 +628,14 @@ incorporated into UniPOPS, solely to boost the performance of the
 system.  The binary representation was changed from that of the DEC
 architecture to that of Sun workstations.  And, the index that was at
 the start of a PDFL file was extended to include such items as the sky
-location and observing frequency so as to make it possible to do more
-efficient searches through the data.  To distinguish the UniPOPS
+location and observing frequency to expand the items that could be 
+efficiently searched in UniPOPS.  To distinguish the UniPOPS
 Sun-specific exported files from VAX PDFL files, the NRAO developers
 changed the name of the export format to Single Dish Data (SDD) format.
 Other than a modification that expanded the capabilities of the index
 section of the NRAO SDD files, the SDD format adopted for UniPOPS
 (Fig.~\ref{fig:nraosdd}) remained unchanged until UniPOPS was retired
 at the NRAO in the mid-2000's.
-
-\begin{figure}[t]
-\begin{center}
-\includegraphics[width=0.5\columnwidth]{sdd-file-layout}
-\end{center}
-\caption{Layout of a UniPOPS data file. The concepts are similar to
-  those used in the GSD format (Fig.~\ref{fig:jcmtgsd}). The bootstrap
-  field describes the basic layout of the file and the index indicates
-  where each of the scans are located in the file. A key difference
-  between GSD and SDD is that GSD contains a single observation
-  whereas an SDD file contains many observations for a single science
-  program.}
-\label{fig:nraosdd}
-\end{figure}
 
 By the late 1980's, users of the NRAO telescopes were very interested
 in seeing a FITS format implemented for the NRAO's single-dish
@@ -667,6 +653,138 @@ imported into the {\textsc CLASS} package.
 Furthermore, when SDFITs was released, few FITS readers at the
 time could actually usefully import binary tables.  Thus, we suspect
 that frequent observers grew into the habit of avoiding SDFITS files.
+
+\subsection{SDD File Format}
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.5\columnwidth]{sdd-file-layout}
+\end{center}
+\caption{Layout of a UniPOPS data file. The concepts are similar to
+  those used in the GSD format (Fig.~\ref{fig:jcmtgsd}). The bootstrap
+  field describes the basic layout of the file and the index indicates
+  where each of the scans are located in the file. A key difference
+  between GSD and SDD is that GSD contains a single observation
+  whereas an SDD file contains many observations for a single science
+  program.}
+\label{fig:nraosdd}
+\end{figure}
+
+The layout of an SDD file is shown in
+Fig.~\ref{fig:nraosdd} \citep[see also][]{UNIPOPS}.  The file consists of 
+3 parts: a bootstrap record, the index, and the data.  An SDD file has an
+integer number of records where the size of a record is given in the bootstrap.
+Each section (index and data) is also an integer number of records.  
+With the data section, each individual ``scan'' is one instance of the
+data structure that evolved from the original GSDD data model.  Each scan 
+occupies an integer number of records within the file (any extra space is
+padded with zeros).  An SDD file can hold both spectral line and continuum
+data.  The type of data is indicated by the C1STC value found in the data for
+each scan. The order and type of the values in the bootstrap record and 
+within each index entry are set by the version number recorded 
+in the bootstrap.  This is not a self-describing format like FITS.
+
+The bootstrap record contains information used to read the index records.
+The size of the index entry and record were chosen so that there are
+an integer number of index entries in each record without any extra space.
+The index record is read into memory in UniPOPS when an SDD file is opened
+and the copy in memory is kept in sync with the contents of the file as 
+changes are made.  Data selection in UniPOPS only uses the fields in
+the index.  Every scan in the file must have an entry in the index
+section.  Empty index entries have zeros for the start and last record
+numbers.  The current largest index number in use is indicated in the
+bootstrap.
+
+Each index entry indicates where the associated scan data starts and ends.
+The scan data consists of a preamble, which is 16 short integers giving
+the number of classes and the starting 8-byte location in the header where
+each class of header words started.  Within each class, the type and order
+of each value is fixed.  The C1HLN value gives the length of all of the 
+header values.  Over time, new values were added to the ends of some
+classes so that UniPOPS retained the ability to read previous versions
+of the SDD format by not attempting to read header words past the end of
+a class as indicated by the values in the preamble and C1HLN.  All
+numerical values in the header are stored as 8-byte floats.  All string
+values are stored as multiples of 8 characters, depending on the 
+specific value.  The data vector immediately follows the header.  The
+data are always 4-byte floats.
+
+In order to accomodate spectral line and continuum data within the same
+structure and minimize the amount of space needed to store the 
+associated header, some header values have 2 meanings depending on the
+type of data.  This is most obvious in class 12, where the associated
+``X axis'' is described.  The data vector for spectral line data is a
+typical spectrum where the x-axis is frequency or velocity.  For
+continuum data, the data vector is the series of regularly sampled
+data (each sample is one integration) so the
+X axis here is related to the position on the sky as the
+telescope is slewed.  UniPOPS was started either in spectral line 
+mode or continuum mode and would need to be restarted to switch
+modes.  It was never possible to work on both continuum data and
+spectral line data within the same session of UniPOPS so typically
+a single SDD file only contained one type of data, although that was
+is required by the file format. 
+
+\subsection{SDD Usage}
+
+UniPOPS dealt directly only with SDD format files.  An SDD file could
+contain raw data, individual integrations and calibrated data. When
+writing to an SDD file, UniPOPS could extend that file by appending
+to the end or it could overwrite existing data in the file provided
+that the size of the scan being overwritten was as least as large
+as the scan being written.  In either case, the appropriate index
+entried was updated.  In the case of appending to the file, the
+next index location after the current end as indicated in the
+bootstrap record was used.  The index entries do not need to reflect
+the order that the data appear in the file, although that typically
+is the case.  If a user tried to overwrite a scan with a scan
+with more channels UniPOPS would append the new scan to the file,
+replace the index entry for the original scan with an appropriate
+index entry for the new scan, and replace the original scan records
+in the SDD file with zeros.
+
+UniPOPS provided observers with access to their data in near
+real-time.  For the 12-m this was direct access to the current
+set of SDD files being written by the telescope control software.
+Multiple files could be written at the same time, depending on the
+backend, and UniPOPS had ways to access the desired data from
+any of those files while the data was being taken.  For long
+observing sessions, multiple versions of each type of file were
+written. The 12-m also provided an SDD file containing system
+temperature across the bandpass for each scan.  UniPOPS provided
+separate tools for accessing that calibration data but the file
+format was identical to all other SDD files.  
+For the 140\, ft, the raw data was written in 
+the original telescope format produced by the Modcomps and so a 
+conversion step was necessary
+for UniPOPS to use that data.  While observing, that conversion
+step happened as needed within UniPOPS using RPC methods.  After
+an observing session was finished at the 140\, ft it was necessary for the observer
+to use a separate conversion tool to produce SDD files that could be
+used by UniPOPS.
+
+SDD format files could be used interchangeably for input and output
+by UniPOPS.  Typically a raw, uncalibrated data set was used as input and
+the user would save processed spectra to a separate SDD file.
+Often that output SDD file would contain the same data saved at different
+stages of the processing.  UniPOPS provided the ability to modify all
+of the header values in a scan.  Within UniPOPS these were known by slightly
+more readable names (e.g. C1SNA is OBJECT in UniPOPS). The number of 
+scans that an SDD file can contain
+is set by the size of the index section.  Scripts were provided with UniPOPS
+to expand an existing SDD file if more index space was necessary.  This
+was done by creating an empty SDD file of the requested index size,
+appending a copy of the original SDD file and using that copy to populate
+the index in the new file.  UniPOPS could not read or write SDFITS
+directly. Separate conversion tools were necessary to produce and consume
+SDFITS.  Conversion tools were also provided for historical NRAO formats.
+
+Archives from both the Green Bank 140\, ft and Tucson 12-m telescopes
+exist.  For the 12-m, there are about 200\, GB of archived SDD
+format files.  The archive from the 140\, ft consists entirely of
+telescope format files.  The current Green Bank single dish analysis
+package, GBTIDL (\ascl{1303.019}), can read archived
+SDD files.  GBTIDL uses SDFITS as it's primary data format.
 
 \section{James Clerk Maxwell Telescope}
 
