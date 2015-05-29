@@ -555,12 +555,15 @@ compatibility problems.
   to store the values of a single switch state and the phase table is
   \texttt{C11PHT}.
 
-\item[\texttt{C12IT} \texttt{C12NI} \texttt{C12SPN}] indicate the integration time,
-  the number of integrations and the starting point in the data block
-  for each receiver channel. {\color{red} I guess ``receiver channel''
-    is the equivalent of a JCMT backend section?}. JCMT data require
-  that each backend section has the same integrations, requiring no
-  keywords to indicate this.
+\item[\texttt{C12IT}] is the total time spent collecting data, 
+  including any blanking time.  This item was not used at JCMT.
+
+\item[\texttt{C12NI} \texttt{C12SPN}] indicate the number of integrations (or
+  channels for spectral line data) and the starting point (channel) in the data vector.
+  UniPOPS used this information to limit display and processing to a sub-set of the 
+  data array and to associate those limits with the data on disk. 
+  JCMT data did not need these quantities for any 
+  similar purpose.
 
 \item[\texttt{C12ST} \texttt{C12RMS}] are the computed source
   temperature and the RMS value. The JCMT online observing system did
@@ -570,8 +573,12 @@ compatibility problems.
   angle encoded in an eight character field. This item was not used at
   JCMT.
 
-\item[\texttt{C12RP} \texttt{C12X0} \texttt{C12DX}] {\color{red} No
-    idea what X-axis means in this context.}
+\item[\texttt{C12RP} \texttt{C12X0} \texttt{C12DX}] These give the
+  reference channel, X value at the reference channel, and spacing along
+  the X axis.  For spectral line data, the X axis is velocity at
+  each channel and for continuum data this is position along the
+  direction of telescope motion for each continuum integration in
+  that scan.  These items were not used at JCMT.
 
 \item[\texttt{C12WT}] is the water temperature. Not measured directly
   at JCMT during this period.
