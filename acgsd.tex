@@ -411,32 +411,6 @@ and the 12m with JCMT adopting a single item, \texttt{C9OT} from the
 \end{tabular}
 \end{table*}
 
-\begin{table}
-\caption{Coordinate codes used at NRAO and JCMT for item
-  \texttt{C4CSC}.}
-\label{tab:coordcodes}
-\begin{center}
-\begin{tabular}{lll}
-\hline
- & NRAO & JCMT \\ \hline
-Galactic & GALACTIC & GA \\
-B1950 RA/Dec & 1950RADC & RB \\
-Epoch RA/Dec & EPOCRADC & RD \\
-Mean RA/Dec & MEANRADC & -- \\
-Apparent RA/Dec & APPRADC & -- \\
-Apparent HA/Dec & APPHADC & EQ \\
-1950 Ecliptic & 1950ECL & EC \\
-Epoch ecliptic & EPOCECL & -- \\
-Apparent ecliptic & APPECL & -- \\
-Azimuth/Elevation & AZEL & AZ \\
-User defined & USERDEF & UD \\
-J2000 RA/Dec & 2000RADC & RJ \\
-Indicated Ra/Dec & INDRADC & -- \\
-\hline
-\end{tabular}
-\end{center}
-\end{table}
-
 The NRAO implementation, not including class 9, includes 26 items not
 found in the JCMT version. The reasons they were not adopted at JCMT
 are described in the following list, which also details other
@@ -498,6 +472,32 @@ compatibility problems.
   NRAO used a completely distinct set of codes using eight
   characters; RB being equivalent to 1950RADC. The full list is shown
   in Table~\ref{tab:coordcodes}.
+
+\begin{table}
+\caption{Coordinate codes used at NRAO and JCMT for item
+  \texttt{C4CSC}.}
+\label{tab:coordcodes}
+\begin{center}
+\begin{tabular}{lll}
+\hline
+ & NRAO & JCMT \\ \hline
+Galactic & GALACTIC & GA \\
+B1950 RA/Dec & 1950RADC & RB \\
+Epoch RA/Dec & EPOCRADC & RD \\
+Mean RA/Dec & MEANRADC & -- \\
+Apparent RA/Dec & APPRADC & -- \\
+Apparent HA/Dec & APPHADC & EQ \\
+1950 Ecliptic & 1950ECL & EC \\
+Epoch ecliptic & EPOCECL & -- \\
+Apparent ecliptic & APPECL & -- \\
+Azimuth/Elevation & AZEL & AZ \\
+User defined & USERDEF & UD \\
+J2000 RA/Dec & 2000RADC & RJ \\
+Indicated Ra/Dec & INDRADC & -- \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
 
 \item[\texttt{C4DO}] is a three-element array labeled ``Descriptive
   Origin'' describing the position and angle of the coordinate system
