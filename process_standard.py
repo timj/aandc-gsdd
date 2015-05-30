@@ -71,7 +71,19 @@ def list_to_dict(items):
     itemsdict = dict()
     for d in items:
         if "NRAO_NAME" in d:
-            itemsdict[d["NRAO_NAME"]] = d
+            keyword = d["NRAO_NAME"]
+            if keyword in itemsdict:
+                # Combine comments
+                newcomment = d["JCMT_COMMENT"]
+                if len(newcomment):
+                    previtem = itemsdict[keyword]
+                    previtem["JCMT_COMMENT"].add(newcomment)
+            else:
+                comment = d["JCMT_COMMENT"]
+                d["JCMT_COMMENT"] = set()
+                if len(comment):
+                    d["JCMT_COMMENT"].add(comment)
+                itemsdict[keyword] = d
 
     # but we have to be careful about C13xxx being higher than C1xxx
     names = sorted( itemsdict.keys(), key=sortbyclassnum )
@@ -135,7 +147,8 @@ def make_item_table(jcmtonly, jcmtitems, ncols=2, caption="A caption"):
             else:
                 item = jcmtonly[idx]
                 info = jcmtitems[item]
-                thisrow += [item, info["JCMT_COMMENT"].replace("&","\\&")]
+                commstr = " \\emph{or} ".join(info["JCMT_COMMENT"])
+                thisrow += ["\\textbf{"+item+"}", commstr.replace("&","\\&")]
         rowstr = " & ".join(thisrow) + "\\\\"
         print(rowstr.replace("_", "\\_"))
 
