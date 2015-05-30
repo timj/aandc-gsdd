@@ -117,13 +117,15 @@ def read_nrao(file="support_docs/nrao-names.txt"):
                 need_names = True
     return list_to_dict(items)
 
-def make_item_table(jcmtonly, jcmtitems, ncols=2, caption="A caption"):
+def make_item_table(jcmtonly, jcmtitems, ncols=2, caption="A caption", label=None):
     # Table for JCMT only keywords.
     table = "table"
     if ncols > 1:
         table = "table*"
     print("\\begin{"+table+"}[t]")
     print("\\caption{{{}}}".format(caption))
+    if label is not None:
+        print("\\label{"+label+"}")
     print("\\begin{center}")
     if ncols == 1:
         print("\\begin{tabular}{lp{2.5in}}")
@@ -186,7 +188,11 @@ for k in sorted(nraoonlydict.keys(), key=sortbyclassnum):
         print("NRAO: {}".format(k))
     nraoonly.append(k)
 
-make_item_table( jcmtonly[0:56], jcmtitems)
-make_item_table( jcmtonly[57:112], jcmtitems)
-make_item_table( jcmtonly[112:], jcmtitems)
-make_item_table( nraoonly, nraoitems, ncols=1)
+make_item_table(jcmtonly[0:56], jcmtitems, label="tab:appa1",
+                caption="JCMT-specific keywords from class 1 to class 4. This includes the three items that were not allocated a class.")
+make_item_table(jcmtonly[57:112], jcmtitems, label="tab:appa2",
+                caption="JCMT-specific keywords from class 4 to class 7.")
+make_item_table(jcmtonly[112:], jcmtitems, label="tab:appa3",
+                caption="JCMT-specific keywords from class 7 to class 14. Class 55 is not included here as that data was not archived.")
+make_item_table( nraoonly, nraoitems, ncols=1, label="tab:noaoonly",
+                 caption="Items of the GSDD model only defined for use at NRAO.")
