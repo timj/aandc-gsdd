@@ -652,7 +652,7 @@
 *
       DATA NRAO_NAME   (108)/'c3nfoc         '/
       DATA JCMT_NAME   (108)/'NO_FE_O_CH     '/
-      DATA JCMT_COMMENT(108)/'NO_FE_O_CH:No. of frontend output channels                                      '/
+      DATA JCMT_COMMENT(108)/'Number of frontend output channels                                              '/
       DATA FITS_TYPE   (108)/'JCMT    '/
       DATA FITS_NAME   (108)/'NOFCHAN '/
 *
