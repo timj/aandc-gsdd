@@ -58,7 +58,7 @@
 *
       DATA NRAO_NAME   (  9)/'c4ceco         '/
       DATA JCMT_NAME   (  9)/'CENTRE_CODE    '/
-      DATA JCMT_COMMENT(  9)/'centre coords. AZ= 1;EQ=3;RD=4;RB=6;RJ=7;GA=8                                   '/
+      DATA JCMT_COMMENT(  9)/'Centre coords. AZ=1; EQ=3; RD=4; RB=6; RJ=7; GA=8                               '/
       DATA FITS_TYPE   (  9)/'JCMT    '/
       DATA FITS_NAME   (  9)/'COORDCD2'/
 *
@@ -808,7 +808,7 @@
 *
       DATA NRAO_NAME   (134)/'c3nch          '/
       DATA JCMT_NAME   (134)/'NO_BE_I_CH     '/
-      DATA JCMT_COMMENT(134)/'NO_BE_I_CH:No. backend output channels                                          '/
+      DATA JCMT_COMMENT(134)/'Number of backend output channels                                               '/
       DATA FITS_TYPE   (134)/'JCMT    '/
       DATA FITS_NAME   (134)/'NOBEOCH '/
 *
@@ -826,7 +826,7 @@
 *
       DATA NRAO_NAME   (137)/'c3nch          '/
       DATA JCMT_NAME   (137)/'NO_BE_O_CH     '/
-      DATA JCMT_COMMENT(137)/'No.backend output channels                                                      '/
+      DATA JCMT_COMMENT(137)/'Number of backend output channels                                               '/
       DATA FITS_TYPE   (137)/'JCMT    '/
       DATA FITS_NAME   (137)/'NOBEOCH '/
 *
@@ -850,7 +850,7 @@
 *
       DATA NRAO_NAME   (141)/'C6CYCLREV      '/
       DATA JCMT_NAME   (141)/'CYCLE_REVERSAL '/
-      DATA JCMT_COMMENT(141)/'cycle reversal flag                                                             '/
+      DATA JCMT_COMMENT(141)/'Cycle reversal flag                                                             '/
       DATA FITS_TYPE   (141)/'JCMT    '/
       DATA FITS_NAME   (141)/'CYCLREV '/
 *
@@ -1480,7 +1480,7 @@
 *
       DATA NRAO_NAME   (246)/'c12gains       '/
       DATA JCMT_NAME   (246)/'GAIN_TRANS     '/
-      DATA JCMT_COMMENT(246)/'Gains                                                                           '/
+      DATA JCMT_COMMENT(246)/'                                                                                '/
       DATA FITS_TYPE   (246)/'JCMT    '/
       DATA FITS_NAME   (246)/'GAINS   '/
 *
@@ -1660,7 +1660,7 @@
 *
       DATA NRAO_NAME   (276)/'c12gains       '/
       DATA JCMT_NAME   (276)/'GAIN           '/
-      DATA JCMT_COMMENT(276)/'Gains                                                                           '/
+      DATA JCMT_COMMENT(276)/'                                                                                '/
       DATA FITS_TYPE   (276)/'JCMT    '/
       DATA FITS_NAME   (276)/'GAINS   '/
 *
@@ -1702,19 +1702,19 @@
 *
       DATA NRAO_NAME   (283)/'C12VHOT        '/
       DATA JCMT_NAME   (283)/'IF_V_HOT       '/
-      DATA JCMT_COMMENT(283)/'                                                                                '/
+      DATA JCMT_COMMENT(283)/'IF V_HOT                                                                        '/
       DATA FITS_TYPE   (283)/'JCMT    '/
       DATA FITS_NAME   (283)/'VHOT    '/
 *
       DATA NRAO_NAME   (284)/'C12VSKY        '/
       DATA JCMT_NAME   (284)/'IF_V_SKY       '/
-      DATA JCMT_COMMENT(284)/'                                                                                '/
+      DATA JCMT_COMMENT(284)/'IF V_SKY                                                                        '/
       DATA FITS_TYPE   (284)/'JCMT    '/
       DATA FITS_NAME   (284)/'VSKY    '/
 *
       DATA NRAO_NAME   (285)/'C12VCOLD       '/
       DATA JCMT_NAME   (285)/'IF_V_COLD      '/
-      DATA JCMT_COMMENT(285)/'                                                                                '/
+      DATA JCMT_COMMENT(285)/'IF V_COLD                                                                       '/
       DATA FITS_TYPE   (285)/'JCMT    '/
       DATA FITS_NAME   (285)/'VCOLD   '/
 *
