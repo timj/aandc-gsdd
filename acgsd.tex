@@ -1448,110 +1448,148 @@ inclinometry data were not archived and as such data files describing
 these observations are extremely rare.
 
 \begin{table*}[t]
-\caption{JCMT-specific keywords from class 1 to class 4. This includes
-the three items that were not allocated a class.}
+\caption{JCMT-specific keywords from class 1 to class 4. This includes the three items that were not allocated a class.}
 \label{tab:appa1}
+\begin{center}
 \begin{tabular}{|lp{2.0in}|lp{2.0in}|}
 \hline
-CELL\_V2Y & Position angle of cell y axis (CCW) & C3DASSHFTFRAC & DAS calibration source for backend calibration (POWER or DATA)\\
-UAZ & User az correction & C3FLY & Data taken on the fly or in discrete mode?\\
-UEL & User el correction & C3FOCUS & Focus observation?\\
-C1BTYP & Type of backend & C3INTT & Scan integration time\\
-C1FTYP & Type of frontend & C3LSPC & Number of channels per backend section\\
-C1HGT & Height of telescope above sea level & C3MAP & Map observation?\\
-C1IFS & Name of the IF device & C3MXP & Maximum number of map points done in a phase\\
-C1LAT & Geodetic latitude of telescope (North +ve) & C3NCH & No.backend output channels\\
-C1LONG & Geographical longitude of telescope (West +ve) & C3NCI & Maximum number of cycles in the scan\\
-C1ONA1 & Name of the support scientist & C3NCP & Total number of xy positions observed during a cycle\\
-C1ONA2 & Name of the telescope operator & C3NCYCLE & Number of cycles done in the scan\\
-C1SNA1 & Source name part 1 & C3NFOC & NO\_FE\_O\_CH:No. of frontend output channels\\
-C1SNA2 & Source name part 2 or altern. name & C3NIS & Number of scans\\
-C2PC1 & Angle by which lower axis is north of ideal & C3NLOOPS & Number of scans per observation commanded at observation start\\
-C2PC2 & Angle by which lower axis is east of ideal & C3NMAP & Number of map points\\
-C2PC3 & Angle by which upper axis is not perpendicular to lower & C3NOIFPBES & Number of IF inputs to each section (2 for correlator, 1 for AOS)\\
-C2PC4 & Angle by which beam is not perpendicular to upper axis & C3NO\_SCAN\_VARS1 & Number of scan table 1 variables\\
-C3BEFENULO & Copy of frontend LO frequency per backend section & C3NO\_SCAN\_VARS2 & Number of scan table 2 variables\\
-C3BEFESB & Copy of frontend sideband sign per backend section & C3NPP & Number of dimension in the map table\\
-C3BEINCON & IF output channels connected to BE input channels & C3NRS & Number of backend sections\\
-C3BESCONN & BE input channels connected to this section & C3NSAMPLE & Number of scans done\\
-C3BESSPEC & Subsystem nr to which each backend section belongs. & C3OVERLAP & Subband overlap\\
-C3BETOTIF & Total IF per backend section & C3UT1C & UT1-UTC correction interpolated from time service telex (in days)\\
-C3CAL & Calibration observation? & C4AMPL\_EW & Secondary mirror chopping amplitude parallel to lower axis\\
-C3CEN & Centre moves between scans? & C4AMPL\_NS & Secondary mirror chopping amplitude parallel to upper axis\\
-C3CONFIGNR & Backend configuration & C4AXY & Angle between cell y axis and x-axis (CCW)\\
-C3DASCALSRC & DAS calibration source for backend calibration (POWER or DATA) & C4AZERR & DAZ:Net Az offset at start (inc.tracker ball setting and user correction)\\
-C3DASOUTPUT & Description of output in DAS DATA (SPECTRUM, T\_REC, T\_SYS, etc.) & C4CECO & centre coords. AZ= 1;EQ=3;RD=4;RB=6;RJ=7;GA=8\\
+\textbf{CELL\_V2Y} & Position angle of cell y axis (CCW) & \textbf{C3DASSHFTFRAC} & DAS calibration source for backend calibration (POWER or DATA)\\
+\textbf{UAZ} & User az correction & \textbf{C3FLY} & Data taken on the fly or in discrete mode?\\
+\textbf{UEL} & User el correction & \textbf{C3FOCUS} & Focus observation?\\
+\textbf{C1BTYP} & Type of backend & \textbf{C3INTT} & Scan integration time\\
+\textbf{C1FTYP} & Type of frontend & \textbf{C3LSPC} & Number of channels per backend section\\
+\textbf{C1HGT} & Height of telescope above sea level & \textbf{C3MAP} & Map observation?\\
+\textbf{C1IFS} & Name of the IF device & \textbf{C3MXP} & Maximum number of map points done in a phase\\
+\textbf{C1LAT} & Geodetic latitude of telescope (North +ve) & \textbf{C3NCH} & Number of backend output channels\\
+\textbf{C1LONG} & Geographical longitude of telescope (West +ve) & \textbf{C3NCI} & Maximum number of cycles in the scan\\
+\textbf{C1ONA1} & Name of the support scientist & \textbf{C3NCP} & Total number of xy positions observed during a cycle\\
+\textbf{C1ONA2} & Name of the telescope operator & \textbf{C3NCYCLE} & Number of cycles done in the scan\\
+\textbf{C1SNA1} & Source name part 1 & \textbf{C3NFOC} & Number of frontend output channels\\
+\textbf{C1SNA2} & Source name part 2 or altern. name & \textbf{C3NIS} & Number of scans\\
+\textbf{C2PC1} & Angle by which lower axis is north of ideal & \textbf{C3NLOOPS} & Number of scans per observation commanded at observation start\\
+\textbf{C2PC2} & Angle by which lower axis is east of ideal & \textbf{C3NMAP} & Number of map points\\
+\textbf{C2PC3} & Angle by which upper axis is not perpendicular to lower & \textbf{C3NOIFPBES} & Number of IF inputs to each section (2 for correlator, 1 for AOS)\\
+\textbf{C2PC4} & Angle by which beam is not perpendicular to upper axis & \textbf{C3NO\_SCAN\_VARS1} & Number of scan table 1 variables\\
+\textbf{C3BEFENULO} & Copy of frontend LO frequency per backend section & \textbf{C3NO\_SCAN\_VARS2} & Number of scan table 2 variables\\
+\textbf{C3BEFESB} & Copy of frontend sideband sign per backend section & \textbf{C3NPP} & Number of dimension in the map table\\
+\textbf{C3BEINCON} & IF output channels connected to BE input channels & \textbf{C3NRS} & Number of backend sections\\
+\textbf{C3BESCONN} & BE input channels connected to this section & \textbf{C3NSAMPLE} & Number of scans done\\
+\textbf{C3BESSPEC} & Subsystem nr to which each backend section belongs. & \textbf{C3OVERLAP} & Subband overlap\\
+\textbf{C3BETOTIF} & Total IF per backend section & \textbf{C3UT1C} & UT1-UTC correction interpolated from time service telex (in days)\\
+\textbf{C3CAL} & Calibration observation? & \textbf{C4AMPL\_EW} & Secondary mirror chopping amplitude parallel to lower axis\\
+\textbf{C3CEN} & Centre moves between scans? & \textbf{C4AMPL\_NS} & Secondary mirror chopping amplitude parallel to upper axis\\
+\textbf{C3CONFIGNR} & Backend configuration & \textbf{C4AXY} & Angle between cell y axis and x-axis (CCW)\\
+\textbf{C3DASCALSRC} & DAS calibration source for backend calibration (POWER or DATA) & \textbf{C4AZERR} & DAZ:Net Az offset at start (inc.tracker ball setting and user correction)\\
+\textbf{C3DASOUTPUT} & Description of output in DAS DATA (SPECTRUM, T\_REC, T\_SYS, etc.) & \textbf{C4CECO} & Centre coords. AZ=1; EQ=3; RD=4; RB=6; RJ=7; GA=8\\
 \hline
 \end{tabular}
+\end{center}
 \end{table*}
-
 \begin{table*}[t]
 \caption{JCMT-specific keywords from class 4 to class 7.}
 \label{tab:appa2}
+\begin{center}
 \begin{tabular}{|lp{2.0in}|lp{2.0in}|}
 \hline
-C4DECDATE & Declination of date & C4THROW & Secondary mirror chop throw\\
-C4DEL & Telescope upper axis correction for secondary mirror XYZ & C4X & Secondary mirror absolute X position at observation start\\
-C4DO1 & Cell x dimension; descriptive origin item 1 & C4Y & Secondary mirror absolute Y position at observation start\\
-C4DO2 & Cell y dimension; descriptive origin item 2 & C4Z & Secondary mirror absolute Z position at observation start\\
-C4DO3 & Angle by which the cell x axis is oriented with respect to local vertical & C5IR1 & Refraction constant A (see MTIN026)\\
-C4EDEC & Declination of source for EPOCH & C5IR2 & Refraction constant B (see MTIN026)\\
-C4EDEC2000 & Declination J2000 & C5IR3 & Refraction constant C (see MTIN026)\\
-C4ELERR & DEL:Net El offset at start (inc.tracker ball setting and user correction) & C6CYCLREV & Cycle reversal flag\\
-C4EPT & Type of epoch, JULIAN, BESSELIAN or APPARENT & C6MODE & Observation mode\\
-C4EW\_ENCODER & Secondary mirror ew encoder value & C6REV & Map rows scanned in alternate directions?\\
-C4EW\_SCALE & Secondary mirror ew chop scale & C6SD & Map rows are in X (horizontal) or Y(vertical) direction\\
-C4FRQ & Secondary mirror chopping period & C6ST & Type of observation\\
-C4FUN & Secondary mirror chopping waveform & C6XPOS & In first row x increases (TRUE) or decreases (FALSE)\\
-C4LSC & Char. code for local x-y coord.system & C6YPOS & In first row y increases (TRUE) or decreases (FALSE)\\
-C4MCF & Centre moving flag (solar system object) & C7AP & Aperture\\
-C4MOCO & Mounting of telescope; defined as LOWER/UPPER axes, e.g; AZ/ALT & C7FIL & Filter\\
-C4NS\_ENCODER & Secondary mirror ns encoder value & C7HP & FWHM of the beam profile (mean)\\
-C4NS\_SCALE & Secondary mirror ns chop scale & C7NIF & Number of IF channels\\
-C4ODCO & Units of cell and mapping coordinates;offset definition code & C7PHASE & Lockin phase\\
-C4OFFS\_EW & Secondary mirror offset parallel to lower axis (East-West Tilt) & C7SEEING & Seeing at JCMT\\
-C4OFFS\_NS & Secondary mirror offset parallel to upper axis (North-South Tilt) & C7SEETIME & SAO seeing time (YYMMDDHHMM)\\
-C4PER & Secondary mirror chopping period & C7SNSTVTY & Lockin sensitivity in scale range units\\
-C4POSANG & Secondary mirror chop position angle & C7SNTVTYRG & Sensitivity range of lockin\\
-C4RA2000 & Right ascension J2000 & C7SZVRAD & Number of elements of vradial array\\
-C4RADATE & Right Ascension of date & C7TAU225 & CSO tau at 225GHz\\
-C4SM & Secondary mirror is chopping & C7TAURMS & CSO tau rms\\
-C4SMCO & Secondary mirror chopping coordinate system & C7TAUTIME & CSO tau time (YYMMDDHHMM)\\
+\textbf{C4DECDATE} & Declination of date & \textbf{C4THROW} & Secondary mirror chop throw\\
+\textbf{C4DEL} & Telescope upper axis correction for secondary mirror XYZ & \textbf{C4X} & Secondary mirror absolute X position at observation start\\
+\textbf{C4DO1} & Cell x dimension; descriptive origin item 1 & \textbf{C4Y} & Secondary mirror absolute Y position at observation start\\
+\textbf{C4DO2} & Cell y dimension; descriptive origin item 2 & \textbf{C4Z} & Secondary mirror absolute Z position at observation start\\
+\textbf{C4DO3} & Angle by which the cell x axis is oriented with respect to local vertical & \textbf{C5IR1} & Refraction constant A\\
+\textbf{C4EDEC} & Declination of source for EPOCH & \textbf{C5IR2} & Refraction constant B\\
+\textbf{C4EDEC2000} & Declination J2000 & \textbf{C5IR3} & Refraction constant C\\
+\textbf{C4ELERR} & DEL:Net El offset at start (inc.tracker ball setting and user correction) & \textbf{C6CYCLREV} & Cycle reversal flag\\
+\textbf{C4EPT} & Type of epoch, JULIAN, BESSELIAN or APPARENT & \textbf{C6MODE} & Observation mode\\
+\textbf{C4EW\_ENCODER} & Secondary mirror ew encoder value & \textbf{C6REV} & Map rows scanned in alternate directions?\\
+\textbf{C4EW\_SCALE} & Secondary mirror ew chop scale & \textbf{C6SD} & Map rows are in X (horizontal) or Y(vertical) direction\\
+\textbf{C4FRQ} & Secondary mirror chopping period & \textbf{C6ST} & Type of observation\\
+\textbf{C4FUN} & Secondary mirror chopping waveform & \textbf{C6XPOS} & In first row x increases (TRUE) or decreases (FALSE)\\
+\textbf{C4LSC} & Char. code for local x-y coord.system & \textbf{C6YPOS} & In first row y increases (TRUE) or decreases (FALSE)\\
+\textbf{C4MCF} & Centre moving flag (solar system object) & \textbf{C7AP} & Aperture\\
+\textbf{C4MOCO} & Mounting of telescope; defined as LOWER/UPPER axes, e.g; AZ/ALT & \textbf{C7FIL} & Filter\\
+\textbf{C4NS\_ENCODER} & Secondary mirror ns encoder value & \textbf{C7HP} & FWHM of the beam profile (mean)\\
+\textbf{C4NS\_SCALE} & Secondary mirror ns chop scale & \textbf{C7NIF} & Number of IF channels\\
+\textbf{C4ODCO} & Units of cell and mapping coordinates;offset definition code & \textbf{C7PHASE} & Lockin phase\\
+\textbf{C4OFFS\_EW} & Secondary mirror offset parallel to lower axis (East-West Tilt) & \textbf{C7SEEING} & Seeing at JCMT\\
+\textbf{C4OFFS\_NS} & Secondary mirror offset parallel to upper axis (North-South Tilt) & \textbf{C7SEETIME} & SAO seeing time (YYMMDDHHMM)\\
+\textbf{C4PER} & Secondary mirror chopping period & \textbf{C7SNSTVTY} & Lockin sensitivity in scale range units\\
+\textbf{C4POSANG} & Secondary mirror chop position angle & \textbf{C7SNTVTYRG} & Sensitivity range of lockin\\
+\textbf{C4RA2000} & Right ascension J2000 & \textbf{C7SZVRAD} & Number of elements of vradial array\\
+\textbf{C4RADATE} & Right Ascension of date & \textbf{C7TAU225} & CSO tau at 225GHz\\
+\textbf{C4SM} & Secondary mirror is chopping & \textbf{C7TAURMS} & CSO tau rms\\
+\textbf{C4SMCO} & Secondary mirror chopping coordinate system & \textbf{C7TAUTIME} & CSO tau time (YYMMDDHHMM)\\
 \hline
 \end{tabular}
+\end{center}
 \end{table*}
-
 \begin{table*}[t]
-\caption{JCMT-specific keywords from class 7 to class 14. Class 55 is
-  not included here as that data was not archived.}
+\caption{JCMT-specific keywords from class 7 to class 14. Class 55 is not included here as that data was not archived.}
 \label{tab:appa3}
+\begin{center}
 \begin{tabular}{|lp{2.0in}|lp{2.0in}|}
 \hline
-C7VREF & Velocity reference code; reference point for telescope \& source velocity & C12SCAN\_VARS2 & Names of the cols. of scan table2\\
-C11PHA & Phase table: switching scheme dependent & C12TAMB & Ambient load temperature\\
-C12ALPHA & Ratio of signal sideband to image sideband sky transmission & C12TASKY & Ratio of signal sideband to image sideband sky transmission\\
-C12BM & Correlation bit mode & C12TCOLD & Cold load temperature\\
-C12CAL & Units of spectrum data & C12TSKY & Sky temperature at last calibration\\
-C12CALTASK & Calibration instrument used (FE, BE, or USER) & C12TSKYIM & Frontend-derived Tsky, image sideband\\
-C12CALTYPE & Type of calibration (THREELOADS or TWOLOADS) & C12TSYSIM & Frontend-derived Tsys, image sideband\\
-C12CM & Correlation function mode & C12TTEL & Telescope temp. from last skydip\\
-C12ETASKY & Sky transmission from last calibration & C12VCOLD & \\
-C12ETASKYIM & Frontend-derived sky transmission & C12VDEF & Velocity definition code - radio, optical, or relativistic\\
-C12ETATEL & Telescope transmission & C12VHOT & \\
-C12GAINS & Gains & C12VREF & Velocity frame of reference - LSR, Bary-, Helio-, or Geo- centric\\
-C12GNORM & Data normalisation factor & C12VSKY & \\
-C12GREC & Raw data units per Kelvin & C13DAT & Reduced data\\
-C12GS & Normalizes signal sideband gain & C13ERR & Standard error\\
-C12INFREQ & BE input frequencies [GHz] & C13RAW\_ERROR & \\
-C12NOI & Noise value & C13RAW\_ERROR\_OP & Raw (out of phase) error also to be stored at end scan\\
-C12REDMODE & Way of calibrating the data (RATIO or DIFFERENCE) & C13RESP & array of responsivities\\
-C12SBRAT & Sideband ratio & C13SPV & \\
-C12SCAN\_TABLE\_1 & Begin scan table & C13SPV\_OP & Raw out of phase data samples in each phase\\
-C12SCAN\_TABLE\_2 & End scan table & C13STD & Phase data standard deviation\\
-C12SCAN\_VARS1 & Names of the cols. of scan table1 & C14PHIST & List of xy offsets for each scan\\
+\textbf{C7VREF} & Velocity reference code; reference point for telescope \& source velocity & \textbf{C12SCAN\_VARS2} & Names of the cols. of scan table2\\
+\textbf{C11PHA} & Phase table: switching scheme dependent & \textbf{C12TAMB} & Ambient load temperature\\
+\textbf{C12ALPHA} & Ratio of signal sideband to image sideband sky transmission & \textbf{C12TASKY} & Ratio of signal sideband to image sideband sky transmission\\
+\textbf{C12BM} & Correlation bit mode & \textbf{C12TCOLD} & Cold load temperature\\
+\textbf{C12CAL} & Units of spectrum data & \textbf{C12TSKY} & Sky temperature at last calibration\\
+\textbf{C12CALTASK} & Calibration instrument used (FE, BE, or USER) & \textbf{C12TSKYIM} & Frontend-derived Tsky, image sideband\\
+\textbf{C12CALTYPE} & Type of calibration (THREELOADS or TWOLOADS) & \textbf{C12TSYSIM} & Frontend-derived Tsys, image sideband\\
+\textbf{C12CM} & Correlation function mode & \textbf{C12TTEL} & Telescope temp. from last skydip\\
+\textbf{C12ETASKY} & Sky transmission from last calibration & \textbf{C12VCOLD} & IF V\_COLD\\
+\textbf{C12ETASKYIM} & Frontend-derived sky transmission & \textbf{C12VDEF} & Velocity definition code - radio, optical, or relativistic\\
+\textbf{C12ETATEL} & Telescope transmission & \textbf{C12VHOT} & IF V\_HOT\\
+\textbf{C12GAINS} & Gain value (kelvins per volt or equivalent) & \textbf{C12VREF} & Velocity frame of reference - LSR, Bary-, Helio-, or Geo- centric\\
+\textbf{C12GNORM} & Data normalisation factor & \textbf{C12VSKY} & IF V\_SKY\\
+\textbf{C12GREC} & Raw data units per Kelvin & \textbf{C13DAT} & Reduced photometric value \emph{or} Spectrum data \emph{or} Reduced data\\
+\textbf{C12GS} & Normalizes signal sideband gain & \textbf{C13ERR} & Standard error\\
+\textbf{C12INFREQ} & BE input frequencies [GHz] & \textbf{C13RAW\_ERROR} & Raw error is accumulated over the scan, so store at end scan\\
+\textbf{C12NOI} & Noise value & \textbf{C13RAW\_ERROR\_OP} & Raw (out of phase) error also to be stored at end scan\\
+\textbf{C12REDMODE} & Way of calibrating the data (RATIO or DIFFERENCE) & \textbf{C13RESP} & array of responsivities\\
+\textbf{C12SBRAT} & Sideband ratio & \textbf{C13SPV} & Individual beam integrations \emph{or} Raw data\\
+\textbf{C12SCAN\_TABLE\_1} & Begin scan table & \textbf{C13SPV\_OP} & Raw out of phase data samples in each phase\\
+\textbf{C12SCAN\_TABLE\_2} & End scan table & \textbf{C13STD} & Phase data standard deviation\\
+\textbf{C12SCAN\_VARS1} & Names of the cols. of scan table1 & \textbf{C14PHIST} & List of xy offsets for each scan\\
 \hline
 \end{tabular}
+\end{center}
 \end{table*}
+\begin{table}[t]
+\caption{Items of the GSDD model only defined for use at NRAO.}
+\label{tab:noaoonly}
+\begin{center}
+\begin{tabular}{lp{2.5in}}
+\hline
+\textbf{C1DLN} & Length of Data [bytes]\\
+\textbf{C1HLN} & Length of Header [bytes]\\
+\textbf{C1SNA} & Source Name\\
+\textbf{C2PC} & Pointing Constants(4)\\
+\textbf{C2UXP} & User Az/RA Pointing Correction [arcsec]\\
+\textbf{C2UYP} & User El/Dec Pointing Correction [arcsec]\\
+\textbf{C4DO} & Descriptive Origin(3)\\
+\textbf{C4IX} & Indicated X Position [deg]\\
+\textbf{C4IY} & Indicated Y Position [deg]\\
+\textbf{C6XZ} & X Position at Map Reference Position Zero [deg]\\
+\textbf{C6YZ} & Y Position at Map Reference Position Zero [deg]\\
+\textbf{C7FW} & Beam Fullwidth at Half Maximum [arcsec]\\
+\textbf{C11TP} & Phase Table\\
+\textbf{C11VV} & Variable Value\\
+\textbf{C12DX} & Delta X\\
+\textbf{C12IT} & Total Integration Time [sec]\\
+\textbf{C12NI} & Number of Integrations\\
+\textbf{C12OO} & O2 Opacity\\
+\textbf{C12OT} & O2 Temperature [K]\\
+\textbf{C12RMS} & RMS of Mean\\
+\textbf{C12RP} & Reference Point Number\\
+\textbf{C12SP} & Polarization\\
+\textbf{C12SPN} & Starting Point Number\\
+\textbf{C12ST} & Source Temperature\\
+\textbf{C12WT} & H2O Temperature [K]\\
+\textbf{C12X0} & X Value at the Reference Point\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
 
 \end{document}
 
