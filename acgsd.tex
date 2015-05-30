@@ -724,7 +724,7 @@ With the data section, each individual ``scan'' is one instance of the
 data structure that evolved from the original GSDD data model.  Each scan 
 occupies an integer number of records within the file (any extra space is
 padded with zeros).  An SDD file can hold both spectral line and continuum
-data.  The type of data is indicated by the C1STC value found in the data for
+data.  The type of data is indicated by the \texttt{C1STC} value found in the data for
 each scan. The order and type of the values in the bootstrap record and 
 within each index entry are set by the version number recorded 
 in the bootstrap.  This is not a self-describing format like FITS.
@@ -744,11 +744,11 @@ Each index entry indicates where the associated scan data starts and ends.
 The scan data consists of a preamble, which is 16 short integers giving
 the number of classes and the starting 8-byte location in the header where
 each class of header words started.  Within each class, the type and order
-of each value is fixed.  The C1HLN value gives the length of all of the 
+of each value is fixed.  The \texttt{C1HLN} value gives the length of all of the 
 header values.  Over time, new values were added to the ends of some
 classes so that UniPOPS retained the ability to read previous versions
 of the SDD format by not attempting to read header words past the end of
-a class as indicated by the values in the preamble and C1HLN.  All
+a class as indicated by the values in the preamble and \texttt{C1HLN}.  All
 numerical values in the header are stored as 8-byte floats.  All string
 values are stored as multiples of 8 characters, depending on the 
 specific value.  The data vector immediately follows the header.  The
@@ -814,7 +814,7 @@ the user would save processed spectra to a separate SDD file.
 Often that output SDD file would contain the same data saved at different
 stages of the processing.  UniPOPS provided the ability to modify all
 of the header values in a scan.  Within UniPOPS these were known by slightly
-more readable names (e.g. C1SNA is OBJECT in UniPOPS). The number of 
+more readable names (e.g. \texttt{C1SNA} is \texttt{OBJECT} in UniPOPS). The number of 
 scans that an SDD file can contain
 is set by the size of the index section.  Scripts were provided with UniPOPS
 to expand an existing SDD file if more index space was necessary.  This
