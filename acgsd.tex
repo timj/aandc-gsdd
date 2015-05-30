@@ -866,12 +866,12 @@ on the acquisition hardware initially targeted for JCMT.
 
 The computer used during testing and commissioning in 1985/86 was a
 VAX 11/730 with 4\,MB of RAM and which had severe performance
-limitations. This was upgraded to a MicroVAXwith 16\,MB of RAM just
+limitations. This was upgraded to a MicroVAX with 16\,MB of RAM just
 before operations started at JCMT in 1987 but performance was the key
 design driver: the control system was required to minimize the
 overheads in data capture and therefore maximize the observing
 time. The VAX Record Management System (RMS) was the basis of all
-records based file handling. The performance of this system was not
+records-based file handling. The performance of this system was not
 suitable for real-time operation as you did not want to the system to
 pause opening or closing or extending a file in the middle of the data
 collection. Furthermore, limits on the maximum record length in RMS
@@ -920,7 +920,7 @@ could include multiple offsets in a grid or on-the-fly map and
 includes the full map area, rather than a single row or column. This
 approach resulted in more files to track in a night but was felt to
 simplify the acqusition software (each observation was completely
-independent of what had gone before), and make it easier to share
+independent of what had gone before), and make it easier to distribute
 subsets of a night's data amongst different observers (a pre-requisite
 for flexible scheduling) and simplify queries for individual
 observations from the data archive. Of course, this meant that the
@@ -1019,9 +1019,9 @@ and continuum) from the telescope commissioning (circa 1986) to the
 delivery of SCUBA in 1996 \citep{1999MNRAS.303..659H}. The GSD format
 continued to be used for heterodyne instruments until the delivery of
 the new ACSIS correlator in 2006 \citep{2009MNRAS.399.1026B}.  SCUBA
-and the new instruments wrote data in the Starlink extensible
+and newer instruments wrote data in the Starlink extensible
 \emph{N}-dimensional Data Format \citep[NDF;][]{2015NDF}, although
-SCUBA's data model did not exactly match that used for ACSIS and
+SCUBA's data model did not exactly match that later used for ACSIS and
 SCUBA-2 \citep{2013MNRAS.430.2513H} data. NDF had a key advantage that
 it was being used throughout the Starlink Software Collection as the
 primary data format \citep{1992ASPC...25..126A}. Writing data using
@@ -1074,7 +1074,7 @@ be compliant with Canadian language regulations. The JCMT Science
 Archive \citep[JSA;][]{2015Economou} therefore does not contain GSD
 data.  To extend the useful life of the GSD format observations and to
 make the observations available to the widest possible community
-through the JSA and the Virtual Observatory, there is a project to
+through the JSA and the Virtual Observatory, there was a project to
 convert the GSD heterodyne files archived at CADC to the modern ACSIS
 format \citep{OCS_ICD_022} such that they can be processed (baseline
 subtracted, co-added, placed into data cubes) using the
@@ -1098,7 +1098,7 @@ The key failure of GSDD was that most of the users of the format did
 not realize that it was a standard and therefore there was no
 impetus for people to continue to communicate as systems
 evolved. The initial developers of the JCMT system were not the people
-maintaining the acquisitions software in Hawaii; the lead developer of
+maintaining the acquisitions software in Hawaii and, at NRAO, the lead developer of
 the 12m GSDD system left NRAO before the end of the 1980s.
 Interviewing people from NRAO and JCMT following the
 respective implementations of GSDD compatible systems, it was very rare
@@ -1119,7 +1119,9 @@ the files into a completely different format that could be understood
 by \textsc{class}.
 
 In conclusion, it is impossible for a standard to survive as a standard
-if no-one knows they are using a standard.
+if no-one knows they are using a standard and the effort must be made
+to broadcast and properly document the effort within the wider
+community as part of the original development.
 
 \subsection{A model must define the values and units}
 
@@ -1133,6 +1135,10 @@ observatories differed despite sharing the same underlying item
 names. If an attempt had ever been made to transfer data between
 observatories special code would have to be written to import the
 data, removing most of the gains of a shared model.
+The was due to a failure to fully develop the standard prior to
+starting it implementation. In some sense, the development/initiative
+was not initiated with/subjected to proper project management
+procedures as we currently understand them.
 
 \subsection{Embrace Flexibility}
 
@@ -1185,13 +1191,14 @@ discussion.
 
 \subsection{Clear separation of model from file format}
 
-Whether by accident or design, the GSDD standard resulted in multiple
+GSDD benefited by explicitly defining the
+data model for single-dish observing distinct from bytes on the
+disk. However, whether by accident or design, the GSDD standard resulted in multiple
 software implementations writing the data to disk in different formats
 and using different techniques. The JCMT GSD format was never written
 on anything other than a VAX but the NRAO format migrated from PDFL to
-SDD going from VAX to Unix. GSDD benefited by explicitly defining the
-data model for single-dish observing distinct from bytes on the
-disk. Unfortunately this also meant that and data reduction software
+SDD going from VAX to Unix. Unfortunately these multiple formats also
+meant that data reduction software
 wishing to read the data would need to implement multiple file
 readers. The reality is this work was never done. Given the focus of
 both institutions on the use of GSDD in data acquisition using
@@ -1215,17 +1222,17 @@ available. The related format continues to be used at the 12-m Telescope.
 \subsection{Feeder for SDFITS}
 \label{sec:sdfits}
 
-GSDD was a very early attempt for independently run observatories to
+GSDD was a very early attempt for independently funded and operated observatories to
 agree on a shared data model. The goals of true interoperability of
 raw telescope data amongst multiple data reduction software packages
-was an important goal that was ahead of its time. Arguably they key
+was an important goal that was ahead of its time. Arguably the key
 outcome of GSDD was that it motivated people to work together towards
 a shared data format based on FITS. The GSDD experience fed in to a
 1989 workshop held at Green Bank in late
 1989\footnote{\url{http://fits.gsfc.nasa.gov/dishfits/dishfits.8910}}
 that discussed how the community could migrate to a
 single-dish FITS format. This was a key motivator for the adoption
-into the FITS standard of binary tables \citep{1995A&AS..113..159C}
+of binary tables into the FITS standard \citep{1995A&AS..113..159C}
 and ultimately led to the SDFITS standard \citep{2000ASPC..216..243G}.
 
 {\color{red} Referee wants more detail on GSDD influence of SDFITS.}
@@ -1249,11 +1256,13 @@ Starlink Project \citep{1982QJRAS..23..485D} to publish the software
 and data files to the UK community. Access to that network from other
 countries, such as the US, was problematic, and hindered the spread of
 the software and prevented take up. Fears of lack of support also
-drive people to create their own in-house solutions.
+drove people to create their own in-house solutions.
 
 Today, 30 years on, the Internet and the culture of open-source
-development make that much less likely and a good idea has a better
-chance of surviving and growing.
+development make that much less likely and
+and good ideas have a tendency to become distributed and generate a
+supporting community outside of the original developers that ensures
+its survival and growth.
 
 \section{Thoughts on the Future}
 
@@ -1268,8 +1277,12 @@ format with more modern underpinnings.  As noted in the debate
 described in \citet{2015MinkADASS}, representing data on disk is
 becoming a secondary concern relative to the discussion of data
 models. A data model can be serialized into many different transport
-and archive formats but the application software should really be
-worrying about the data model that is being used. This is, after all,
+and archive formats but
+it is relatively easy to make applications flexible enough to be
+able to cope with these differences. Instead, it is much harder to
+deal with different data models and implementation efforts should
+concentrate on optimizing and generalizing the data model that is
+being used. This is, after all,
 the underlying \emph{business logic} that enables science to progress.
 It may be true that all data models can be represented in a FITS file
 but that doesn't mean that a FITS file is the most compact or most
@@ -1287,17 +1300,17 @@ models are represented on disk.
 
 GSDD failed to unify the single-dish radio telescope community to use
 a single file format. Focusing on the data model as a first step was
-probably the correct decision at the time but it was poorly
+the correct decision at the time but it was poorly
 implemented with little buy-in from the people writing the
 software. Failing to agree on units, coordinate codes and the approach
-to adding future keywords removed any chance of GSDD being a
+to adding additional keywords removed any chance of GSDD being a
 generically useful data model for the community.
-Ideally a GSDD data model library would have been written to
-abstract the file format completely from the user. Recall that this was
+Ideally a GSDD data model library should have been written to
+abstract the file format completely from the user, but this was
 all occuring before object-oriented programming was a common
 paradigm. If GSDD were being implemented now it would be obvious how
-to wrap the millimetre observing into object-oriented classes
-involving specific receiver types and observing modes.
+to wrap data representing millimetre observations within object-oriented classes
+involving differing receiver types and observing modes.
 
 Abstracting the data model from the underlying file format is an idea
 whose time has come. The Large Synoptic Survey Telescope data
@@ -1307,7 +1320,7 @@ the system and the butler then pulls all the relevant data items
 together (from a database or from files or from a combination of the
 two) and instantiates an object representing that data. For LSST this
 \texttt{Exposure} class represents something relevant to an optical
-imager, but it could just as easily return an object that understands
+imager, but it could just as easily return an object that is relevant to
 millimeter observing.
 
 \section{Conclusions}
