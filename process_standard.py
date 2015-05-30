@@ -1,5 +1,7 @@
 #!python3
 
+from __future__ import print_function
+
 """
 Read JCMT and NRAO standard specification.
 Compare them.
@@ -66,7 +68,7 @@ def read_jcmt(file="support_docs/jcmt_storage_translate_full.inc"):
 def list_to_dict(items):
     # Convert the list to a dict so that we can order the
     # output by NRAO_NAME
-    itemsdict = dict({})
+    itemsdict = dict()
     for d in items:
         if "NRAO_NAME" in d:
             itemsdict[d["NRAO_NAME"]] = d
@@ -105,12 +107,20 @@ def read_nrao(file="support_docs/nrao-names.txt"):
 
 def make_item_table(jcmtonly, jcmtitems, ncols=2, caption="A caption"):
     # Table for JCMT only keywords.
-    print("\\begin{table*}[t]")
+    table = "table"
+    if ncols > 1:
+        table = "table*"
+    print("\\begin{"+table+"}[t]")
     print("\\caption{{{}}}".format(caption))
-    if ncols == 2:
+    print("\\begin{center}")
+    if ncols == 1:
+        print("\\begin{tabular}{lp{2.5in}}")
+    elif ncols == 2:
         print("\\begin{tabular}{|lp{2.0in}|lp{2.0in}|}")
-    else:
+    elif ncols == 3:
         print("\\begin{tabular}{|lp{1.5in}|lp{1.5in}|lp{1.5in}|}")
+    else:
+        raise ValueError("Can not support {} columns.".format(ncols))
     print("\\hline")
 
     nitems = len(jcmtonly)
@@ -131,7 +141,8 @@ def make_item_table(jcmtonly, jcmtitems, ncols=2, caption="A caption"):
 
     print("\\hline")
     print("\\end{tabular}")
-    print("\\end{table*}")
+    print("\\end{center}")
+    print("\\end{"+table+"}")
 
 
 # Program starts here
@@ -165,4 +176,4 @@ for k in sorted(nraoonlydict.keys(), key=sortbyclassnum):
 make_item_table( jcmtonly[0:56], jcmtitems)
 make_item_table( jcmtonly[57:112], jcmtitems)
 make_item_table( jcmtonly[112:], jcmtitems)
-make_item_table( nraoonly, nraoitems)
+make_item_table( nraoonly, nraoitems, ncols=1)
