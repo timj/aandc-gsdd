@@ -532,7 +532,8 @@ found in the JCMT version and these are given in
 Table~\ref{tab:nraoonly}.
 The following list -- which is not intended to be exhaustive -- details
 the main discrepancies and major compatibility problems between the NRAO and
-GSDD data models.
+GSDD data models. The first part describes in detail the items found
+in the NRAO model but not implemented at JCMT:
 
 \begin{table}[t]
 \caption{Items of the GSDD model only defined for use at NRAO.}
@@ -577,11 +578,6 @@ GSDD data models.
   because the length of the header region and the length of the data
   region are encoded in the file format design.
 
-\item[\texttt{C1DP}] This is used to specify the precision and data
-  type used to store the instrument data. This was used in early
-  variants of the JCMT system but was later dropped due to the data
-  format being able to report the data type associated with each item.
-
 \item[\texttt{C1SNA}] is the source object name and exists as two separate
   items at JCMT, \texttt{C1SNA1} and \texttt{C1SNA2}, to allow the
   object name to be specified in two parts or with an alternative name
@@ -589,23 +585,6 @@ GSDD data models.
   to the \texttt{OBJECT} FITS keyword. Historically the alternate or
   secondary part of the name was rarely used at JCMT so the name
   change, in hindsight, turned out to be unnecessary.
-
-\item[\texttt{C1ONA}] JCMT used this as a synonym for \texttt{C1OBS}
-  and instead added \texttt{C1ONA1} to indicate the name of the
-  support scientist for the observing run and \texttt{C1ONA2} to
-  indicate the name of the telescope operator.
-
-\item[\texttt{C1STC}] specifies the type of observation. At NRAO this
-  was defined as two 4 character strings defining the type of data and
-  the observing mode. For example \texttt{LINEPSSW} for a
-  position-switched spectral line observation. JCMT used this item
-  solely to define the switching mode (position-switched, beam switch,
-  frequency switch and no switch), preferring instead to use
-  \texttt{C1FTYP} to specify the frontend type (heterodyne versus
-  bolometer) and \texttt{C1BTYP} to indicate the backend type (line
-  versus continuum). In
-  later versions JCMT dropped \texttt{C1STC} completely, preferring to
-  specify the switching mode explicitly in \texttt{C6MODE}.
 
 \item[\texttt{C2PC}] was used at NRAO to specify a four-element
   secondary pointing correction. The JCMT version specifies this as
@@ -616,41 +595,6 @@ GSDD data models.
   pointing corrections in arcsec but at JCMT these were simply called
   \texttt{UAZ} and \texttt{UEL} with no class prefix and no RA/Dec
   equivalent.
-
-\item[\texttt{C3UT}] is the Universal Time in decimal hours, yet at
-  JCMT it was decided that this should refer to UT1.
-
-\item[\texttt{C4CSC}] The JCMT coordinate system codes \citep{mtdn12}
-  were a two-character code such as RB to indicate B1950 RA/Dec.
-  NRAO used a completely distinct set of codes using eight
-  characters; RB being equivalent to 1950RADC. The full list is shown
-  in Table~\ref{tab:coordcodes}.
-
-\begin{table}
-\caption{Coordinate codes used at NRAO and JCMT for item
-  \texttt{C4CSC}.}
-\label{tab:coordcodes}
-\begin{center}
-\begin{tabular}{lll}
-\hline
- & NRAO & JCMT \\ \hline
-Galactic & GALACTIC & GA \\
-B1950 RA/Dec & 1950RADC & RB \\
-Epoch RA/Dec & EPOCRADC & RD \\
-Mean RA/Dec & MEANRADC & -- \\
-Apparent RA/Dec & APPRADC & -- \\
-Apparent HA/Dec & APPHADC & EQ \\
-1950 Ecliptic & 1950ECL & EC \\
-Epoch ecliptic & EPOCECL & -- \\
-Apparent ecliptic & APPECL & -- \\
-Azimuth/Elevation & AZEL & AZ \\
-User defined & USERDEF & UD \\
-J2000 RA/Dec & 2000RADC & RJ \\
-Indicated Ra/Dec & INDRADC & -- \\
-\hline
-\end{tabular}
-\end{center}
-\end{table}
 
 \item[\texttt{C4DO}] is a three-element array labeled ``Descriptive
   Origin'' describing the position and angle of the coordinate system
@@ -668,33 +612,9 @@ Indicated Ra/Dec & INDRADC & -- \\
   telescope as measured by the encoders. This information was not
   recorded by JCMT.
 
-\item[\texttt{C6FC}] is the coordinate frame to use when offsetting,
-  which allows the offset system to be distinct from the telescope
-  tracking centre. At NRAO this was an eight character string made up
-  of two four character components (polar versus cartesian and step
-  versus scanning). At JCMT this item was an integer indicating which
-  coordinate frame should be used with options of AZ=1, EQ=3, RD=4,
-  RB=6, RJ=7 and GA=8 (using the same definition explained in item
-  \texttt{C4CSC}.
-
 \item[\texttt{C6XZ} \texttt{C6YZ}] specify the position of the map
   origin. These coordinates are not stored at JCMT as the map is
   defined in terms of offsets from the specified tracking centre.
-
-\item[\texttt{C7VRD}] is defined as the velocity definition and
-  reference at NRAO, by combining two four character strings into a
-  single item. It describes how the source radial velocity,
-  \texttt{C7VRD}, should be intrepreted. The allowed velocity
-  definitions were RADI (radio), OPTL (optical) and RELV
-  (relativistic). The velocity reference was allowed to be LSR (Local
-  Standard of Rest), HELO (Heliocentric), EART (earth), BARI
-  (barycentre) and OBS (observer). At JCMT this item was reserved
-  entirely for the velocity definition but deprecated in later
-  versions. The velocity definition was later defined in
-  \texttt{C12VDEF} (allowed values being RADIO, OPTICAL and
-  RELATIVISTIC) and the standard of rest indicated in \texttt{C12VREF}
-  (allowed values being TOPO(centric), LSR, HELI(ocentric),
-  GEO(centric), BARY(centric) and TELL(uric)).
 
 \item[\texttt{C7FW}] is the beam full width at half maximum in arcsec
   at NRAO but at JCMT the item used is \texttt{C7HP} and most JCMT data
@@ -745,10 +665,99 @@ Indicated Ra/Dec & INDRADC & -- \\
 
 \end{description}
 
-Additionally, whilst JCMT did use \texttt{C5IR} to report the mean
-refractive index, the JCMT implementation also stored the three refraction constants
-defined in the JCMT refraction model \citep{mtin26} as \texttt{C5IR1}, \texttt{C5IR2}
-and \texttt{C5IR3}.
+The following items are found in both implementations but resulted in
+some discrepancies:
+
+\begin{description}
+
+\item[\texttt{C1DP}] This is used to specify the precision and data
+  type used to store the instrument data. This was used in early
+  variants of the JCMT system but was later dropped due to the data
+  format being able to report the data type associated with each item.
+
+\item[\texttt{C1ONA}] JCMT used this as a synonym for \texttt{C1OBS}
+  and instead added \texttt{C1ONA1} to indicate the name of the
+  support scientist for the observing run and \texttt{C1ONA2} to
+  indicate the name of the telescope operator.
+
+\item[\texttt{C1STC}] specifies the type of observation. At NRAO this
+  was defined as two 4 character strings defining the type of data and
+  the observing mode. For example \texttt{LINEPSSW} for a
+  position-switched spectral line observation. JCMT used this item
+  solely to define the switching mode (position-switched, beam switch,
+  frequency switch and no switch), preferring instead to use
+  \texttt{C1FTYP} to specify the frontend type (heterodyne versus
+  bolometer) and \texttt{C1BTYP} to indicate the backend type (line
+  versus continuum). In
+  later versions JCMT dropped \texttt{C1STC} completely, preferring to
+  specify the switching mode explicitly in \texttt{C6MODE}.
+
+\item[\texttt{C3UT}] is the Universal Time in decimal hours, yet at
+  JCMT it was decided that this should refer to UT1.
+
+\item[\texttt{C4CSC}] The JCMT coordinate system codes \citep{mtdn12}
+  were a two-character code such as RB to indicate B1950 RA/Dec.
+  NRAO used a completely distinct set of codes using eight
+  characters; RB being equivalent to 1950RADC. The full list is shown
+  in Table~\ref{tab:coordcodes}.
+
+\begin{table}
+\caption{Coordinate codes used at NRAO and JCMT for item
+  \texttt{C4CSC}.}
+\label{tab:coordcodes}
+\begin{center}
+\begin{tabular}{lll}
+\hline
+ & NRAO & JCMT \\ \hline
+Galactic & GALACTIC & GA \\
+B1950 RA/Dec & 1950RADC & RB \\
+Epoch RA/Dec & EPOCRADC & RD \\
+Mean RA/Dec & MEANRADC & -- \\
+Apparent RA/Dec & APPRADC & -- \\
+Apparent HA/Dec & APPHADC & EQ \\
+1950 Ecliptic & 1950ECL & EC \\
+Epoch ecliptic & EPOCECL & -- \\
+Apparent ecliptic & APPECL & -- \\
+Azimuth/Elevation & AZEL & AZ \\
+User defined & USERDEF & UD \\
+J2000 RA/Dec & 2000RADC & RJ \\
+Indicated Ra/Dec & INDRADC & -- \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\item[\texttt{C5IR}] Whilst JCMT did use \texttt{C5IR} to report the
+  mean refractive index, the JCMT implementation also stored the three
+  refraction constants defined in the JCMT refraction model
+  \citep{mtin26} as \texttt{C5IR1}, \texttt{C5IR2} and \texttt{C5IR3}.
+
+\item[\texttt{C6FC}] is the coordinate frame to use when offsetting,
+  which allows the offset system to be distinct from the telescope
+  tracking centre. At NRAO this was an eight character string made up
+  of two four character components (polar versus cartesian and step
+  versus scanning). At JCMT this item was an integer indicating which
+  coordinate frame should be used with options of AZ=1, EQ=3, RD=4,
+  RB=6, RJ=7 and GA=8 (using the same definition explained in item
+  \texttt{C4CSC}.
+
+\item[\texttt{C7VRD}] is defined as the velocity definition and
+  reference at NRAO, by combining two four character strings into a
+  single item. It describes how the source radial velocity,
+  \texttt{C7VRD}, should be intrepreted. The allowed velocity
+  definitions were RADI (radio), OPTL (optical) and RELV
+  (relativistic). The velocity reference was allowed to be LSR (Local
+  Standard of Rest), HELO (Heliocentric), EART (earth), BARI
+  (barycentre) and OBS (observer). At JCMT this item was reserved
+  entirely for the velocity definition but deprecated in later
+  versions. The velocity definition was later defined in
+  \texttt{C12VDEF} (allowed values being RADIO, OPTICAL and
+  RELATIVISTIC) and the standard of rest indicated in \texttt{C12VREF}
+  (allowed values being TOPO(centric), LSR, HELI(ocentric),
+  GEO(centric), BARY(centric) and TELL(uric)).
+
+\end{description}
+
 
 \section{National Radio Astronomy Observatory}
 
