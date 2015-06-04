@@ -235,13 +235,15 @@ history and philosophy of astronomy
 
 In the late 1970s and early 1980s millimeter and submillimeter
 single-dish astronomy was undergoing a significant period of growth
-\citep[see e.g.,][]{2013ASSP...37...39R} with the NRAO 12-m telescope
+\citep[see e.g.,][]{2013ASSP...37...39R} with the National Radio
+Astronomy Observatory (NRAO) 12-m telescope
 leading the way \citep[see e.g.,][]{2005ASSL..323.....G} and with
-multiple observatories being developed such as the IRAM 30-m
+multiple observatories being developed such as the Institut de
+Radioastronomie Millim\'{e}trique (IRAM) 30-m
 \citep{1981MitAG..54...61B}, the 15-m James Clerk Maxwell Telescope
 \citep[JCMT;][]{1985ESOC...22...63H}, the 10-m Sub-Millimeter
-Telescope \citep[SMT;][]{1985ESOC...22...71W}, the 15-m Swedish ESO
-Submm Telescope \citep[SEST;][]{1985ESOC...22...25D}, and the Caltech
+Telescope \citep[SMT;][]{1985ESOC...22...71W}, the 15-m Swedish
+European Southern Obsevatory Submm Telescope \citep[SEST;][]{1985ESOC...22...25D}, and the Caltech
 Submillimeter Observatory \citep[CSO;][]{1988BAAS...20..690P}. In this
 environment it was recognized by some institutions that the ability
 for raw, or partially processed data taken on one telescope, to be
@@ -290,7 +292,7 @@ joint NRAO/JCMT description of the model and provide a retrospective
 on the history and usage of the format.
 A basic introduction to millimeter and submillimeter observing
 techniques is beyond the scope of this paper but good background
-informat can be provided by \citet{2002ASPC..278.....S}.
+information can be provided by \citet{2002ASPC..278.....S}.
 
 \section{Data Model}
 \label{sec:datamodel}
@@ -407,12 +409,12 @@ memory system and
 was equivalent to the \texttt{RESTFREQ} FITS keyword. A full list of
 the equivalences for JCMT can be found elsewhere \citep{SUN229,mtdn85}. As
 commissioning took place, new
-instrumentation arrived and new facilities were added at JCMT the data
+instrumentation arrived and new facilities were added, the JCMT data
 model diverged with many new items being added without consultation
 with NRAO. These items are listed in Tables \ref{tab:appa1},
 \ref{tab:appa2} and \ref{tab:appa3}.  Class 55 (Inclinometry) is not
 included here as the inclinometry data were not archived and therefore
-such data files describing these observations are extremely rare.
+data files describing these observations are extremely rare.
 
 \begin{table*}[!ht]
 \caption{JCMT-specific keywords from class 1 to class 4. This includes the three items that were not allocated a class.}
@@ -645,7 +647,7 @@ in the NRAO model but not implemented at JCMT:
 
 \item[\texttt{C12ST} \texttt{C12RMS}] are the computed source
   temperature and the RMS value. The JCMT online observing system did
-  not calculate this.
+  not calculate these.
 
 \item[\texttt{C12SP}] is a description of the polarization type and
   angle encoded in an eight character field. This item was not used at
@@ -666,8 +668,8 @@ in the NRAO model but not implemented at JCMT:
 
 \end{description}
 
-The following items are found in both implementations but resulted in
-some discrepancies:
+The following items are found in both implementations.
+Some discrepancies are noted as follows.
 
 \begin{description}
 
@@ -740,7 +742,7 @@ Indicated Ra/Dec & INDRADC & -- \\
   versus scanning). At JCMT this item was an integer indicating which
   coordinate frame should be used with options of AZ=1, EQ=3, RD=4,
   RB=6, RJ=7 and GA=8 (using the same definition explained in item
-  \texttt{C4CSC}.
+  \texttt{C4CSC}).
 
 \item[\texttt{C7VRD}] is defined as the velocity definition and
   reference at NRAO, by combining two four character strings into a
@@ -798,7 +800,7 @@ items added as described in section~\ref{sec:datamodel} and a new Class 9 to hol
 the values that were unique to to the Green Bank telescopes. The UniPOPS
 file format is nearly identical to the POPS Data File (PDFL) format
 in use at the 12-m prior to UniPOPS. This
-data structure and file format was used by UniPOPS to hold data at
+data structure and file format were used by UniPOPS to hold data at
 all stages of processing (raw, calibated, averaged, smoothed, etc.).
 Adapting 140\,ft and 300\,ft data to use the GSDD data model was
 relatively easy, good evidence that GSDD was indeed a rather versatile
@@ -832,7 +834,7 @@ found transporting SDD files more convenient than using
 SDFITS files.  It was probably very rare that a UniPOPS SDD file was
 imported into another analysis system.  For example, a separate
 utility was developed that would prepare data files that could be
-imported into the {\textsc CLASS} package.
+imported into the \textsc{class} package.
 Furthermore, when SDFITs was released, few FITS readers at the
 time could actually usefully import binary tables.  Thus, we suspect
 that frequent observers grew into the habit of avoiding SDFITS files.
@@ -911,7 +913,7 @@ In order to accomodate spectral line and continuum data within the
 same structure and minimize the amount of space needed to store the
 associated header, some header values have 2 meanings depending on the
 type of data.  This is most obvious in class 12, where the associated
-``X axis'' is described.  For spectral line data the x-axis is the
+X axis is described.  For spectral line data the X axis is the
 frequency or velocity at each channel.  For
 continuum data, the data vector is a series of regularly sampled
 data (each sample is one integration) so the X axis is related to
@@ -1311,7 +1313,7 @@ names. If an attempt had ever been made to transfer data between
 observatories special code would have to be written to import the
 data, removing most of the gains of a shared model.
 The was due to a failure to fully develop the standard prior to
-starting it implementation. In some sense, the development/initiative
+starting its implementation. In some sense, the development/initiative
 was not initiated with/subjected to proper project management
 procedures as we currently understand them.
 
@@ -1410,8 +1412,6 @@ single-dish FITS format. This was a key motivator for the adoption
 of binary tables into the FITS standard \citep{1995A&AS..113..159C}
 and ultimately led to the SDFITS standard \citep{2000ASPC..216..243G}.
 
-{\color{red} Referee wants more detail on GSDD influence of SDFITS.}
-
 \subsection{Communication}
 
 A failing of GSDD is that when developers had real, practical reasons
@@ -1463,7 +1463,7 @@ It may be true that all data models can be represented in a FITS file
 but that doesn't mean that a FITS file is the most compact or most
 efficiently accessed format. Changing the underlying file format used
 in astronomy may simplify infrastructure libraries and result in new
-abilities not available from within FITS but the easiest way to
+abilities not available from within FITS. The easiest way to
 migrate people to a new format may well be to do it without people
 knowing what underlying format really is being used by their
 applications.  As we move forward with discussions on data formats and
